@@ -1,0 +1,1 @@
+{{ optional($container->supplier)->name }}

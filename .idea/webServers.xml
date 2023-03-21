@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="ce318389-0281-458d-840d-d63b0c582704" name="RC_SFTP" url="https://rc-system.ru/">
+        <fileTransfer rootFolder="/var/www/okmdk4jasjl/data/www/rc-system.ru" accessType="SFTP" host="62.109.4.81" port="22" sshConfigId="2282b412-0638-41f8-a3f3-59a89d982677" sshConfig="okmdk4jasjl@62.109.4.81:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
