@@ -29,6 +29,14 @@
                                     <input type="text" class="form-control project-name" name="name" placeholder="{{ $project->name }}"
                                            value="{{ $project->name }}" required>
                                 </div>
+                                @if (in_array($role, ['super-admin','director']))
+                                    <div class="form-group clearfix">
+                                        <div class="icheck-primary d-inline">
+                                            <input type="checkbox" id="management_expenses" name="management_expenses" {{ is_null($project->management_expenses) ?: 'checked' }}>
+                                            <label for="management_expenses">УР проект</label>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">

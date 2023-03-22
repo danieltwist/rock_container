@@ -2,7 +2,7 @@
     <div class="card-header">
         <h3 class="card-title">{{ __('container.containers_list') }}</h3>
         <div class="card-tools">
-            <div class="dropdown dropleft">
+            <div class="dropdown dropleft" id="container_card_buttons">
                 @if(in_array($role, ['director', 'super-admin']))
                     <button type="button" class="btn btn-success btn-sm d-none"
                             id="unmark_processing">

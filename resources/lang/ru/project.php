@@ -212,4 +212,5 @@ return [
     'update_project_finance' => 'Финансовые данные были успешно обновлены',
     'project_successfully_removed' => 'Проект :NAME был успешно удален',
     'remove_from_stat_successfully' => 'Список проектов был успешно изменен',
+    'created_successfully' => 'Проект был успешно создан'
 ];

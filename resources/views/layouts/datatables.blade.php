@@ -39,9 +39,9 @@
             if (getInvoicesPageType() === 'agree') getAgreedInvoicesAmount();
         }
         if (urlpath[1] === 'container') {
-            getContainersColumns();
-            getContainersFilters('');
-            checkProcessing();
+            // getContainersColumns();
+            // getContainersFilters('');
+            // checkProcessing();
         }
         if (urlpath[1] === 'application') {
             getContainersColumns();
@@ -376,6 +376,8 @@
                 setTimeout(function () {
                     $('#containers_extended_ajax_table').DataTable({
                         destroy: true,
+                        scrollY: 1000,
+                        scrollCollapse: true,
                         pageLength: 25,
                         processing: true,
                         serverSide: true,
@@ -835,14 +837,20 @@
         });
 
         /////////////////////////////////////////////
+        let fixed_header_enabled = true;
 
         $('.containers_extended_table').each(function () {
+            getContainersColumns();
+            getContainersFilters('');
+            checkProcessing();
             let filter_type = $(this).data('filter_type');
             if(filter_type === 'application'){
                 containers_filters.application = $(this).data('application_id');
             }
             let $table_id = $('#containers_extended_ajax_table');
             $table_id.DataTable({
+                scrollY: 1000,
+                scrollCollapse: true,
                 processing: true,
                 serverSide: true,
                 searching: true,
@@ -990,6 +998,20 @@
                     }
                 }
             });
+            // if(filter_type === 'application'){
+            //     setTimeout(function () {
+            //         fixed_header_enabled = false;
+            //         if(fixed_header_enabled){
+            //             $('#container_card_buttons').prepend('<button type="button" class="btn btn-secondary btn-sm fixed_header_toggle" data-fixed_state="blocked"> <i class="fas fa-unlock"></i> Разблокировать шапку</button>')
+            //         }
+            //         else {
+            //             $('#container_card_buttons').prepend('<button type="button" class="btn btn-secondary btn-sm fixed_header_toggle" data-fixed_state="unblocked"> <i class="fas fa-lock"></i> Заблокировать шапку</button>')
+            //         }
+            //         $table_id.DataTable().fixedHeader.disable();
+            //     }, 2000);
+            //
+            // }
+
         });
 
         $('.containers_archive_table').each(function () {
@@ -1151,6 +1173,9 @@
         });
 
         $(document).on("click", ".containers_filters", function () {
+            getContainersColumns();
+            getContainersFilters('');
+            checkProcessing();
             let filter_type = $(this).data('filter');
             let columns_show = [];
 
@@ -1202,7 +1227,6 @@
                 });
                 $('#containers_extended_ajax_table').DataTable().columns.adjust().draw();
             }, 1000);
-
         });
 
         function writeCookieContainersColumns() {

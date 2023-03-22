@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="form-group" id="user_edit_password_field" style="display: none;">
                                     <label for="password">{{ __('user.password') }}</label>
-                                    <input type="password" class="form-control" name="{{ __('user.password') }}" placeholder="Пароль">
+                                    <input type="password" class="form-control" name="password" placeholder="{{ __('user.password') }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="name">{{ __('user.position') }}</label>

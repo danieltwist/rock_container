@@ -54,10 +54,9 @@ if(!function_exists('can_edit_this_project')){
             $project_create_user_role = $project_create_user->getRoleNames()[0];
 
             if(config('app.prefix_view') == 'rl_' || config('app.prefix_view') == 'ntc_'){
-                if(!is_null($project)){
                     if (in_array($role, ['super-admin','director']) ||
                         in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
-                        $project->user_id == '2' ||
+                        $project->management_expenses == 'on' ||
                         $user->id == '13' ||
                         $user->id == '14' ||
                         ($role == 'logist' && $project_create_user_role == 'logist')){
@@ -67,41 +66,29 @@ if(!function_exists('can_edit_this_project')){
                     }
 
                     else return false;
-
-                }
-
-                else return false;
             }
             elseif (config('app.prefix_view') == 'rc_'){
-                if(!is_null($project)){
                     if (in_array($role, ['super-admin','director']) ||
                         in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
                         in_array($project->user_id, ['21', '40']) ||
-                        ($role == 'supply' && $project_create_user_role == 'supply')){
+                        $project->management_expenses == 'on' ||
+                        ($role == 'supply' && $project_create_user_role == 'supply'))
+                    {
 
                         return true;
 
                     }
-
-                    else return false;
-
-                }
-
                 else return false;
             }
             elseif (config('app.prefix_view') == 'blc_'){
-                if(!is_null($project)){
                     if (in_array($role, ['super-admin','director']) ||
                         in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
-                        in_array($role, ['logist', 'accountant'])){
-
+                        $project->management_expenses == 'on' ||
+                        in_array($role, ['logist', 'accountant']))
+                    {
                         return true;
 
                     }
-
-                    else return false;
-
-                }
 
                 else return false;
             }
@@ -109,7 +96,6 @@ if(!function_exists('can_edit_this_project')){
         else return false;
 
     }
-
 
     function containerHasProject($container_id, $project_id){
 

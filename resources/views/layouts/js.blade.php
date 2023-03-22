@@ -2016,6 +2016,9 @@
                 else {
                     $('#save_containers_list_edits').removeAttr("disabled");
                 }
+                $('.select2-containers_list').select2({
+                    "language": "ru",
+                });
             },
             error: function (XMLHttprequest, textStatus, errorThrown) {
                 console.log(textStatus);
@@ -2155,6 +2158,19 @@
         else
             return false;
     }
+
+    $(document).on('click', '.fixed_header_toggle', function () {
+        if($(this).data('fixed_state') === 'unblocked'){
+            $('#containers_extended_ajax_table').DataTable().fixedHeader.enable();
+            $(this).data('fixed_state', 'blocked');
+            $(this).html('<i class="fas fa-unlock"></i> Разблокировать шапку</button>');
+        }
+        else {
+            $('#containers_extended_ajax_table').DataTable().fixedHeader.disable();
+            $(this).data('fixed_state', 'unblocked');
+            $(this).html('<i class="fas fa-lock"></i> Заблокировать шапку</button>');
+        }
+    });
 
 
 </script>

@@ -537,7 +537,7 @@
                                         <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"
                                                 data-filter="Доход"
                                                 data-filter_type="direction"
-                                                @if(strripos($project->name, 'УР') !== false && !in_array($role,['super-admin','director','accountant']))
+                                                @if($project->management_expenses == 'on' && !in_array($role,['super-admin','director','accountant']))
                                                     data-personal="true"
                                                 @endif
                                                 >{{ __('project.show_income') }}
@@ -545,7 +545,7 @@
                                         <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"
                                                 data-filter="Расход"
                                                 data-filter_type="direction"
-                                                @if(strripos($project->name, 'УР') !== false && !in_array($role,['super-admin','director','accountant']))
+                                                @if($project->management_expenses == 'on' && !in_array($role,['super-admin','director','accountant']))
                                                     data-personal="true"
                                                 @endif
                                                 >{{ __('project.show_outcome') }}
@@ -557,7 +557,7 @@
                                     <div class="invoices_project mt-4 filter_table_div"
                                          id="standard_block_invoices"
                                          data-type="project"
-                                         @if(strripos($project->name, 'УР') !== false && !in_array($role,['super-admin','director','accountant']))
+                                         @if($project->management_expenses == 'on' && !in_array($role,['super-admin','director','accountant']))
                                             data-personal="true"
                                          @endif
                                          data-object_id="{{ $project->id }}">

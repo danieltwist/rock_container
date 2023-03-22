@@ -44,6 +44,14 @@
                                     <input type="text" class="form-control project-name" name="name" placeholder="{{ __('project.project_name') }}"
                                            value="{{ substr($today, 2) }}" id="project_name" required>
                                 </div>
+                                @if (in_array($role, ['super-admin','director']))
+                                    <div class="form-group clearfix">
+                                        <div class="icheck-primary d-inline">
+                                            <input type="checkbox" id="management_expenses" name="management_expenses">
+                                            <label for="management_expenses">УР проект</label>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">

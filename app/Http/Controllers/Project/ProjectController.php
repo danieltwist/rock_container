@@ -77,7 +77,7 @@ class ProjectController extends Controller
         $user = auth()->user();
         $role = $user->getRoleNames()[0];
 
-        if (in_array($role,['director'])){
+        if (in_array($role,['super-admin','director'])){
             $status = 'В работе';
         }
         else {
@@ -103,6 +103,8 @@ class ProjectController extends Controller
         $new_project->planned_payment_date = $request->planned_payment_date;
         $new_project->prepayment = $request->prepayment;
         $new_project->status = $status;
+        !isset($request->management_expenses) ?: $new_project->management_expenses = $request->management_expenses;
+
 
         $new_project->save();
 
@@ -520,6 +522,7 @@ class ProjectController extends Controller
             $project->planned_payment_date = $request->planned_payment_date;
             $project->prepayment = $request->prepayment;
             $project->additional_info = $request->additional_info;
+            isset($request->management_expenses) ? $project->management_expenses = $request->management_expenses : $project->management_expenses = null;
 
             if (can_edit_this_project_price($project->id) || (can_edit_this_project($project->id) && ($project->status == 'Черновик'))){
 

@@ -484,7 +484,7 @@ class ContainerController extends Controller
             $fields = array_merge($fields_for_update, $fields_for_null);
 
             if(!empty($fields)){
-                foreach (explode(',', $request->containers_list) as $container_id){
+                foreach ($request->containers_list as $container_id){
                     DB::transaction(function() use($container_id, $fields) {
                         Container::where(['id' => $container_id])
                             ->update($fields);
