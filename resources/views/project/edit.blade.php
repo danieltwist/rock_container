@@ -110,13 +110,20 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label>{{ __('project.logist') }}</label>
-                                            <select class="form-control select2" name="logist_id" data-placeholder="{{ __('project.logist') }}" style="width: 100%;">
-                                                <option></option>
-                                                @foreach($users as $logist)
-                                                    <option value="{{ $logist->id }}" {{ $project->logist_id == $logist->id ? 'selected' : '' }}>{{$logist->name}}</option>
-                                                @endforeach
-                                            </select>
+                                            <div class="form-group">
+                                                <label>Имеет доступ к проекту</label>
+                                                <select class="form-control select2" name="access_to_project[]" id="access_to_project"
+                                                        data-placeholder="Имеет доступ к проекту" style="width: 100%;" multiple>
+                                                    <option></option>
+                                                    @foreach($users as $user)
+                                                        <option value="{{ $user->id }}"
+                                                            @if(!is_null($project->access_to_project))
+                                                                {{ !in_array($user->id, $project->access_to_project) ?: 'selected' }}
+                                                            @endif
+                                                            >{{ $user->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 @endif

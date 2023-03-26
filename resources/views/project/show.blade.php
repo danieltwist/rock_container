@@ -149,11 +149,17 @@
                                                 <b class="d-block">{{ $project->freight_info }} {{ $project->freight_amount }}</b>
                                             </p>
                                         @endif
-                                        <p class="text-sm">{{ __('project.project_users') }}
+                                        <p class="text-sm">Создан / Менеджер / Доступ к проекту
                                             <b class="d-block">{{ $project->user->name }} /
                                                 {{ $project->manager_id!='' ? optional($project->manager)->name : 'Не выбран' }}
                                                 /
-                                                {{ $project->logist_id!='' ? optional($project->logist)->name : 'Не выбран' }}
+                                                @if(!is_null($project->access_to_project))
+                                                    @foreach($project->access_to_project as $user_id)
+                                                        {{ optional(\App\Models\User::where('id', $user_id)->first())->name }}
+                                                    @endforeach
+                                                @else
+                                                    Не выбраны
+                                                @endif
                                             </b>
                                         </p>
                                         <p class="text-sm">{{ __('project.current_stage') }}

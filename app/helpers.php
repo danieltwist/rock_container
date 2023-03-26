@@ -68,8 +68,10 @@ if(!function_exists('can_edit_this_project')){
                     else return false;
             }
             elseif (config('app.prefix_view') == 'rc_'){
+                    is_null($project->access_to_project) ? $access_to_projects = $project->access_to_project = [] : $access_to_projects = $project->access_to_project;
                     if (in_array($role, ['super-admin','director']) ||
-                        in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
+                        in_array($user->id, [$project->user_id, $project->manager_id]) ||
+                        in_array($user->id, $access_to_projects) ||
                         in_array($project->user_id, ['21', '40']) ||
                         $project->management_expenses == 'on' ||
                         ($role == 'supply' && $project_create_user_role == 'supply'))

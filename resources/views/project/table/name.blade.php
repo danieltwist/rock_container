@@ -23,12 +23,12 @@
                                               href="{{ route('get_user_statistic', optional($project->manager)->id) }}">{{ optional($project->manager)->name}}</a>
         @endif
     @endif
-    @if($project->logist_id != '')
-        @if(!is_null(optional($project->logist)->name))
-            / {{ __('project.logist') }}: <a class="text-dark"
-                                             href="{{ route('get_user_statistic', optional($project->logist)->id) }}">{{ optional($project->logist)->name}}</a>
-        @endif
-    @endif
+{{--    @if($project->logist_id != '')--}}
+{{--        @if(!is_null(optional($project->logist)->name))--}}
+{{--            / {{ __('project.logist') }}: <a class="text-dark"--}}
+{{--                                             href="{{ route('get_user_statistic', optional($project->logist)->id) }}">{{ optional($project->logist)->name}}</a>--}}
+{{--        @endif--}}
+{{--    @endif--}}
 </small>
 <br>
 <br>

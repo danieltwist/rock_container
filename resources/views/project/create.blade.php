@@ -117,16 +117,28 @@
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label>{{ __('project.logist') }}</label>
-                                        <select class="form-control select2" name="logist_id" id="logist_select" onchange="MakeFoldersList();"
-                                                data-placeholder="{{ __('project.logist') }}"
-                                                style="width: 100%;">
-                                            <option></option>
-                                            @foreach($users as $user)
-                                                <option value="{{ $user->id }}" data-folder="{{ $user->folder_on_yandex_disk }}">{{$user->name}}</option>
-                                            @endforeach
-                                        </select>
+                                        <div class="form-group">
+                                            <label>Имеет доступ к проекту</label>
+                                            <select class="form-control select2" name="access_to_project[]" id="access_to_project"
+                                                    data-placeholder="Имеет доступ к проекту" style="width: 100%;" multiple>
+                                                <option></option>
+                                                @foreach($users as $user)
+                                                    <option value="{{ $user->id }}">{{$user->name}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
+{{--                                    <div class="col-md-4">--}}
+{{--                                        <label>{{ __('project.logist') }}</label>--}}
+{{--                                        <select class="form-control select2" name="logist_id" id="logist_select" onchange="MakeFoldersList();"--}}
+{{--                                                data-placeholder="{{ __('project.logist') }}"--}}
+{{--                                                style="width: 100%;">--}}
+{{--                                            <option></option>--}}
+{{--                                            @foreach($users as $user)--}}
+{{--                                                <option value="{{ $user->id }}" data-folder="{{ $user->folder_on_yandex_disk }}">{{$user->name}}</option>--}}
+{{--                                            @endforeach--}}
+{{--                                        </select>--}}
+{{--                                    </div>--}}
                                     <div class="col-md-4">
                                         <label>{{ __('project.choose_folder_on_yandex') }}</label>
                                         <select class="form-control select2" name="folder_yandex_disk" id="folder_yandex_disk"

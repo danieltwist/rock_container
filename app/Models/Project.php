@@ -11,6 +11,10 @@ class Project extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'access_to_project' => 'array',
+    ];
+
     protected $guarded = [];
 
     public function client(){

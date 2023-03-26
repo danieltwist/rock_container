@@ -33026,3 +33026,7 @@ span.twitter-typeahead {
 
     color: transparent !important; /* hide the x */
 }
+
+.height-72 {
+    height: 72px;
+}

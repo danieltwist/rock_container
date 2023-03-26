@@ -2009,11 +2009,12 @@
                 if(response.excluded_containers_exist){
                     $('#containers_list_collapse').collapse("show");
                 }
-                if(response.chosen_containers_list === ''){
+                else if(response.chosen_containers_list === ''){
                     $('#containers_list_collapse').collapse("show");
                     $('#save_containers_list_edits').attr("disabled", "disabled");
                 }
                 else {
+                    $('#containers_list_collapse').collapse("hide");
                     $('#save_containers_list_edits').removeAttr("disabled");
                 }
                 $('.select2-containers_list').select2({
@@ -2163,12 +2164,12 @@
         if($(this).data('fixed_state') === 'unblocked'){
             $('#containers_extended_ajax_table').DataTable().fixedHeader.enable();
             $(this).data('fixed_state', 'blocked');
-            $(this).html('<i class="fas fa-unlock"></i> Разблокировать шапку</button>');
+            $(this).html('<i class="fas fa-unlock"></i></button>');
         }
         else {
             $('#containers_extended_ajax_table').DataTable().fixedHeader.disable();
             $(this).data('fixed_state', 'unblocked');
-            $(this).html('<i class="fas fa-lock"></i> Заблокировать шапку</button>');
+            $(this).html('<i class="fas fa-lock"></i></button>');
         }
     });
 

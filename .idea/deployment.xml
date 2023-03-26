@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="RC_SFTP" confirmBeforeUploading="false">
+  <component name="PublishConfigData" serverName="RC_SFTP" uploadOnCheckin="ce318389-0281-458d-840d-d63b0c582704" confirmBeforeUploading="false">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
       <paths name="RC_SFTP">
@@ -24,6 +24,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="localhost">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="rocklogistic-system-local.ru">
         <serverdata>
           <mappings>
@@ -32,5 +39,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myUploadOnCheckinName" value="RC_SFTP" />
   </component>
 </project>

@@ -170,11 +170,12 @@ class ApplicationController extends Controller
                                 $place_of_delivery_city = $request->place_of_delivery_city[0];
                             }
                         }
+
                         if($request->counterparty_type == 'Клиент') {
                             $client = Client::find($request->client_id);
                             !is_null($client->short_name) ? $name = $client->short_name : $name = $client->name;
                             $container->relocation_counterparty_id = $request->client_id;
-                            $container->relocation_counterparty_name = $name;
+                            $container->relocation_counterparty_type = 'client';
                         }
 
                         if($request->counterparty_type == 'Поставщик') {
@@ -182,6 +183,7 @@ class ApplicationController extends Controller
                             !is_null($supplier->short_name) ? $name = $supplier->short_name : $name = $supplier->name;
                             $container->relocation_counterparty_id = $request->supplier_id;
                             $container->relocation_counterparty_name = $name;
+                            $container->relocation_counterparty_type = 'supplier';
                         }
 
                         $container->relocation_application_id = $application->id;
@@ -477,6 +479,7 @@ class ApplicationController extends Controller
                                 !is_null($client->short_name) ? $name = $client->short_name : $name = $client->name;
                                 $container->relocation_counterparty_id = $request->client_id;
                                 $container->relocation_counterparty_name = $name;
+                                $container->relocation_counterparty_type = 'client';
                             }
 
                             if($request->counterparty_type == 'Поставщик') {
@@ -484,6 +487,7 @@ class ApplicationController extends Controller
                                 !is_null($supplier->short_name) ? $name = $supplier->short_name : $name = $supplier->name;
                                 $container->relocation_counterparty_id = $request->supplier_id;
                                 $container->relocation_counterparty_name = $name;
+                                $container->relocation_counterparty_type = 'supplier';
                             }
 
                             $container->relocation_application_id = $application->id;
@@ -612,8 +616,7 @@ class ApplicationController extends Controller
         foreach ($containers as $key => $name){
             $containers[$key] = preg_replace("/[^0-9A-Za-z]/",'', $name);
         }
-        //dd($used_delimiter);
-        //dd($containers);
+
         foreach ($containers as $container_name){
 
             if($this->checkContainerFormat($container_name)){

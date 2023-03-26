@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <link rel="stylesheet" href="/admin/plugins/datatables-scroller/css/scroller.bootstrap4.min.css">
-    <link rel="stylesheet" href="/admin/plugins/datatables-fixedheader/css/fixedHeader.bootstrap4.min.css">
+    <link rel="stylesheet" href="/admin/plugins/datatables-fixedheader/css/fixedHeader.bootstrap4.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/admin/dist/css/adminlte.css">
     <!-- overlayScrollbars -->
@@ -199,8 +199,8 @@
 <script src="/admin/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="/admin/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script src="/admin/plugins/datatables-scroller/js/scroller.bootstrap4.min.js"></script>
-<script src="/admin/plugins/datatables-fixedheader/js/dataTables.fixedHeader.min.js"></script>
-<script src="/admin/plugins/datatables-fixedheader/js/fixedHeader.bootstrap4.min.js"></script>
+<script src="/admin/plugins/datatables-fixedheader/js/dataTables.fixedHeader.js"></script>
+<script src="/admin/plugins/datatables-fixedheader/js/fixedHeader.bootstrap4.js"></script>
 
 <!-- InputMask -->
 <script src="/admin/plugins/moment/moment.min.js"></script>

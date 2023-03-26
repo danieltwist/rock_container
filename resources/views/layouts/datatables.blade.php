@@ -38,15 +38,186 @@
         if (urlpath[1] === 'invoice') {
             if (getInvoicesPageType() === 'agree') getAgreedInvoicesAmount();
         }
-        if (urlpath[1] === 'container') {
-            // getContainersColumns();
-            // getContainersFilters('');
-            // checkProcessing();
-        }
-        if (urlpath[1] === 'application') {
+        if (urlpath[1] === 'container' || urlpath[1] === 'application') {
             getContainersColumns();
             getContainersFilters('');
             checkProcessing();
+            setTimeout(function () {
+                $('.containers_extended_table').each(function () {
+                    let filter_type = $(this).data('filter_type');
+                    if(filter_type === 'application'){
+                        containers_filters.application = $(this).data('application_id');
+                    }
+                    let $table_id = $('#containers_extended_ajax_table');
+                    $table_id.DataTable({
+                        fixedHeader: true,
+                        processing: true,
+                        serverSide: true,
+                        searching: true,
+                        ordering: true,
+                        pageLength: 25,
+                        lengthChange: true,
+                        order: [0, 'desc'],
+                        info: true,
+                        scrollX: true,
+                        ajax: {
+                            url: "{{route('containers_extended_table')}}",
+                            type: "POST",
+                            data: containers_filters
+                        },
+                        language: {
+                            "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
+                        },
+                        columns: [
+                            {data: "id"},
+                            {data: "name"},
+                            {data: "status"},
+                            {data: "type"},
+                            {data: "owner_name"},
+                            {data: "size"},
+                            {data: "supplier_application_name"},
+                            {data: "supplier_price_amount"},
+                            {data: "supplier_grace_period"},
+                            {data: "supplier_snp_after_range"},
+                            {data: "supplier_country"},
+                            {data: "supplier_city"},
+                            {data: "supplier_terminal"},
+                            {data: "supplier_date_get"},
+                            {data: "supplier_date_start_using"},
+                            {data: "supplier_days_using"},
+                            {data: "supplier_snp_total"},
+                            {data: "supplier_place_of_delivery_country"},
+                            {data: "supplier_place_of_delivery_city"},
+                            {data: "svv"},
+                            {data: "supplier_terminal_storage_amount"},
+                            {data: "supplier_payer_tx"},
+                            {data: "supplier_renewal_reexport_costs_amount"},
+                            {data: "supplier_repair_amount"},
+                            {data: "supplier_repair_status"},
+                            {data: "supplier_repair_confirmation"},
+                            {data: "relocation_counterparty_name"},
+                            {data: "relocation_application_name"},
+                            {data: "relocation_price_amount"},
+                            {data: "relocation_date_send"},
+                            {data: "relocation_date_arrival_to_terminal"},
+                            {data: "relocation_place_of_delivery_city"},
+                            {data: "relocation_place_of_delivery_terminal"},
+                            {data: "relocation_delivery_time_days"},
+                            {data: "relocation_snp_after_range"},
+                            {data: "relocation_snp_total"},
+                            {data: "relocation_repair_amount"},
+                            {data: "relocation_repair_status"},
+                            {data: "relocation_repair_confirmation"},
+                            {data: "client_counterparty_name"},
+                            {data: "client_application_name"},
+                            {data: "client_price_amount"},
+                            {data: "client_grace_period"},
+                            {data: "client_snp_after_range"},
+                            {data: "client_date_get"},
+                            {data: "client_date_return"},
+                            {data: "client_place_of_delivery_city"},
+                            {data: "client_days_using"},
+                            {data: "client_snp_total"},
+                            {data: "client_repair_amount"},
+                            {data: "client_repair_status"},
+                            {data: "client_repair_confirmation"},
+                            {data: "client_smgs"},
+                            {data: "client_manual"},
+                            {data: "client_location_request"},
+                            {data: "client_date_manual_request"},
+                            {data: "client_return_act"},
+                            {data: "own_date_buy"},
+                            {data: "own_date_sell"},
+                            {data: "own_sale_price"},
+                            {data: "own_buyer"},
+                            {data: "processing"},
+                            {data: "removed"},
+                            {data: "additional_info"}
+                        ],
+                        columnDefs: [
+                            {targets: 'no-sort', orderable: false}
+                        ],
+                        initComplete: function () {
+                            this.api().columns().every(function () {
+                                let column = this;
+                                let column_id = column[0][0];
+                                if (column_id !== 0) {
+                                    $('<span id="sorting_column_' + column_id + '" class="cursor-pointer sorting_containers_table" data-column_id="' + column_id + '" data-ordering_direction="asc">' + containers_table_columns[column_id].name + '</span>')
+                                        .prependTo($(column.header()).append());
+                                }
+                            });
+                            this.api().columns('.select-filter').every(function () {
+                                let column = this;
+                                let column_id = column[0][0];
+                                let select = $('<select class="form-control select2 init_select2" id="column_' + column_id + '" style="height: calc(1.8125rem + 2px); font-size: small;"><option value=""></option></select>')
+                                    .prependTo($(column.header()).append())
+                                    .on('change', function (data) {
+                                        column.search($(this).val(), false, false).draw();
+                                    });
+                                containers_table_filters[[column[0][0]]].forEach(function (value) {
+                                    select.append('<option value="' + value + '">' + value + '</option>');
+                                });
+                            });
+                            this.api().columns('.input-filter').every(function () {
+                                let column = this;
+                                $('<input type="text" class="form-control" style="height: calc(1.8125rem + 2px); font-size: small;">')
+                                    .prependTo($(column.header()).append())
+                                    .on('keyup', function (data) {
+                                        column.search($(this).val(), false, false).draw();
+                                    });
+                            });
+
+                            if (typeof $.cookie('containers_hidden_columns') !== 'undefined') {
+                                JSON.parse($.cookie('containers_hidden_columns')).forEach(function (value) {
+                                    $containers_extended_table.DataTable().column(value).visible(false);
+                                    $('#containers_table_column_' + value).prop("checked", false);
+                                });
+                            }
+                        },
+                        drawCallback: function () {
+                            $('.xedit').editable({
+                                mode: 'inline',
+                                url: '{{url("xeditable/update")}}',
+                                title: '{{ __('general.update_') }}',
+                                emptytext: '{{ __('general.empty') }}',
+                                params: function (params) {
+                                    params.model = $(this).data('model');
+                                    return params;
+                                },
+                                success: function (response, newValue) {
+                                    $containers_extended_table.DataTable().draw(false);
+                                    if (response.status === 'error') console.log('Ошибка');
+                                }
+                            });
+                            chosen_containers_id = $table_id.DataTable().ajax.json().id_list;
+                            $('#chosen_containers_id').val(chosen_containers_id);
+                            chosen_containers_names = $table_id.DataTable().ajax.json().prefix_list;
+                        },
+                        createdRow: function (row, data, dataIndex) {
+                            if (data.class !== '') {
+                                $(row).addClass(data.class);
+                            }
+                            if($table_id.DataTable().ajax.json().collapsed_exist){
+                                console.log('collapsed-exits');
+                                $(row).addClass('height-72');
+                            }
+                        }
+                    });
+                    if(filter_type === 'application'){
+                        setTimeout(function () {
+                            fixed_header_enabled = false;
+                            if(fixed_header_enabled){
+                                $('#container_card_buttons').prepend('<button type="button" class="btn btn-secondary btn-sm fixed_header_toggle" data-fixed_state="blocked"> <i class="fas fa-unlock"></i> </button>')
+                            }
+                            else {
+                                $('#container_card_buttons').prepend('<button type="button" class="btn btn-secondary btn-sm fixed_header_toggle" data-fixed_state="unblocked"> <i class="fas fa-lock"></i> </button>')
+                            }
+                            $table_id.DataTable().fixedHeader.disable();
+                        }, 2000);
+
+                    }
+                });
+            }, 500);
         }
     });
 
@@ -363,6 +534,8 @@
     }
 
     function filterContainerTable(filter) {
+        $('#containers_extended_table_div').addClass('d-none');
+        console.log('filter');
         getContainersFilters(filter);
         containers_filters.filter = filter;
         $.ajax({
@@ -372,17 +545,17 @@
                 type: filter
             },
             success: function (response) {
+                $('#containers_extended_ajax_table').DataTable().destroy();
                 $('#containers_extended_table_div').html(response.view);
                 setTimeout(function () {
                     $('#containers_extended_ajax_table').DataTable({
-                        destroy: true,
-                        scrollY: 1000,
-                        scrollCollapse: true,
-                        pageLength: 25,
+                        fixedHeader: true,
                         processing: true,
                         serverSide: true,
                         searching: true,
                         ordering: true,
+                        pageLength: 25,
+                        lengthChange: true,
                         order: [0, 'desc'],
                         info: true,
                         scrollX: true,
@@ -464,6 +637,7 @@
                             {targets: 'no-sort', orderable: false}
                         ],
                         initComplete: function () {
+                            console.log('init');
                             this.api().columns().every(function () {
                                 let column = this;
                                 let column_id = column[0][0];
@@ -494,6 +668,7 @@
                             });
                         },
                         drawCallback: function () {
+                            console.log('draw');
                             chosen_containers_id = $('#containers_extended_ajax_table').DataTable().ajax.json().id_list;
                             $('#chosen_containers_id').val(chosen_containers_id);
                             chosen_containers_names = $('#containers_extended_ajax_table').DataTable().ajax.json().prefix_list;
@@ -502,9 +677,19 @@
                             if (data.class !== '') {
                                 $(row).addClass(data.class);
                             }
+                            if($('#containers_extended_ajax_table').DataTable().ajax.json().collapsed_exist){
+                                console.log('collapsed-exits');
+                                $(row).addClass('height-72');
+                            }
                         }
                     });
                 }, 100);
+                setTimeout(function () {
+                    if (window.location.pathname.replace('public/', '').split('/')[1] === 'application') {
+                        $('#containers_extended_ajax_table').DataTable().fixedHeader.disable();
+                    }
+                }, 2000);
+
             },
             error: function (XMLHttprequest, textStatus, errorThrown) {
                 console.log(textStatus);
@@ -544,6 +729,26 @@
     }
 
     $(document).ready(function () {
+
+        // fix to get fixedHeader and scrollX working together in datatables
+        $(document).on('preInit.dt', function (e, settings) {
+            if(
+                settings.oInit
+                && settings.oInit.fixedHeader
+                && settings.oInit.scrollX
+            ) {
+                $(settings.nScrollBody).scroll(function() {
+                    if(!settings._fixedHeader) {
+                        return false;
+                    }
+
+                    let tableFloatingHeader = settings._fixedHeader.dom.header.floating;
+                    if(tableFloatingHeader) {
+                        tableFloatingHeader.css('left', this.getBoundingClientRect().x - parseInt($(this).scrollLeft()) + 'px');
+                    }
+                });
+            }
+        });
 
         $.ajaxSetup({
             headers: {
@@ -839,180 +1044,6 @@
         /////////////////////////////////////////////
         let fixed_header_enabled = true;
 
-        $('.containers_extended_table').each(function () {
-            getContainersColumns();
-            getContainersFilters('');
-            checkProcessing();
-            let filter_type = $(this).data('filter_type');
-            if(filter_type === 'application'){
-                containers_filters.application = $(this).data('application_id');
-            }
-            let $table_id = $('#containers_extended_ajax_table');
-            $table_id.DataTable({
-                scrollY: 1000,
-                scrollCollapse: true,
-                processing: true,
-                serverSide: true,
-                searching: true,
-                ordering: true,
-                pageLength: 25,
-                order: [0, 'desc'],
-                info: true,
-                scrollX: true,
-                ajax: {
-                    url: "{{route('containers_extended_table')}}",
-                    type: "POST",
-                    data: containers_filters
-                },
-                language: {
-                    "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
-                },
-                columns: [
-                    {data: "id"},
-                    {data: "name"},
-                    {data: "status"},
-                    {data: "type"},
-                    {data: "owner_name"},
-                    {data: "size"},
-                    {data: "supplier_application_name"},
-                    {data: "supplier_price_amount"},
-                    {data: "supplier_grace_period"},
-                    {data: "supplier_snp_after_range"},
-                    {data: "supplier_country"},
-                    {data: "supplier_city"},
-                    {data: "supplier_terminal"},
-                    {data: "supplier_date_get"},
-                    {data: "supplier_date_start_using"},
-                    {data: "supplier_days_using"},
-                    {data: "supplier_snp_total"},
-                    {data: "supplier_place_of_delivery_country"},
-                    {data: "supplier_place_of_delivery_city"},
-                    {data: "svv"},
-                    {data: "supplier_terminal_storage_amount"},
-                    {data: "supplier_payer_tx"},
-                    {data: "supplier_renewal_reexport_costs_amount"},
-                    {data: "supplier_repair_amount"},
-                    {data: "supplier_repair_status"},
-                    {data: "supplier_repair_confirmation"},
-                    {data: "relocation_counterparty_name"},
-                    {data: "relocation_application_name"},
-                    {data: "relocation_price_amount"},
-                    {data: "relocation_date_send"},
-                    {data: "relocation_date_arrival_to_terminal"},
-                    {data: "relocation_place_of_delivery_city"},
-                    {data: "relocation_place_of_delivery_terminal"},
-                    {data: "relocation_delivery_time_days"},
-                    {data: "relocation_snp_after_range"},
-                    {data: "relocation_snp_total"},
-                    {data: "relocation_repair_amount"},
-                    {data: "relocation_repair_status"},
-                    {data: "relocation_repair_confirmation"},
-                    {data: "client_counterparty_name"},
-                    {data: "client_application_name"},
-                    {data: "client_price_amount"},
-                    {data: "client_grace_period"},
-                    {data: "client_snp_after_range"},
-                    {data: "client_date_get"},
-                    {data: "client_date_return"},
-                    {data: "client_place_of_delivery_city"},
-                    {data: "client_days_using"},
-                    {data: "client_snp_total"},
-                    {data: "client_repair_amount"},
-                    {data: "client_repair_status"},
-                    {data: "client_repair_confirmation"},
-                    {data: "client_smgs"},
-                    {data: "client_manual"},
-                    {data: "client_location_request"},
-                    {data: "client_date_manual_request"},
-                    {data: "client_return_act"},
-                    {data: "own_date_buy"},
-                    {data: "own_date_sell"},
-                    {data: "own_sale_price"},
-                    {data: "own_buyer"},
-                    {data: "processing"},
-                    {data: "removed"},
-                    {data: "additional_info"}
-                ],
-                columnDefs: [
-                    {targets: 'no-sort', orderable: false}
-                ],
-                initComplete: function () {
-                    this.api().columns().every(function () {
-                        let column = this;
-                        let column_id = column[0][0];
-                        if (column_id !== 0) {
-                            $('<span id="sorting_column_' + column_id + '" class="cursor-pointer sorting_containers_table" data-column_id="' + column_id + '" data-ordering_direction="asc">' + containers_table_columns[column_id].name + '</span>')
-                                .prependTo($(column.header()).append());
-                        }
-                    });
-                    this.api().columns('.select-filter').every(function () {
-                        let column = this;
-                        let column_id = column[0][0];
-                        let select = $('<select class="form-control select2 init_select2" id="column_' + column_id + '" style="height: calc(1.8125rem + 2px); font-size: small;"><option value=""></option></select>')
-                            .prependTo($(column.header()).append())
-                            .on('change', function (data) {
-                                column.search($(this).val(), false, false).draw();
-                            });
-                        containers_table_filters[[column[0][0]]].forEach(function (value) {
-                            select.append('<option value="' + value + '">' + value + '</option>');
-                        });
-                    });
-                    this.api().columns('.input-filter').every(function () {
-                        let column = this;
-                        $('<input type="text" class="form-control" style="height: calc(1.8125rem + 2px); font-size: small;">')
-                            .prependTo($(column.header()).append())
-                            .on('keyup', function (data) {
-                                column.search($(this).val(), false, false).draw();
-                            });
-                    });
-
-                    if (typeof $.cookie('containers_hidden_columns') !== 'undefined') {
-                        JSON.parse($.cookie('containers_hidden_columns')).forEach(function (value) {
-                            $containers_extended_table.DataTable().column(value).visible(false);
-                            $('#containers_table_column_' + value).prop("checked", false);
-                        });
-                    }
-                },
-                drawCallback: function () {
-                    $('.xedit').editable({
-                        mode: 'inline',
-                        url: '{{url("xeditable/update")}}',
-                        title: '{{ __('general.update_') }}',
-                        emptytext: '{{ __('general.empty') }}',
-                        params: function (params) {
-                            params.model = $(this).data('model');
-                            return params;
-                        },
-                        success: function (response, newValue) {
-                            $containers_extended_table.DataTable().draw(false);
-                            if (response.status === 'error') console.log('Ошибка');
-                        }
-                    });
-                    chosen_containers_id = $table_id.DataTable().ajax.json().id_list;
-                    $('#chosen_containers_id').val(chosen_containers_id);
-                    chosen_containers_names = $table_id.DataTable().ajax.json().prefix_list;
-                },
-                createdRow: function (row, data, dataIndex) {
-                    if (data.class !== '') {
-                        $(row).addClass(data.class);
-                    }
-                }
-            });
-            // if(filter_type === 'application'){
-            //     setTimeout(function () {
-            //         fixed_header_enabled = false;
-            //         if(fixed_header_enabled){
-            //             $('#container_card_buttons').prepend('<button type="button" class="btn btn-secondary btn-sm fixed_header_toggle" data-fixed_state="blocked"> <i class="fas fa-unlock"></i> Разблокировать шапку</button>')
-            //         }
-            //         else {
-            //             $('#container_card_buttons').prepend('<button type="button" class="btn btn-secondary btn-sm fixed_header_toggle" data-fixed_state="unblocked"> <i class="fas fa-lock"></i> Заблокировать шапку</button>')
-            //         }
-            //         $table_id.DataTable().fixedHeader.disable();
-            //     }, 2000);
-            //
-            // }
-
-        });
 
         $('.containers_archive_table').each(function () {
             let filter_type = $(this).data('filter_type');
@@ -1143,7 +1174,6 @@
             initApplicationTables();
         });
 
-
         $(document).on("click", ".applications_filters", function () {
             let filter_type = $(this).data('filter_type');
             if(filter_type === 'type'){
@@ -1173,9 +1203,6 @@
         });
 
         $(document).on("click", ".containers_filters", function () {
-            getContainersColumns();
-            getContainersFilters('');
-            checkProcessing();
             let filter_type = $(this).data('filter');
             let columns_show = [];
 
@@ -1225,6 +1252,7 @@
                         }
                     }
                 });
+                $('#containers_extended_table_div').removeClass('d-none');
                 $('#containers_extended_ajax_table').DataTable().columns.adjust().draw();
             }, 1000);
         });

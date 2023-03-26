@@ -104,6 +104,7 @@ class ProjectController extends Controller
         $new_project->prepayment = $request->prepayment;
         $new_project->status = $status;
         !isset($request->management_expenses) ?: $new_project->management_expenses = $request->management_expenses;
+        $new_project->access_to_project = $request->access_to_project;
 
 
         $new_project->save();
@@ -523,6 +524,7 @@ class ProjectController extends Controller
             $project->prepayment = $request->prepayment;
             $project->additional_info = $request->additional_info;
             isset($request->management_expenses) ? $project->management_expenses = $request->management_expenses : $project->management_expenses = null;
+            $project->access_to_project = $request->access_to_project;
 
             if (can_edit_this_project_price($project->id) || (can_edit_this_project($project->id) && ($project->status == 'Черновик'))){
 

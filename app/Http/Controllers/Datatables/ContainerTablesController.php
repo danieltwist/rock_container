@@ -175,12 +175,29 @@ class ContainerTablesController extends Controller
         $totalRecords = $totalRecords->count();
 
         if($searchValue != ''){
+            $probable_delimiters = array(", ", " ", ";", "\r\n", "\r", "\n", "\n,", ",");
+            $used_delimiter = null;
+
+            foreach ($probable_delimiters as $delimiter){
+                if(strpos($searchValue, $delimiter) !== false ){
+                    $used_delimiter = $delimiter;
+                    break;
+                }
+            }
             $records = Container::query()->orderBy($columnName, $columnSortOrder);
-            $records = $records->where(function ($query) use ($searchValue) {
+
+            $records = $records->where(function ($query) use ($searchValue, $used_delimiter) {
                 foreach ($this->columns as $column){
-                    $query->orWhere($column['id'], 'like', '%' . $searchValue . '%');
+                    if($column['id'] == 'name' && !is_null($used_delimiter)){
+                        foreach (explode($used_delimiter, $searchValue) as $prefix){
+                            $query->orWhere('name', 'like', '%' . $prefix . '%');
+                        }
+                    }
+                    else
+                        $query->orWhere($column['id'], 'like', '%' . $searchValue . '%');
                 }
             });
+
             $records = $records->where(function ($query) use ($request) {
                 foreach ($this->columns as $key => $value){
                     $searchValue = $request->columns[$key]['search']['value'];
@@ -308,7 +325,10 @@ class ContainerTablesController extends Controller
             }
 
             if(!is_null($container->owner_id)){
-                $owner_name = '<a href="'. route('supplier.show', $container->owner_id) .'">'.$container->owner_name.'</a>';
+                $owner_name = [
+                    'name' => $container->owner_name,
+                    'id' => $container->owner_id
+                ];
             }
             else {
                 $owner_name = '';
@@ -322,7 +342,11 @@ class ContainerTablesController extends Controller
             }
 
             if(!is_null($container->relocation_counterparty_name)){
-                $relocation_counterparty_name = '<a href="'. route('supplier.show', $container->relocation_counterparty_id) .'">'.$container->relocation_counterparty_name.'</a>';
+                $relocation_counterparty_name = [
+                    'name' => $container->relocation_counterparty_name,
+                    'id' => $container->relocation_counterparty_id,
+                    'type' => $container->relocation_counterparty_type,
+                ];
             }
             else {
                 $relocation_counterparty_name = '';
@@ -343,7 +367,10 @@ class ContainerTablesController extends Controller
             }
 
             if(!is_null($container->client_counterparty_name)){
-                $client_counterparty_name = '<a href="'. route('client.show', $container->client_counterparty_id) .'">'.$container->client_counterparty_name.'</a>';
+                $client_counterparty_name = [
+                    'name' => $container->client_counterparty_name,
+                    'id' => $container->client_counterparty_id,
+                ];
             }
             else {
                 $client_counterparty_name = '';
@@ -433,13 +460,65 @@ class ContainerTablesController extends Controller
             );
         }
 
+        $collapsed_exist = false;
+
+        foreach ($data_arr as $key => $value){
+            foreach ($value as $value_key => $text){
+
+                if(!in_array($value_key, ['name', 'owner_name', 'supplier_application_name', 'relocation_counterparty_name', 'relocation_application_name', 'client_counterparty_name', 'client_application_name'])) {
+                    if (mb_strlen($text) > 25){
+                        $data_arr[$key][$value_key] = view('container.table_extended.collapsed_text', [
+                            'id' => $data_arr[$key]['id'].'_'.$value_key,
+                            'text' => $text
+                        ])->render();
+                        $collapsed_exist = true;
+                    }
+                }
+                if(in_array($value_key, ['owner_name', 'relocation_counterparty_name', 'client_counterparty_name'])){
+                    if($text != ''){
+                        switch ($value_key){
+                            case 'owner_name':
+                                $id = $data_arr[$key]['id'].'_'.$value_key;
+                                $route = route('supplier.show', $data_arr[$key]['owner_name']['id']);
+                                $link_text = $data_arr[$key]['owner_name']['name'];
+                                break;
+                            case 'relocation_counterparty_name':
+                                $id = $data_arr[$key]['id'].'_'.$value_key;
+                                $route = route($data_arr[$key]['relocation_counterparty_name']['type'].'.show', $data_arr[$key]['relocation_counterparty_name']['id']);
+                                $link_text = $data_arr[$key]['relocation_counterparty_name']['name'];
+                                break;
+                            case 'client_counterparty_name':
+                                $id = $data_arr[$key]['id'].'_'.$value_key;
+                                $route = route('client.show', $data_arr[$key]['client_counterparty_name']['id']);
+                                $link_text = $data_arr[$key]['client_counterparty_name']['name'];
+                                break;
+                        }
+
+                        if (mb_strlen($link_text) > 30){
+                            $data_arr[$key][$value_key] = view('container.table_extended.collapsed_text_with_link', [
+                                'id' => $id,
+                                'route' => $route,
+                                'text' => $link_text
+                            ])->render();
+                            $collapsed_exist = true;
+                        }
+                        else {
+                            $data_arr[$key][$value_key] = '<a href="'. $route .'">'.$link_text.'</a>';
+                        }
+                    }
+
+                }
+            }
+        }
+
         $response = array(
             "draw" => intval($draw),
             "iTotalRecords" => $totalRecords,
             "iTotalDisplayRecords" => $totalRecordswithFilter,
             "aaData" => $data_arr,
             "id_list" => $id_list,
-            "prefix_list" => $prefix_list
+            "prefix_list" => $prefix_list,
+            "collapsed_exist" => $collapsed_exist
         );
 
 

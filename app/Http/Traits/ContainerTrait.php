@@ -270,8 +270,8 @@ trait ContainerTrait {
             'name' => 'Локация сдачи',
             'search_type' => 'select',
             'width' => [
-                'all' => '150px',
-                'free' => '150px',
+                'all' => '250px',
+                'free' => '250px',
                 'main_info' => null,
                 'manual' => null,
                 'repair' => null,
