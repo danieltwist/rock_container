@@ -141,7 +141,7 @@ class InvoiceTablesController extends Controller
                 'invoice' => $invoice
             ])->render();
 
-            $status = view('invoice.table.'.config('app.prefix_view').'status', [
+            $status = view('invoice.table.status', [
                 'invoice' => $invoice
             ])->render();
 
@@ -325,7 +325,7 @@ class InvoiceTablesController extends Controller
                 'invoice' => $invoice
             ])->render();
 
-            $status = view('invoice.table.'.config('app.prefix_view').'status', [
+            $status = view('invoice.table.status', [
                 'invoice' => $invoice
             ])->render();
 
@@ -497,7 +497,7 @@ class InvoiceTablesController extends Controller
                 'invoice' => $invoice
             ])->render();
 
-            $status = view('invoice.table.'.config('app.prefix_view').'status', [
+            $status = view('invoice.table.status', [
                 'invoice' => $invoice
             ])->render();
 

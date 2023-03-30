@@ -13,6 +13,7 @@ use App\Models\ContainerHistory;
 use App\Models\Contract;
 use App\Models\Country;
 use App\Models\CurrencyRate;
+use App\Models\ExpenseType;
 use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\Supplier;
@@ -278,6 +279,7 @@ class ApplicationController extends Controller
             'planned_out' => $planned_out,
             'fact_in' => $fact_in,
             'fact_out' => $fact_out,
+            'expense_types' => ExpenseType::all()
         ]);
     }
 

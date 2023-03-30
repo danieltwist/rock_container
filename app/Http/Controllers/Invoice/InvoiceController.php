@@ -9,6 +9,7 @@ use App\Http\Traits\FinanceTrait;
 use App\Models\ActionRecording;
 use App\Models\Client;
 use App\Models\CurrencyRate;
+use App\Models\ExpenseType;
 use App\Models\Invoice;
 use App\Models\Notification;
 use App\Models\Supplier;
@@ -60,6 +61,8 @@ class InvoiceController extends Controller
             $new_invoice->amount = $request->amount;
             $new_invoice->deadline = $request->deadline;
             $new_invoice->additional_info = $request->additional_info;
+            $new_invoice->expense_category = $request->expense_category;
+            $new_invoice->expense_type = $request->expense_type;
             $new_invoice->user_add = Auth::user()->name;
             if ($losses) {
                 $new_invoice->losses_potential = [
@@ -105,6 +108,10 @@ class InvoiceController extends Controller
                         'income_invoice_id' => ''
                     ];
                 }
+
+                $new_invoice->expense_category = $request->expense_category;
+                $new_invoice->expense_type = $request->expense_type;
+
             }
             else  {
                 if ($request->direction == 'Клиенту') {
@@ -457,6 +464,8 @@ class InvoiceController extends Controller
                 'rate_sale_date' => $request->rate_sale_date,
                 'status' => $request->status,
                 'additional_info' => $request->additional_info,
+                'expense_category' => $request->expense_category,
+                'expense_type' => $request->expense_type,
                 'edited' => '1'
             ]);
 
@@ -548,7 +557,8 @@ class InvoiceController extends Controller
             'company_list' => $company_list,
             'company_type_id' => $company_type_id,
             'company_type_name' => $company_type_name,
-            'class' => $class
+            'class' => $class,
+            'expense_types' => ExpenseType::all()
         ]);
 
     }

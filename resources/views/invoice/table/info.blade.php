@@ -18,11 +18,18 @@
         <i class="fas fa-clock"></i>
     </a>
 @endif
+@if($invoice->expense_type != '' || $invoice->expense_category != '')
+    <br><small>{{ $invoice->expense_category }} {{ $invoice->expense_type }}</small>
+@endif
 @if (!is_null($invoice->project))
-    <br><a href="{{ route('project.show', $invoice->project->id) }}">{{ $invoice->project->name }}</a><br>
+    <br><a href="{{ route('project.show', $invoice->project->id) }}">{{ $invoice->project->name }}</a>
+@endif
+@if (!is_null($invoice->application))
+    / <a href="{{ route('application.show', $invoice->application->id) }}">Заявка {{ $invoice->application->name }}</a><br>
 @endif
 <small>
     @if ($invoice->additional_info !='')
+        <br>
         @if(mb_strlen($invoice->additional_info)>100)
             <div id="collapse_task_text_compact_{{ $invoice->id }}">
                 {{ \Illuminate\Support\Str::limit($invoice->additional_info, 100, $end='...') }}

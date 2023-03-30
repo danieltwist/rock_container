@@ -19,10 +19,25 @@
                     <input type="hidden" name="action" value="create_new_finance">
                     <div class="form-group">
                         <label for="type">{{ __('general.type') }}</label>
-                        <select class="form-control" name="type" required>
+                        <select class="form-control" name="type" required id="invoice_type">
                             <option value="Расход">{{ __('general.outcome') }}</option>
                             <option value="Доход">{{ __('general.income') }}</option>
                         </select>
+                    </div>
+                    <div id="expense_types_categories">
+                        <div class="form-group">
+                            <label for="expense_category">Вид расходов</label>
+                            <select class="form-control select2" name="expense_category" id="expense_category"
+                                    data-placeholder="Выберите вид расходов" style="width: 100%;">
+                                <option></option>
+                                @foreach($expense_types as $expense_type)
+                                    @if($expense_type->type == 'category')
+                                        <option value="{{ $expense_type->name }}">{{ $expense_type->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="expense_type_div"></div>
                     </div>
                     <div class="form-group">
                         <label for="direction">{{ __('general.direction') }}</label>
@@ -44,7 +59,7 @@
                     <div class="form-group" id="supplier_group">
                         <label for="supplier_id">{{ __('general.supplier') }}</label>
                         <select class="form-control select2" required name="supplier_id" id="supplier_select"
-                                data-placeholder="{{ __('project.select_supplier') }}" style="width: 100%;" >
+                                data-placeholder="{{ __('project.select_supplier') }}" style="width: 100%;">
                             <option></option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}">{{$supplier->name}}</option>
@@ -65,7 +80,8 @@
                     @endif
                     <div class="form-group">
                         <label>{{ __('general.currency') }}</label>
-                        <select class="form-control" name="currency" id="invoice_currency" data-placeholder="Выбери валюту" style="width: 100%;" required>
+                        <select class="form-control" name="currency" id="invoice_currency"
+                                data-placeholder="Выбери валюту" style="width: 100%;" required>
                             <option value="RUB"
                                     data-currency-rate="1">
                                 {{ __('general.ruble') }}
@@ -86,19 +102,23 @@
                     </div>
                     <div class="form-group d-none" id="invoice_rate_div">
                         <label>{{ __('general.cb_rate_minus') }} <span id="ratio"></span></label>
-                        <input class="form-control" type="text" name="rate_out_date" id="invoice_rate" placeholder="{{ __('general.cb_rate_corrected') }}" value="1">
+                        <input class="form-control" type="text" name="rate_out_date" id="invoice_rate"
+                               placeholder="{{ __('general.cb_rate_corrected') }}" value="1">
                     </div>
                     <div class="form-group d-none" id="invoice_amount_in_currency_div">
                         <label>{{ __('general.price_in_currency') }}</label>
-                        <input class="form-control rate_input" type="text" id="invoice_amount_in_currency" name="amount_in_currency" placeholder="{{ __('general.price_in_currency') }}" value="0">
+                        <input class="form-control rate_input" type="text" id="invoice_amount_in_currency"
+                               name="amount_in_currency" placeholder="{{ __('general.price_in_currency') }}" value="0">
                     </div>
                     <div class="form-group">
                         <label>{{ __('general.price_in_rubles') }}</label>
-                        <input class="form-control rate_input" id="invoice_total_price_in_rub" type="text" name="amount" placeholder="{{ __('general.price_in_rubles') }}" required>
+                        <input class="form-control rate_input" id="invoice_total_price_in_rub" type="text" name="amount"
+                               placeholder="{{ __('general.price_in_rubles') }}" required>
                     </div>
                     <div class="form-group">
                         <label>{{ __('project.payment_deadline') }}</label>
-                        <input type="text" class="form-control date_input invoice_deadline" name="deadline" placeholder="{{ __('project.payment_deadline') }}">
+                        <input type="text" class="form-control date_input invoice_deadline" name="deadline"
+                               placeholder="{{ __('project.payment_deadline') }}">
                     </div>
                     <div class="form-group">
                         <label>{{ __('general.additional_info') }}</label>

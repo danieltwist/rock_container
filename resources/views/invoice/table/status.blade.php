@@ -45,5 +45,17 @@
     @endif
 @endif
 @if (in_array($invoice->status, ['Оплачен', 'Частично оплачен', 'Не оплачен']))
-    <small>{{ $invoice['accountant_comment']!='' ? $invoice['accountant_comment'] : ''}}</small>
+    @if($invoice['accountant_comment']!='')
+        <a class="cursor-pointer text-sm text-dark"
+           data-toggle="collapse"
+           data-target="#collapse_invoice_payment_info_{{ $invoice->id }}"
+           aria-expanded="false"
+           aria-controls="collapseExample">
+            <i class="fa fa-angle-down"></i>
+            {{ __('general.info') }}
+        </a>
+        <div class="collapse mt-2" id="collapse_invoice_payment_info_{{ $invoice->id }}">
+            <small>{{ $invoice['accountant_comment'] }}</small>
+        </div>
+    @endif
 @endif

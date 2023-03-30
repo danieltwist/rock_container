@@ -15,6 +15,7 @@ use App\Models\ContainerGroup;
 use App\Models\ContainerGroupLocation;
 use App\Models\ContainerUsageStatistic;
 use App\Models\CurrencyRate;
+use App\Models\ExpenseType;
 use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\ProjectExpense;
@@ -302,7 +303,8 @@ class ProjectController extends Controller
             'applications' => $this->getApplications($project->id),
             'comments' => $project->comments,
             'rates' => $currency_rates,
-            'users' => User::all()
+            'users' => User::all(),
+            'expense_types' => ExpenseType::all()
         ]);
     }
 

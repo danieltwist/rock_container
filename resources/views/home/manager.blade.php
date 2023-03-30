@@ -15,40 +15,40 @@
     <section class="content">
         <div class="container-fluid">
         @include('layouts.info_block')
-            <div class="row">
-                <div class="col-lg-3 col-6">
-                    <div class="small-box bg-gradient-primary">
-                        <div class="inner">
-                            <h4>{{ $user->stat['active_projects_count'] }}</h4>
-                            <p>{{ __('home.active_projects_count') }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="small-box bg-gradient-navy">
-                        <div class="inner">
-                            <h4>{{ $user->stat['finished_projects_count'] }}</h4>
-                            <p>{{ __('home.this_month_finished_projects_count') }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="small-box bg-gradient-indigo">
-                        <div class="inner">
-                            <h4>{{ number_format($user->stat['active_projects_profit'], 0, '.', ' ') }}р.</h4>
-                            <p>{{ __('home.active_projects_profit') }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="small-box bg-gradient-success">
-                        <div class="inner">
-                            <h4>{{ number_format($user->stat['finished_projects_profit'], 0, '.', ' ') }}р.</h4>
-                            <p>{{ __('home.finished_projects_profit') }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{--            <div class="row">--}}
+{{--                <div class="col-lg-3 col-6">--}}
+{{--                    <div class="small-box bg-gradient-primary">--}}
+{{--                        <div class="inner">--}}
+{{--                            <h4>{{ $user->stat['active_projects_count'] }}</h4>--}}
+{{--                            <p>{{ __('home.active_projects_count') }}</p>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--                <div class="col-md-3 col-6">--}}
+{{--                    <div class="small-box bg-gradient-navy">--}}
+{{--                        <div class="inner">--}}
+{{--                            <h4>{{ $user->stat['finished_projects_count'] }}</h4>--}}
+{{--                            <p>{{ __('home.this_month_finished_projects_count') }}</p>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--                <div class="col-md-3 col-6">--}}
+{{--                    <div class="small-box bg-gradient-indigo">--}}
+{{--                        <div class="inner">--}}
+{{--                            <h4>{{ number_format($user->stat['active_projects_profit'], 0, '.', ' ') }}р.</h4>--}}
+{{--                            <p>{{ __('home.active_projects_profit') }}</p>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--                <div class="col-md-3 col-6">--}}
+{{--                    <div class="small-box bg-gradient-success">--}}
+{{--                        <div class="inner">--}}
+{{--                            <h4>{{ number_format($user->stat['finished_projects_profit'], 0, '.', ' ') }}р.</h4>--}}
+{{--                            <p>{{ __('home.finished_projects_profit') }}</p>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('home.my_projects') }}</h3>

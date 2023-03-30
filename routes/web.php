@@ -345,4 +345,10 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
     Route::post('application/unblock_processing', 'App\Http\Controllers\Container\ContainerController@unblockProcessing')
         ->name('unblock_processing')
         ->middleware(['auth']);
+
+    Route::get('expense_type/load_expense_types_by_category', 'App\Http\Controllers\ExpenseTypeController@loadExpenseTypesByCategory')
+        ->name('load_expense_types_by_category')
+        ->middleware(['auth']);
+
+    Route::resource('expense_type', \App\Http\Controllers\ExpenseTypeController::class)->middleware(['auth']);
 });

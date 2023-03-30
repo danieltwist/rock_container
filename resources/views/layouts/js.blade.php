@@ -2173,5 +2173,38 @@
         }
     });
 
+    $(document).on('change', '#invoice_type', function () {
+        if($(this).val() === 'Доход'){
+            $('#expense_types_categories').addClass('d-none');
+        }
+        else {
+            $('#expense_types_categories').removeClass('d-none');
+        }
+    });
+
+    $(document).on('change', '#expense_category, #edit_expense_category', function () {
+        $.ajax({
+            type: "GET",
+            url: "{{ route('load_expense_types_by_category') }}",
+            data: {
+                category: $(this).val(),
+            },
+            success: function (response) {
+                $('.expense_type_div').html(response);
+                $('.select2').select2({
+                    "language": "ru",
+                });
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    });
+
+    $('#make_invoice').on('show.bs.modal', function (event) {
+        $('.select2').select2({
+            "language": "ru",
+        });
+    });
 
 </script>

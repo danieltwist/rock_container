@@ -15,6 +15,42 @@
             @endforeach
         </select>
     </div>
+    @if($invoice->direction == 'Расход')
+        <div class="form-group">
+            <label for="expense_category">Вид расходов</label>
+            <select class="form-control select2" name="expense_category" id="edit_expense_category"
+                    data-placeholder="Выберите вид расходов" style="width: 100%;">
+                <option></option>
+                @foreach($expense_types as $expense_type)
+                    @if($expense_type->type == 'category')
+                        <option value="{{ $expense_type->name }}"
+                        @if($invoice->expense_category == $expense_type->name)
+                            selected
+                        @endif
+                        >{{ $expense_type->name }}</option>
+                    @endif
+                @endforeach
+            </select>
+        </div>
+        <div class="expense_type_div">
+            <div class="form-group">
+                <label for="expense_type">Тип расходов</label>
+                <select class="form-control select2" name="expense_type"
+                        data-placeholder="Выберите тип расходов" style="width: 100%;">
+                    <option></option>
+                    @foreach($expense_types as $expense_type)
+                        @if($expense_type->type == 'type')
+                            <option value="{{ $expense_type->name }}"
+                                @if($invoice->expense_type == $expense_type->name)
+                                    selected
+                                @endif
+                            >{{ $expense_type->name }}</option>
+                        @endif
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    @endif
     <div class="form-group">
         <label>{{ __('general.currency') }}</label>
         <select class="form-control select2" name="currency"

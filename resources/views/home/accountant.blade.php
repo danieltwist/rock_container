@@ -13,40 +13,40 @@
     <section class="content">
         <div class="container-fluid">
         @include('layouts.info_block')
-            <div class="row">
-                <div class="col-md-3 col-6">
-                    <div class="small-box bg-gradient-primary">
-                        <div class="inner">
-                            <h4>{{ $agreed_invoices_count }}</h4>
-                            <p>{{ __('home.agreed_invoices_count') }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="small-box bg-gradient-navy">
-                        <div class="inner">
-                            <h4>{{ number_format($debit, 0, '.', ' ') }}р.</h4>
-                            <p>{{ __('home.income_invoices_amount') }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="small-box bg-gradient-indigo">
-                        <div class="inner">
-                            <h4>{{ number_format($credit, 0, '.', ' ') }}р.</h4>
-                            <p>{{ __('home.outcome_invoices_amount') }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="small-box bg-gradient-success">
-                        <div class="inner">
-                            <h4>{{ number_format($this_month_total_profit, 0, '.', ' ') }}р.</h4>
-                            <p>{{ __('home.this_month_total_profit') }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+{{--            <div class="row">--}}
+{{--                <div class="col-md-3 col-6">--}}
+{{--                    <div class="small-box bg-gradient-primary">--}}
+{{--                        <div class="inner">--}}
+{{--                            <h4>{{ $agreed_invoices_count }}</h4>--}}
+{{--                            <p>{{ __('home.agreed_invoices_count') }}</p>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--                <div class="col-md-3 col-6">--}}
+{{--                    <div class="small-box bg-gradient-navy">--}}
+{{--                        <div class="inner">--}}
+{{--                            <h4>{{ number_format($debit, 0, '.', ' ') }}р.</h4>--}}
+{{--                            <p>{{ __('home.income_invoices_amount') }}</p>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--                <div class="col-md-3 col-6">--}}
+{{--                    <div class="small-box bg-gradient-indigo">--}}
+{{--                        <div class="inner">--}}
+{{--                            <h4>{{ number_format($credit, 0, '.', ' ') }}р.</h4>--}}
+{{--                            <p>{{ __('home.outcome_invoices_amount') }}</p>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--                <div class="col-md-3 col-6">--}}
+{{--                    <div class="small-box bg-gradient-success">--}}
+{{--                        <div class="inner">--}}
+{{--                            <h4>{{ number_format($this_month_total_profit, 0, '.', ' ') }}р.</h4>--}}
+{{--                            <p>{{ __('home.this_month_total_profit') }}</p>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
             <div class="card card-default">
                 <div class="card-header">
                     <h3 class="card-title">{{ __('home.agreed_invoices') }}</h3>
