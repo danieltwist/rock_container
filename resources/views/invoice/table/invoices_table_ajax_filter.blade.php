@@ -6,7 +6,7 @@
         <th style="width: 15%">{{ __('general.counterparty') }}</th>
         <th style="width: 17%">{{ __('general.amount') }}</th>
         <th style="width: 17%">{{ __('general.paid') }}</th>
-        <th>{{ __('general.status') }}</th>
+        <th style="width: 7%">{{ __('general.status') }}</th>
         <th style="width: 30%">{{ __('general.actions') }}</th>
     </tr>
     </thead>

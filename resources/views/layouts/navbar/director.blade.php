@@ -432,6 +432,9 @@
                             <a href="{{ route('currency_ratio_settings') }}" class="nav-link">
                                 <p>{{ __('interface.currency_ratio_settings') }}</p>
                             </a>
+                            <a href="{{ route('expense_type.index') }}" class="nav-link">
+                                <p>Классификатор расходов</p>
+                            </a>
                         </li>
                     </ul>
                 </li>
