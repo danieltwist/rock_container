@@ -306,4 +306,30 @@ class ClientController extends Controller
 
         return redirect()->back()->withSuccess(__('client.was_deleted'));
     }
+
+
+    public function deleteRow($id){
+
+        Client::findOrFail($id)->delete();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('client.was_deleted')
+        ]);
+    }
+
+    public function restoreRow($id){
+
+        $client = Client::withTrashed()->findOrFail($id);
+        $client_name = $client->name;
+        $client->restore();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('Клиент ' .$client_name. ' был успешно восстановлен')
+        ]);
+    }
+
 }

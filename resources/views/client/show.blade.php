@@ -61,7 +61,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card collapsed">
-                            <div class="card-header cursor-pointer" data-card-widget="collapse">
+                            <div class="card-header cursor-pointer {{ is_null($client->deleted_at) ?: 'bg-danger' }}" data-card-widget="collapse">
                                 <h3 class="card-title">{{ __('general.requisites') }}</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="card collapsed">
-                            <div class="card-header cursor-pointer" data-card-widget="collapse">
+                            <div class="card-header cursor-pointer {{ is_null($client->deleted_at) ?: 'bg-danger' }}" data-card-widget="collapse">
                                 <h3 class="card-title">{{ __('general.contracts') }}</h3>
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
@@ -127,7 +127,7 @@
                                 <th style="width: 20%">
                                     Контрагент
                                 </th>
-                                <th style="width: 20%">
+                                <th style="width: 15%">
                                     Маршрут
                                 </th>
                                 <th style="width: 15%">
@@ -135,6 +135,9 @@
                                 </th>
                                 <th style="width: 15%">
                                     Контейнеры
+                                </th>
+                                <th style="width: 5%">
+                                    Статус
                                 </th>
                                 <th style="width: 24%">
                                     {{ __('general.actions') }}
@@ -225,6 +228,7 @@
                 </div>
             </div>
             @include('project.modals.confirm_invoice')
+            @include('audit.component_history_modal')
         </section>
     @endif
 @endsection

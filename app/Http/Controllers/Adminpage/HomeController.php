@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Adminpage;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\ContainerTrait;
 use App\Http\Traits\ProjectTrait;
+use App\Models\Application;
 use App\Models\Container;
 use App\Models\ContainerUsageStatistic;
 use App\Models\Country;
@@ -16,6 +17,7 @@ use App\Models\WorkRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\FinanceTrait;
+use OwenIt\Auditing\Models\Audit;
 
 
 class HomeController extends Controller
@@ -26,15 +28,25 @@ class HomeController extends Controller
 
     public function test_function()
     {
-//        Country::where('name', 'Китай')->update(
-//            [
-//                'cities' => [
-//                    "Пекин", "Шанхай", "Тяньцзинь", "Дацин", "Харбин", "Муданьцзян", "Суйфэньхэ", "Чаншу", "Чанчжоу", "Куншан", "Лиян", "Нанкин", "Наньтун", "Сучжоу", "Тайчан", "Тайчжоу", "Уси", "Сюйчжоу", "Яньчэн", "Янчжоу", "Исин", "Чжэньцзян", "Анжи", "Дэцин", "Фуян", "Хайнинг", "Ханьчжоу", "Хучжоу", "Цзясин", "Линхай", "Лишуи", "Нинбо", "Циндаоху", "Жуйань", "Шаосина", "Туньцы", "Вэньчжоу", "Учжэн", "Иу", "Чжоушань", "Чанчунь", "Цзилинь", "Аньшань", "Далянь", "Даньдун", "Шеньян", "Голмуд", "Синин", "Дуньхуан", "Ланьчжоу", "Сиань", "Сианьянг", "Чанчжи", "Датун", "Пинъяо", "Тайюань", "Цанчжоу", "Лангфанг", "Циньхуандао", "Шицзячжуан", "Таншань", "Жунхуа", "Чэнду", "Дуцзянянь", "Эмейшан", "Гуаньюань", "Цзючжайгоу", "Лэшань", "Маньян", "Наньчун", "Сичан", "Баодин", "Ухань", "Ичан", "Дэнфэн", "Кайфэн", "Лоян", "Наньян", "Синьсян", "Чжэнчжоу", "Дуньин", "Цзинань", "Линьи", "Циндао", "Жичжао", "Тайань", "Вэйфан", "Вейхай", "Янтай", "Цзыбо", "Бэнбу", "Чаоху", "Хэфэй", "Хуаншань", "Уху", "Дали", "Куньмин", "Лицзян", "Шангрила", "Гуйян", "Чанша", "Шаошань", "Юэян", "Чжанцзяцзе", "Ганьчжоу", "Цзиань", "Цзиндэчжэнь", "Цзюцзян", "Наньчан", "Дунгуань", "Фошань", "Гуанчжоу", "Хуэйчжоу", "Цзянмэнь", "Цинъюань", "Шаньтоу", "Шаогуань", "Шэньчжэнь", "Чжаньцзян", "Чжуншань", "Чжухай", "Фучжоу", "Цзинцзян", "Лунянь", "Ниндэ", "Цюаньчжоу", "Шиши", "Фуцзянь", "Сямынь", "Хами", "Кашгар", "Корла", "Урумчи", "Лхаса", "Баотоу", "Чифэн", "Хоххот", "Маньчжурия", "Тонглиао", "Ухай", "Бэйхай", "Гуйлинь", "Хэчжоу", "Лючжоу", "Наньнин", "Яншо", "Иньчуань", "Чунцин", "Данчжоу", "Хайкоу", "Санья", "Ваньин", "Учжишань"
-//                ]
-//            ]
-//        );
-        $archive_containers = ContainerUsageStatistic::where('application_id', 132)->pluck('fields')->toArray();
 
+        $records = Audit::query();
+
+        $application_invoices = Application::withTrashed()->find(69)->invoices;
+        $records->where('auditable_type', 'App\Models\Application')->where('auditable_id', 69);
+
+        $records = $records->orWhere(function ($query) use ($application_invoices) {
+            foreach ($application_invoices as $invoice){
+                $query->where('auditable_type', 'App\Models\Invoice')->where('auditable_id', $invoice->id);
+            }
+        });
+
+
+        if(isset($request->user)){
+            $records->where('user_id', $request->user);
+        }
+
+        $records = $records->select('audits.*')->get();
+        dd($records);
     }
 
     public function getUserCounts()

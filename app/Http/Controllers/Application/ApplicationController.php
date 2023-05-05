@@ -37,17 +37,10 @@ class ApplicationController extends Controller
 
     public function create()
     {
-        $latest_application_id = Application::latest()->first();
-        if(!is_null($latest_application_id)){
-            $latest_application_id = Application::latest()->first()->id+1;
-        }
-        else {
-            $latest_application_id = 1;
-        }
         return view('application.create', [
             'clients' => Client::all(),
             'suppliers' => Supplier::all(),
-            'latest_application_id' => $latest_application_id,
+            'latest_application_id' => $this->getNextApplicationID(),
             'countries' => Country::all()
         ]);
     }
@@ -67,32 +60,60 @@ class ApplicationController extends Controller
             $client = Client::find($request->client_id);
             !is_null($client->short_name) ? $name = $client->short_name : $name = $client->name;
             $application->client_name = $name;
+            $counterparty_id = $request->client_id;
+            $counterparty_type = 'client';
         }
 
         if($request->counterparty_type == 'Поставщик') {
             $supplier = Supplier::find($request->supplier_id);
             !is_null($supplier->short_name) ? $name = $supplier->short_name : $name = $supplier->name;
             $application->supplier_name = $name;
+            $counterparty_id = $request->supplier_id;
+            $counterparty_type = 'supplier';
         }
 
         $contract = Contract::find($request->contract_id);
 
         $contract_info = [
             'name' => $contract->name,
-            'date' => $contract->date_start
+            'date' => $contract->date_start->format('d.m.Y')
         ];
+
+        $send_from_country = $request->send_from_country;
+        $send_from_city = $request->send_from_city;
+        $send_to_country = null;
+        $send_to_city = null;
+        $place_of_delivery_country = null;
+        $place_of_delivery_city = null;
+
+        switch ($request->application_type){
+            case 'Поставщик':
+                $send_to_country = $request->send_to_country;
+                $send_to_city = $request->send_to_city;
+                $place_of_delivery_country = $request->place_of_delivery_country;
+                $place_of_delivery_city = $request->place_of_delivery_city;
+                break;
+            case 'Подсыл':
+                $send_to_country = $request->send_to_country;
+                $send_to_city = $request->send_to_city;
+                break;
+            case 'Клиент':
+                $place_of_delivery_country = $request->place_of_delivery_country;
+                $place_of_delivery_city = $request->place_of_delivery_city;
+                break;
+        }
 
         $application->contract_info = $contract_info;
         $application->price_currency = $request->price_currency;
         $application->price_amount = $request->price_amount;
         $application->currency_rate = $this->getCurrencyRate($request->price_currency);
         $application->containers_amount = $request->containers_amount;
-        $application->send_from_country = $request->send_from_country;
-        $application->send_from_city = $request->send_from_city;
-        $application->send_to_country = $request->send_to_country;
-        $application->send_to_city = $request->send_to_city;
-        $application->place_of_delivery_country = $request->place_of_delivery_country;
-        $application->place_of_delivery_city = $request->place_of_delivery_city;
+        $application->send_from_country = $send_from_country;
+        $application->send_from_city = $send_from_city;
+        $application->send_to_country = $send_to_country;
+        $application->send_to_city = $send_to_city;
+        $application->place_of_delivery_country = $place_of_delivery_country;
+        $application->place_of_delivery_city = $place_of_delivery_city;
         $application->grace_period = $request->grace_period;
         $application->snp_currency = $request->snp_currency;
         $application->snp_range = $request->snp_application_array;
@@ -100,6 +121,8 @@ class ApplicationController extends Controller
         $application->containers = $request->containers;
         $application->containers_type = $request->containers_type;
         $application->additional_info = $request->additional_info;
+        $application->created_at = $request->created_at;
+        $application->status = 'В работе';
 
         $application->save();
         if(!is_null($request->containers)){
@@ -128,10 +151,11 @@ class ApplicationController extends Controller
                             $place_of_delivery_city = $request->place_of_delivery_city[0];
                         }
                     }
+                    else $place_of_delivery_city = null;
 
                     $container->name = $item;
-                    $container->owner_id = $request->supplier_id;
-                    $container->owner_name = $supplier->name;
+                    $container->owner_id = $counterparty_id;
+                    $container->owner_name = $name;
                     $container->supplier_application_id = $application->id;
                     $container->supplier_application_name = $request->name;
                     $container->supplier_price_amount = $request->price_amount;
@@ -155,7 +179,8 @@ class ApplicationController extends Controller
                     $item = str_replace(' ', '', $item);
                     $container = Container::where('name', $item)->first();
                     if(!is_null($container)){
-                        if(!is_null($request->send_to_city)){
+
+                        if(!is_null($send_to_city)){
                             if(count($request->send_to_city) > 1){
                                 $send_to_city = implode(', ', $request->send_to_city);
                             }
@@ -163,7 +188,7 @@ class ApplicationController extends Controller
                                 $send_to_city = $request->send_to_city[0];
                             }
                         }
-                        if(!is_null($request->place_of_delivery_city)){
+                        if(!is_null($place_of_delivery_city)){
                             if(count($request->place_of_delivery_city) > 1){
                                 $place_of_delivery_city = implode(', ', $request->place_of_delivery_city);
                             }
@@ -171,22 +196,11 @@ class ApplicationController extends Controller
                                 $place_of_delivery_city = $request->place_of_delivery_city[0];
                             }
                         }
+                        else $place_of_delivery_city = null;
 
-                        if($request->counterparty_type == 'Клиент') {
-                            $client = Client::find($request->client_id);
-                            !is_null($client->short_name) ? $name = $client->short_name : $name = $client->name;
-                            $container->relocation_counterparty_id = $request->client_id;
-                            $container->relocation_counterparty_type = 'client';
-                        }
-
-                        if($request->counterparty_type == 'Поставщик') {
-                            $supplier = Supplier::find($request->supplier_id);
-                            !is_null($supplier->short_name) ? $name = $supplier->short_name : $name = $supplier->name;
-                            $container->relocation_counterparty_id = $request->supplier_id;
-                            $container->relocation_counterparty_name = $name;
-                            $container->relocation_counterparty_type = 'supplier';
-                        }
-
+                        $container->relocation_counterparty_id = $counterparty_id;
+                        $container->relocation_counterparty_name = $name;
+                        $container->relocation_counterparty_type = $counterparty_type;
                         $container->relocation_application_id = $application->id;
                         $container->relocation_application_name = $request->name;
                         $container->relocation_price_amount = $request->price_amount;
@@ -208,7 +222,7 @@ class ApplicationController extends Controller
                     $item = str_replace(' ', '', $item);
                     $container = Container::where('name', $item)->first();
                     if(!is_null($container)){
-                        if(!is_null($request->place_of_delivery_city)){
+                        if(!is_null($place_of_delivery_city)){
                             if(count($request->place_of_delivery_city) > 1){
                                 $place_of_delivery_city = implode(', ', $request->place_of_delivery_city);
                             }
@@ -216,9 +230,10 @@ class ApplicationController extends Controller
                                 $place_of_delivery_city = $request->place_of_delivery_city[0];
                             }
                         }
+                        else $place_of_delivery_city = null;
 
-                        $container->client_counterparty_id = $request->client_id;
-                        $container->client_counterparty_name = $client->name;
+                        $container->client_counterparty_id = $counterparty_id;
+                        $container->client_counterparty_name = $name;
                         $container->client_application_id = $application->id;
                         $container->client_application_name = $request->name;
                         $container->client_price_amount = $request->price_amount;
@@ -233,6 +248,56 @@ class ApplicationController extends Controller
 
                         $container->save();
                     }
+                }
+            }
+            if($request->application_type == 'Покупка') {
+                foreach ($request->containers as $item){
+                    $item = str_replace(' ', '', $item);
+                    $container = Container::where('name', $item)->first();
+
+                    if(is_null($container)){
+                        $container = new Container();
+                    }
+
+                    $container->name = $item;
+                    $container->type = 'Соб';
+                    $container->owner_id = 413;
+                    $container->owner_name = 'ООО Рок контейнер';
+                    $container->supplier_application_id = $application->id;
+                    $container->supplier_application_name = $request->name;
+                    $container->supplier_price_amount = $request->price_amount;
+                    $container->supplier_price_currency = $request->price_currency;
+                    $container->size = $request->containers_type;
+                    $container->own_date_buy = Carbon::now();
+
+                    $container->save();
+
+                }
+            }
+            if($request->application_type == 'Продажа') {
+                foreach ($request->containers as $item){
+                    $item = str_replace(' ', '', $item);
+                    $container = Container::where('name', $item)->first();
+
+                    if(is_null($container)){
+                        $container = new Container();
+                    }
+
+                    $container->name = $item;
+                    $container->type = null;
+                    $container->owner_id = $counterparty_id;
+                    $container->owner_name = $name;
+                    $container->client_application_id = $application->id;
+                    $container->client_application_name = $request->name;
+                    $container->client_price_amount = $request->price_amount;
+                    $container->client_price_currency = $request->price_currency;
+                    $container->size = $request->containers_type;
+                    $container->own_date_sell = Carbon::now();
+                    $container->own_sale_price = $request->price_amount.$request->price_currency;
+                    $container->own_buyer = $name;
+
+                    $container->save();
+
                 }
             }
         }
@@ -355,30 +420,57 @@ class ApplicationController extends Controller
             $client = Client::find($request->client_id);
             !is_null($client->short_name) ? $name = $client->short_name : $name = $client->name;
             $application->client_name = $name;
+            $counterparty_id = $request->client_id;
+            $counterparty_type = 'client';
         }
         if($request->counterparty_type == 'Поставщик') {
             $supplier = Supplier::find($request->supplier_id);
             !is_null($supplier->short_name) ? $name = $supplier->short_name : $name = $supplier->name;
             $application->supplier_name = $name;
+            $counterparty_id = $request->supplier_id;
+            $counterparty_type = 'supplier';
         }
 
         $contract = Contract::find($request->contract_id);
         $contract_info = [
             'name' => $contract->name,
-            'date' => $contract->date_start
+            'date' => $contract->date_start->format('d.m.Y')
         ];
+
+        $send_from_country = $request->send_from_country;
+        $send_from_city = $request->send_from_city;
+        $send_to_country = null;
+        $send_to_city = null;
+        $place_of_delivery_country = null;
+        $place_of_delivery_city = null;
+
+        switch ($request->type){
+            case 'Поставщик':
+                $send_to_country = $request->send_to_country;
+                $send_to_city = $request->send_to_city;
+                $place_of_delivery_country = $request->place_of_delivery_country;
+                $place_of_delivery_city = $request->place_of_delivery_city;
+                break;
+            case 'Подсыл':
+                $send_to_country = $request->send_to_country;
+                $send_to_city = $request->send_to_city;
+                break;
+            case 'Клиент':
+                $place_of_delivery_country = $request->place_of_delivery_country;
+                $place_of_delivery_city = $request->place_of_delivery_city;
+                break;
+        }
 
         $application->contract_info = $contract_info;
         $application->price_currency = $request->price_currency;
         $application->price_amount = $request->price_amount;
-        $application->currency_rate = $this->getCurrencyRate($request->price_currency);
         $application->containers_amount = $request->containers_amount;
-        $application->send_from_country = $request->send_from_country;
-        $application->send_from_city = $request->send_from_city;
-        $application->send_to_country = $request->send_to_country;
-        $application->send_to_city = $request->send_to_city;
-        $application->place_of_delivery_country = $request->place_of_delivery_country;
-        $application->place_of_delivery_city = $request->place_of_delivery_city;
+        $application->send_from_country = $send_from_country;
+        $application->send_from_city = $send_from_city;
+        $application->send_to_country = $send_to_country;
+        $application->send_to_city = $send_to_city;
+        $application->place_of_delivery_country = $place_of_delivery_country;
+        $application->place_of_delivery_city = $place_of_delivery_city;
         $application->grace_period = $request->grace_period;
         $application->snp_currency = $request->snp_currency;
         $application->snp_range = $request->snp_application_array;
@@ -407,7 +499,10 @@ class ApplicationController extends Controller
         }
 
         $application->additional_info = $request->additional_info;
+        $application->created_at = $request->created_at;
+
         $application->save();
+
         if(is_null($application->containers_archived)){
             if(!is_null($request->containers)){
                 if($request->type == 'Поставщик') {
@@ -418,7 +513,7 @@ class ApplicationController extends Controller
                             $container = new Container();
                         }
 
-                        if(!is_null($request->send_from_city)){
+                        if(!is_null($send_from_city)){
                             if(count($request->send_from_city) > 1){
                                 $send_from_city = implode(', ', $request->send_from_city);
                             }
@@ -426,7 +521,7 @@ class ApplicationController extends Controller
                                 $send_from_city = $request->send_from_city[0];
                             }
                         }
-                        if(!is_null($request->place_of_delivery_city)){
+                        if(!is_null($place_of_delivery_city)){
                             if(count($request->place_of_delivery_city) > 1){
                                 $place_of_delivery_city = implode(', ', $request->place_of_delivery_city);
                             }
@@ -436,8 +531,8 @@ class ApplicationController extends Controller
                         }
 
                         $container->name = $item;
-                        $container->owner_id = $request->supplier_id;
-                        $container->owner_name = $supplier->name;
+                        $container->owner_id = $counterparty_id;
+                        $container->owner_name = $name;
                         $container->supplier_application_id = $application->id;
                         $container->supplier_application_name = $request->name;
                         $container->supplier_price_amount = $request->price_amount;
@@ -459,7 +554,7 @@ class ApplicationController extends Controller
                     foreach ($request->containers as $item){
                         $container = Container::where('name', $item)->first();
                         if(!is_null($container)){
-                            if(!is_null($request->send_to_city)){
+                            if(!is_null($send_to_city)){
                                 if(count($request->send_to_city) > 1){
                                     $send_to_city = implode(', ', $request->send_to_city);
                                 }
@@ -467,7 +562,7 @@ class ApplicationController extends Controller
                                     $send_to_city = $request->send_to_city[0];
                                 }
                             }
-                            if(!is_null($request->place_of_delivery_city)){
+                            if(!is_null($place_of_delivery_city)){
                                 if(count($request->place_of_delivery_city) > 1){
                                     $place_of_delivery_city = implode(', ', $request->place_of_delivery_city);
                                 }
@@ -476,22 +571,9 @@ class ApplicationController extends Controller
                                 }
                             }
 
-                            if($request->counterparty_type == 'Клиент') {
-                                $client = Client::find($request->client_id);
-                                !is_null($client->short_name) ? $name = $client->short_name : $name = $client->name;
-                                $container->relocation_counterparty_id = $request->client_id;
-                                $container->relocation_counterparty_name = $name;
-                                $container->relocation_counterparty_type = 'client';
-                            }
-
-                            if($request->counterparty_type == 'Поставщик') {
-                                $supplier = Supplier::find($request->supplier_id);
-                                !is_null($supplier->short_name) ? $name = $supplier->short_name : $name = $supplier->name;
-                                $container->relocation_counterparty_id = $request->supplier_id;
-                                $container->relocation_counterparty_name = $name;
-                                $container->relocation_counterparty_type = 'supplier';
-                            }
-
+                            $container->relocation_counterparty_name = $name;
+                            $container->relocation_counterparty_id = $counterparty_id;
+                            $container->relocation_counterparty_type = $counterparty_type;
                             $container->relocation_application_id = $application->id;
                             $container->relocation_application_name = $request->name;
                             $container->relocation_price_amount = $request->price_amount;
@@ -510,7 +592,7 @@ class ApplicationController extends Controller
                     foreach ($request->containers as $item){
                         $container = Container::where('name', $item)->first();
                         if(!is_null($container)){
-                            if(!is_null($request->place_of_delivery_city)){
+                            if(!is_null($place_of_delivery_city)){
                                 if(count($request->place_of_delivery_city) > 1){
                                     $place_of_delivery_city = implode(', ', $request->place_of_delivery_city);
                                 }
@@ -519,8 +601,8 @@ class ApplicationController extends Controller
                                 }
                             }
 
-                            $container->client_counterparty_id = $request->client_id;
-                            $container->client_counterparty_name = $client->name;
+                            $container->client_counterparty_id = $counterparty_id;
+                            $container->client_counterparty_name = $name;
                             $container->client_application_id = $application->id;
                             $container->client_application_name = $request->name;
                             $container->client_price_amount = $request->price_amount;
@@ -534,6 +616,56 @@ class ApplicationController extends Controller
                             $container->size = $request->containers_type;
                             $container->save();
                         }
+                    }
+                }
+                if($request->type == 'Покупка') {
+                    foreach ($request->containers as $item){
+                        $item = str_replace(' ', '', $item);
+                        $container = Container::where('name', $item)->first();
+
+                        if(is_null($container)){
+                            $container = new Container();
+                        }
+
+                        $container->name = $item;
+                        $container->type = 'Соб';
+                        $container->owner_id = 413;
+                        $container->owner_name = 'ООО Рок контейнер';
+                        $container->supplier_application_id = $application->id;
+                        $container->supplier_application_name = $request->name;
+                        $container->supplier_price_amount = $request->price_amount;
+                        $container->supplier_price_currency = $request->price_currency;
+                        $container->size = $request->containers_type;
+                        $container->own_date_buy = Carbon::now();
+
+                        $container->save();
+
+                    }
+                }
+                if($request->type == 'Продажа') {
+                    foreach ($request->containers as $item){
+                        $item = str_replace(' ', '', $item);
+                        $container = Container::where('name', $item)->first();
+
+                        if(is_null($container)){
+                            $container = new Container();
+                        }
+
+                        $container->name = $item;
+                        $container->type = null;
+                        $container->owner_id = $counterparty_id;
+                        $container->owner_name = $name;
+                        $container->client_application_id = $application->id;
+                        $container->client_application_name = $request->name;
+                        $container->client_price_amount = $request->price_amount;
+                        $container->client_price_currency = $request->price_currency;
+                        $container->size = $request->containers_type;
+                        $container->own_date_sell = Carbon::now();
+                        $container->own_sale_price = $request->price_amount.$request->price_currency;
+                        $container->own_buyer = $name;
+
+                        $container->save();
+
                     }
                 }
             }
@@ -1249,19 +1381,33 @@ class ApplicationController extends Controller
         $containers = $application->containers;
 
         $invoices_generate = $this->getApplicationInvoices($application);
-        $application->update([
-            'invoices_generate' => $invoices_generate,
-            'containers_archived' => 'yes'
-        ]);
 
-        if(!is_null($containers)){
-            foreach ($containers as $container_name){
-                $container = Container::where('name', $container_name)->first();
-                $this->saveContainerUsageHistory($container, $application->id);
+        if($application->type != 'Покупка'){
+            $application->update([
+                'invoices_generate' => $invoices_generate,
+                'containers_archived' => 'yes',
+                'status' => 'Завершена',
+                'finished_at' => Carbon::now()
+            ]);
+            if(!is_null($containers)){
+                foreach ($containers as $container_name){
+                    $container = Container::where('name', $container_name)->first();
+                    $this->saveContainerUsageHistory($container, $application->id);
+                }
             }
+            $message = 'Заявка была успешно завершена. Информация по контейнерам перенесена в архив';
+        }
+        else {
+            $application->update([
+                'invoices_generate' => $invoices_generate,
+                'status' => 'Завершена',
+                'finished_at' => Carbon::now()
+            ]);
+
+            $message = 'Заявка была успешно завершена';
         }
 
-        return redirect()->back()->withSuccess('Информация по контейнерам данной заявки успешно перенесена в архив');
+        return redirect()->back()->withSuccess($message);
 
     }
 
@@ -1513,6 +1659,64 @@ class ApplicationController extends Controller
             'from' => 'Система',
             'message' => __('Заявка ' .$application_name. ' была успешно удалена')
         ]);
+    }
+
+    public function restoreRow($id){
+
+        $application = Application::withTrashed()->findOrFail($id);
+        $application_name = $application->name;
+        $application->restore();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('Заявка ' .$application_name. ' была успешно восстановлена')
+        ]);
+    }
+
+    public function buySellCreate(){
+        return view('application.buysell_create', [
+            'clients' => Client::all(),
+            'suppliers' => Supplier::all(),
+            'latest_application_id' => $this->getNextApplicationID()
+        ]);
+    }
+
+    public function buySellEdit($id)
+    {
+        $application = Application::find($id);
+
+        $contracts = [];
+
+        if($application->counterparty_type == 'Поставщик'){
+            $supplier = Supplier::find($application->supplier_id);
+            $contracts = $supplier->contracts;
+        }
+
+        if($application->counterparty_type == 'Клиент'){
+            $client = Client::find($application->client_id);
+            $contracts = $client->contracts;
+        }
+
+        return view('application.buysell_edit', [
+            'clients' => Client::all(),
+            'suppliers' => Supplier::all(),
+            'application' => $application,
+            'contracts' => $contracts,
+        ]);
+    }
+
+    public function getNextApplicationID(){
+        $latest_application_id = Application::orderBy('id', 'DESC')->first();
+
+        if(!is_null($latest_application_id)){
+            $latest_application_id = $latest_application_id->id+1;
+        }
+        else {
+            $latest_application_id = 1;
+        }
+
+        return$latest_application_id;
     }
 
 }

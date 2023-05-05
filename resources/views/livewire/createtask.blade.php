@@ -279,7 +279,7 @@
         </div>
         <div class="form-group">
             <label>{{ __('task.finish_before') }}</label>
-            <input type="text" class="form-control task_deadline" name="task_deadline" value="{{ $task->deadline }}"
+            <input type="text" class="form-control task_deadline" name="task_deadline" value="{{ !is_null($task->deadline) ? $task->deadline->format('d.m.Y H:i') : "" }}"
                    placeholder="{{ __('task.task_deadline') }}">
         </div>
 

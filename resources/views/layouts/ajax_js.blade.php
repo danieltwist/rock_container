@@ -84,6 +84,42 @@
         });
     });
 
+    ////ajax таблицы восстановить строку
+    $(document).on("click", ".ajax-restore-row", function() {
+        let action = $(this).data('action');
+        let type = $(this).data('type');
+        let object = $(this).data('object');
+        let object_id = $(this).data('object-id');
+        let table_id = $(this).closest('table').attr('id');
+        console.log(table_id);
+        $.ajax({
+            type: "POST",
+            url: APP_URL + "/" + object + "/" + action + "/" + object_id,
+            beforeSend:function(){
+                return confirm("{{ __('general.are_you_sure') }}");
+            },
+            success: function (data) {
+                $(document).Toasts('create', {
+                    autohide: true,
+                    delay: 3000,
+                    class: data['bg-class'],
+                    title: 'Уведомление от ' + data['from'],
+                    body: data['message']
+                });
+                if(type === 'ajax'){
+                    $('#'+table_id).DataTable().draw(false);
+                }
+                else {
+                    removeRow(table_id, object ,object_id)
+                }
+
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    });
+
     ///// удалить элемент из счета
     $(document).on("click", ".ajax_remove", function() {
         let action = $(this).data('action');
@@ -224,7 +260,7 @@
                                 if(key === 'datetimepicker_init'){
                                     $('.invoice_deadline').datetimepicker({
                                         timepicker: false,
-                                        format:'Y-m-d',
+                                        format:'d.m.Y',
                                         lang:'{{ auth()->user()->language }}',
                                         minDate:0
                                     });

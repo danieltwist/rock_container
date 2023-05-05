@@ -23,7 +23,7 @@
     @else
         @foreach($invoice->upd_file as $key=>$upd_file)
             <div class="mt-2">
-                {{ __('invoice.upload_date') }} - {{ $upd_file['date'] }}<br>
+                {{ __('invoice.upload_date') }} - {{ \Carbon\Carbon::parse($upd_file['date'])->format('d.m.Y H:i:s') }}<br>
                 {{ __('invoice.uploaded_by') }} - {{ $upd_file['user'] }}<br>
                 @if(array_key_exists('amount', $upd_file))
                     {{ __('general.amount') }} - {{ $upd_file['amount'] }}<br>

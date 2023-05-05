@@ -2,5 +2,5 @@
 <small>
     @include('settings.country_switch', ['country' => $supplier->country]) / @include('supplier.type_switch', ['type' => $supplier->type])
     <br>
-    {{ __('general.added') }} {{ $supplier['created_at'] }}
+    {{ __('general.added') }} {{ $supplier->created_at->format('d.m.Y') }}
 </small>

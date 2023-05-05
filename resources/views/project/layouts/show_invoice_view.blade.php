@@ -24,8 +24,11 @@
 @endphp
 <div class="row invoice-info">
     <div class="col-sm-6 invoice-col">
-        <b>{{ __('invoice.number_in_system') }}:</b> {{ $invoice->id }}<br>
-        <b>{{ __('invoice.added') }}:</b> {{ $invoice->created_at }} {{ $invoice->user_add }}<br>
+        <b>{{ __('invoice.number_in_system') }}:</b> {{ $invoice->id }}
+        @if(!is_null($invoice->deleted_at))
+            (удален)
+        @endif<br>
+        <b>{{ __('invoice.added') }}:</b> {{ $invoice->created_at->format('d.m.Y H:i:s') }} {{ $invoice->user_add }}<br>
         <b>{{ __('general.type') }}: </b>
         @if(!is_null($invoice->losses_potential) && (!is_null($invoice->losses_amount)) && (is_null($invoice->losses_confirmed)))
             {{ __('invoice.losses_potential') }} {{ $invoice->losses_amount }}р.
@@ -67,28 +70,10 @@
             <b>{{ __('project.project_of_user') }}:</b> {{ $invoice->project->user->name }}<br>
         @endif
         <b>{{ __('invoice.waiting_amount') }}:</b> {{ $invoice->amount }}р.<br>
-
         @if ($invoice->manager_comment!='')
             <b>{{ __('invoice.manager_comment') }}:</b> {{ $invoice->manager_comment }}<br>
         @endif
-        @if ($invoice->agree_1 != '' || $invoice->agree_2 != '')
-            <b>{{ __('invoice.agreement') }}:</b><br>
-            @if ($invoice->agree_1 != '')
-                @if(checkUploadedFileInvoice($invoice->id)['agree1'])
-                    Ава: @include('invoice.status_switch', ['status' => unserialize($invoice->agree_1)['status']]) {{ unserialize($invoice->agree_1)['date'] }}
-                @else
-                    Ава: {{ $invoice->agree_1 }}
-                @endif
-            @endif
-            <br>
-            @if ($invoice->agree_2 != '')
-                @if(checkUploadedFileInvoice($invoice->id)['agree2'])
-                    Иннокентий: @include('invoice.status_switch', ['status' => unserialize($invoice->agree_2)['status']]) {{ unserialize($invoice->agree_2)['date'] }}
-                @else
-                    Иннокентий: {{ $invoice->agree_2 }}
-                @endif
-            @endif
-        @endif
+        {!! agreeInfo($invoice->id) !!}
         @if ($invoice->accountant_comment!='')
             <br><b>{{ __('invoice.accountant_comment') }}:</b> {{ $invoice->accountant_comment }}
         @endif
@@ -162,7 +147,7 @@
                 <b>{{ __('invoice.info_about_payment') }}: </b>
                 <br>
                 @foreach($invoice->payments_history as $payment)
-                    {{ $payment['date'] }} - {{ $payment['user'] }} <br>
+                    {{ \Carbon\Carbon::parse($payment['date'])->format('d.m.Y H:i:s') }} - {{ $payment['user'] }} <br>
                     @if($payment['currency'] == 'RUB')
                         {{ __('invoice.payment_amount') }}: {{ $payment['amount_rub'] }}р.
                     @else
@@ -242,7 +227,7 @@
     </div>
     <div class="col-md-12 mt-4">
         <div id="invoice_table_modal_ajax">
-            @include('invoice.ajax.'.config('app.prefix_view').'invoice_table_modal')
+            @include('invoice.ajax.invoice_table_modal')
         </div>
     </div>
     @if(!is_null($invoice->losses_potential))
@@ -307,46 +292,44 @@
             </form>
         </div>
     @endif
-    @can ('agree invoices')
-        @if(in_array($current_user_id, ['1','21','9']))
-            @if ($invoice->status!='Оплачен' && $invoice->direction == 'Расход')
-                <div class="col-md-12 mt-4">
-                    <h5>{{ __('invoice.agree_invoice') }}</h5>
-                    <form action="{{ route('agree_invoice_rl') }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="invoice_id" value="{{ $invoice->id }}">
-                        <div class="form-group">
-                            <label>{{ __('invoice.comment_for_accountant') }}</label>
-                            <textarea class="form-control" rows="3" name="director_comment"
-                                      placeholder="{{ __('invoice.comment_for_accountant') }}">{{ $invoice->director_comment }}</textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>{{ __('invoice.set_invoice_status') }}</label>
-                            <select class="form-control" name="status">
-                                <option value="Счет согласован на оплату">{{ __('invoice.status_agreed') }}</option>
-                                <option value="Согласована частичная оплата">{{ __('invoice.status_part_agreed') }}</option>
-                                <option value="Счет на согласовании">{{ __('invoice.status_agree') }}</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>{{ __('invoice.sub_status') }}</label>
-                            <select class="form-control" name="sub_status">
-                                @foreach(['Без дополнительного статуса', 'Срочно', 'Взаимозачет', 'Отложен'] as $sub_status)
-                                    <option value="{{ $sub_status }}" {{ $sub_status == $invoice->sub_status ? 'selected' : '' }}>
-                                        @include('invoice.status_switch', ['status' => $sub_status])
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary float-right submit_from_invoice_modal"
-                                data-action='{"hide_modal":{"id": "view_invoice"}}'>
-                            {{ __('invoice.agree_invoice') }}
-                        </button>
-                    </form>
-                </div>
-            @endif
+    @if(in_array($current_user_id, $agree_invoice_users))
+        @if ($invoice->status!='Оплачен' && $invoice->direction == 'Расход')
+            <div class="col-md-12 mt-4">
+                <h5>{{ __('invoice.agree_invoice') }}</h5>
+                <form action="{{ route('agree_invoice_rc') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="invoice_id" value="{{ $invoice->id }}">
+                    <div class="form-group">
+                        <label>{{ __('invoice.comment_for_accountant') }}</label>
+                        <textarea class="form-control" rows="3" name="director_comment"
+                                  placeholder="{{ __('invoice.comment_for_accountant') }}">{{ $invoice->director_comment }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ __('invoice.set_invoice_status') }}</label>
+                        <select class="form-control" name="status">
+                            <option value="Счет согласован на оплату">{{ __('invoice.status_agreed') }}</option>
+                            <option value="Согласована частичная оплата">{{ __('invoice.status_part_agreed') }}</option>
+                            <option value="Счет на согласовании">{{ __('invoice.status_agree') }}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>{{ __('invoice.sub_status') }}</label>
+                        <select class="form-control" name="sub_status">
+                            @foreach(['Без дополнительного статуса', 'Срочно', 'Взаимозачет', 'Отложен'] as $sub_status)
+                                <option value="{{ $sub_status }}" {{ $sub_status == $invoice->sub_status ? 'selected' : '' }}>
+                                    @include('invoice.status_switch', ['status' => $sub_status])
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary float-right submit_from_invoice_modal"
+                            data-action='{"hide_modal":{"id": "view_invoice"}}'>
+                        {{ __('invoice.agree_invoice') }}
+                    </button>
+                </form>
+            </div>
         @endif
-    @endcan
+    @endif
     @can ('pay invoices')
         @if($invoice->direction == 'Расход')
             @if (in_array($invoice->status, ['Счет согласован на оплату', 'Согласована частичная оплата', 'Частично оплачен', 'Ожидается оплата']))

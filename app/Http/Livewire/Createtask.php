@@ -40,7 +40,7 @@ class Createtask extends Component
     {
         $this->users = User::whereHas('roles', function ($query) {
             $query->whereNotIn('name', ['super-admin']);
-        })->get();;
+        })->get();
 
         $roles = Role::get()->whereNotIn('name', ['super-admin','user','special']);
 

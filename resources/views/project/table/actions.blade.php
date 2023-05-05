@@ -18,14 +18,26 @@
     @endif
 @endcan
 @can ('remove projects')
-    <button
-        class="btn btn-app bg-danger ajax-delete-row"
-        data-action="delete_row"
-        data-object="project"
-        data-type="ajax"
-        data-object-id="{{ $project->id }}">
-        <i class="fas fa-trash">
-        </i>
-        {{ __('general.remove') }}
-    </button>
+    @if(!is_null($project->deleted_at))
+        <button
+            class="btn btn-app bg-warning ajax-restore-row"
+            data-action="restore_row"
+            data-object="project"
+            data-type="ajax"
+            data-object-id="{{ $project->id }}">
+            <i class="fas fa-trash-restore"></i>
+            Восстановить
+        </button>
+    @else
+        <button
+            class="btn btn-app bg-danger ajax-delete-row"
+            data-action="delete_row"
+            data-object="project"
+            data-type="ajax"
+            data-object-id="{{ $project->id }}">
+            <i class="fas fa-trash">
+            </i>
+            {{ __('general.remove') }}
+        </button>
+    @endif
 @endcan

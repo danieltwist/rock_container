@@ -276,7 +276,7 @@ class ContainerTablesController extends Controller
             if(!is_null($container->supplier_snp_range)){
                 $supplier_snp_range = [];
                 foreach ($container->supplier_snp_range as $range){
-                    $supplier_snp_range [] = $range['range'].' - '.$range['price'];
+                    $supplier_snp_range [] = $range['range'].': '.$range['price'].$container->supplier_snp_currency;
                 }
                 $supplier_snp_range [] = 'далее - '.$container->supplier_snp_after_range.$container->supplier_snp_currency;
 
@@ -287,7 +287,7 @@ class ContainerTablesController extends Controller
             if(!is_null($container->client_snp_range)){
                 $client_snp_range = [];
                 foreach ($container->supplier_snp_range as $range){
-                    $client_snp_range [] = $range['range'].' - '.$range['price'];
+                    $client_snp_range [] = $range['range'].': '.$range['price'].$container->client_snp_currency;
                 }
                 $client_snp_range [] = 'далее - '.$container->client_snp_after_range.$container->client_snp_currency;
 
@@ -298,7 +298,7 @@ class ContainerTablesController extends Controller
             if(!is_null($container->relocation_snp_range)){
                 $relocation_snp_range = [];
                 foreach ($container->relocation_snp_range as $range){
-                    $relocation_snp_range [] = $range['range'].' - '.$range['price'];
+                    $relocation_snp_range [] = $range['range'].': '.$range['price'].$container->relocation_snp_currency;
                 }
                 $relocation_snp_range [] = 'далее - '.$container->relocation_snp_after_range.$container->relocation_snp_currency;
 
@@ -405,8 +405,8 @@ class ContainerTablesController extends Controller
                 "supplier_country" => $container->supplier_country,
                 "supplier_city" => $container->supplier_city,
                 "supplier_terminal" => $container->supplier_terminal,
-                "supplier_date_get" => $container->supplier_date_get,
-                "supplier_date_start_using" => $container->supplier_date_start_using,
+                "supplier_date_get" => !is_null($container->supplier_date_get) ? $container->supplier_date_get->format('d.m.Y') : '',
+                "supplier_date_start_using" => !is_null($container->supplier_date_start_using) ? $container->supplier_date_start_using->format('d.m.Y') : '',
                 "supplier_days_using" => $container->supplier_days_using,
                 "supplier_snp_total" => $supplier_snp_total,
                 "supplier_place_of_delivery_country" => $container->supplier_place_of_delivery_country,
@@ -421,8 +421,8 @@ class ContainerTablesController extends Controller
                 "relocation_counterparty_name" => $relocation_counterparty_name,
                 "relocation_application_name" => $relocation_application_name,
                 "relocation_price_amount" => $container->relocation_price_amount.$container->relocation_price_currency,
-                "relocation_date_send" => $container->relocation_date_send,
-                "relocation_date_arrival_to_terminal" => $container->relocation_date_arrival_to_terminal,
+                "relocation_date_send" => !is_null($container->relocation_date_send) ? $container->relocation_date_send->format('d.m.Y') : '',
+                "relocation_date_arrival_to_terminal" => !is_null($container->relocation_date_arrival_to_terminal) ? $container->relocation_date_arrival_to_terminal->format('d.m.Y') : '',
                 "relocation_place_of_delivery_city" => $container->relocation_place_of_delivery_city,
                 "relocation_place_of_delivery_terminal" => $container->relocation_place_of_delivery_terminal,
                 "relocation_delivery_time_days" => $container->relocation_delivery_time_days,
@@ -436,8 +436,8 @@ class ContainerTablesController extends Controller
                 "client_price_amount" => $container->client_price_amount.$container->client_price_currency,
                 "client_grace_period" => $container->client_grace_period,
                 "client_snp_after_range" => $client_snp,
-                "client_date_get" => $container->client_date_get,
-                "client_date_return" => $container->client_date_return,
+                "client_date_get" => !is_null($container->client_date_get) ? $container->client_date_get->format('d.m.Y') : '',
+                "client_date_return" => !is_null($container->client_date_return) ? $container->client_date_return->format('d.m.Y') : '',
                 "client_place_of_delivery_city" => $container->client_place_of_delivery_city,
                 "client_days_using" => $container->client_days_using,
                 "client_snp_total" => $client_snp_total,
@@ -447,10 +447,10 @@ class ContainerTablesController extends Controller
                 "client_smgs" => $container->client_smgs,
                 "client_manual" => $container->client_manual,
                 "client_location_request" => $container->client_location_request,
-                "client_date_manual_request" => $container->client_date_manual_request,
+                "client_date_manual_request" => !is_null($container->client_date_manual_request) ? $container->client_date_manual_request->format('d.m.Y') : '',
                 "client_return_act" => $container->client_return_act,
-                "own_date_buy" => $container->own_date_buy,
-                "own_date_sell" => $container->own_date_sell,
+                "own_date_buy" => !is_null($container->own_date_buy) ? $container->own_date_buy->format('d.m.Y') : '',
+                "own_date_sell" => !is_null($container->own_date_sell) ? $container->own_date_sell->format('d.m.Y') : '',
                 "own_sale_price" => $container->own_sale_price,
                 "own_buyer" => $container->own_buyer,
                 "processing" => $container->processing,
@@ -598,7 +598,7 @@ class ContainerTablesController extends Controller
             if(!is_null($container->supplier_snp_range)){
                 $supplier_snp_range = [];
                 foreach ($container->supplier_snp_range as $range){
-                    $supplier_snp_range [] = $range['range'].' - '.$range['price'];
+                    $supplier_snp_range [] = $range['range'].': '.$range['price'].$container->supplier_snp_currency;
                 }
                 $supplier_snp_range [] = 'далее - '.$container->supplier_snp_after_range.$container->supplier_snp_currency;
 
@@ -609,7 +609,7 @@ class ContainerTablesController extends Controller
             if(!is_null($container->client_snp_range)){
                 $client_snp_range = [];
                 foreach ($container->supplier_snp_range as $range){
-                    $client_snp_range [] = $range['range'].' - '.$range['price'];
+                    $client_snp_range [] = $range['range'].': '.$range['price'].$container->client_snp_currency;
                 }
                 $client_snp_range [] = 'далее - '.$container->client_snp_after_range.$container->client_snp_currency;
 
@@ -620,7 +620,7 @@ class ContainerTablesController extends Controller
             if(!is_null($container->relocation_snp_range)){
                 $relocation_snp_range = [];
                 foreach ($container->relocation_snp_range as $range){
-                    $relocation_snp_range [] = $range['range'].' - '.$range['price'];
+                    $relocation_snp_range [] = $range['range'].': '.$range['price'].$container->relocation_snp_currency;
                 }
                 $relocation_snp_range [] = 'далее - '.$container->relocation_snp_after_range.$container->relocation_snp_currency;
 
@@ -632,7 +632,6 @@ class ContainerTablesController extends Controller
             if(!is_null($container->removed)){
                 $class = 'table-danger';
             }
-
             if(!is_null($container->processing)){
                 if(auth()->user()->name != $container->processing){
                     $class = 'table-info';
@@ -648,7 +647,10 @@ class ContainerTablesController extends Controller
             }
 
             if(!is_null($container->owner_id)){
-                $owner_name = '<a href="'. route('supplier.show', $container->owner_id) .'">'.$container->owner_name.'</a>';
+                $owner_name = [
+                    'name' => $container->owner_name,
+                    'id' => $container->owner_id
+                ];
             }
             else {
                 $owner_name = '';
@@ -662,7 +664,11 @@ class ContainerTablesController extends Controller
             }
 
             if(!is_null($container->relocation_counterparty_name)){
-                $relocation_counterparty_name = '<a href="'. route('supplier.show', $container->relocation_counterparty_id) .'">'.$container->relocation_counterparty_name.'</a>';
+                $relocation_counterparty_name = [
+                    'name' => $container->relocation_counterparty_name,
+                    'id' => $container->relocation_counterparty_id,
+                    'type' => $container->relocation_counterparty_type,
+                ];
             }
             else {
                 $relocation_counterparty_name = '';
@@ -683,7 +689,10 @@ class ContainerTablesController extends Controller
             }
 
             if(!is_null($container->client_counterparty_name)){
-                $client_counterparty_name = '<a href="'. route('client.show', $container->client_counterparty_id) .'">'.$container->client_counterparty_name.'</a>';
+                $client_counterparty_name = [
+                    'name' => $container->client_counterparty_name,
+                    'id' => $container->client_counterparty_id,
+                ];
             }
             else {
                 $client_counterparty_name = '';
@@ -706,10 +715,10 @@ class ContainerTablesController extends Controller
 
             $data_arr[] = array(
                 "id" => $container->id,
-                "name" => '<a href="'. route('container.show', $container->id) .'">'.$container->name.'</a>',
+                "name" => $container->name,
                 "status" => $container->status,
                 "type" => $container->type,
-                "owner_name" => $owner_name,
+                "owner_name" => $container->owner_name,
                 "size" => $container->size,
                 "supplier_application_name" => $supplier_application,
                 "supplier_price_amount" => $container->supplier_price_amount.$container->supplier_price_currency,
@@ -718,8 +727,8 @@ class ContainerTablesController extends Controller
                 "supplier_country" => $container->supplier_country,
                 "supplier_city" => $container->supplier_city,
                 "supplier_terminal" => $container->supplier_terminal,
-                "supplier_date_get" => $container->supplier_date_get,
-                "supplier_date_start_using" => $container->supplier_date_start_using,
+                "supplier_date_get" => !is_null($container->supplier_date_get) ? $container->supplier_date_get->format('d.m.Y') : '',
+                "supplier_date_start_using" => !is_null($container->supplier_date_start_using) ? $container->supplier_date_start_using->format('d.m.Y') : '',
                 "supplier_days_using" => $container->supplier_days_using,
                 "supplier_snp_total" => $supplier_snp_total,
                 "supplier_place_of_delivery_country" => $container->supplier_place_of_delivery_country,
@@ -731,11 +740,11 @@ class ContainerTablesController extends Controller
                 "supplier_repair_amount" => $container->supplier_repair_amount.$container->supplier_repair_currency,
                 "supplier_repair_status" => $container->supplier_repair_status,
                 "supplier_repair_confirmation" => $container->supplier_repair_confirmation,
-                "relocation_counterparty_name" => $relocation_counterparty_name,
+                "relocation_counterparty_name" => $container->relocation_counterparty_name,
                 "relocation_application_name" => $relocation_application_name,
                 "relocation_price_amount" => $container->relocation_price_amount.$container->relocation_price_currency,
-                "relocation_date_send" => $container->relocation_date_send,
-                "relocation_date_arrival_to_terminal" => $container->relocation_date_arrival_to_terminal,
+                "relocation_date_send" => !is_null($container->relocation_date_send) ? $container->relocation_date_send->format('d.m.Y') : '',
+                "relocation_date_arrival_to_terminal" => !is_null($container->relocation_date_arrival_to_terminal) ? $container->relocation_date_arrival_to_terminal->format('d.m.Y') : '',
                 "relocation_place_of_delivery_city" => $container->relocation_place_of_delivery_city,
                 "relocation_place_of_delivery_terminal" => $container->relocation_place_of_delivery_terminal,
                 "relocation_delivery_time_days" => $container->relocation_delivery_time_days,
@@ -744,13 +753,13 @@ class ContainerTablesController extends Controller
                 "relocation_repair_amount" => $container->relocation_repair_amount.$container->relocation_repair_currency,
                 "relocation_repair_status" => $container->relocation_repair_status,
                 "relocation_repair_confirmation" => $container->relocation_repair_confirmation,
-                "client_counterparty_name" => $client_counterparty_name,
+                "client_counterparty_name" => $container->client_counterparty_name,
                 "client_application_name" => $client_application_name,
                 "client_price_amount" => $container->client_price_amount.$container->client_price_currency,
                 "client_grace_period" => $container->client_grace_period,
                 "client_snp_after_range" => $client_snp,
-                "client_date_get" => $container->client_date_get,
-                "client_date_return" => $container->client_date_return,
+                "client_date_get" => !is_null($container->client_date_get) ? $container->client_date_get->format('d.m.Y') : '',
+                "client_date_return" => !is_null($container->client_date_return) ? $container->client_date_return->format('d.m.Y') : '',
                 "client_place_of_delivery_city" => $container->client_place_of_delivery_city,
                 "client_days_using" => $container->client_days_using,
                 "client_snp_total" => $client_snp_total,
@@ -760,10 +769,10 @@ class ContainerTablesController extends Controller
                 "client_smgs" => $container->client_smgs,
                 "client_manual" => $container->client_manual,
                 "client_location_request" => $container->client_location_request,
-                "client_date_manual_request" => $container->client_date_manual_request,
+                "client_date_manual_request" => !is_null($container->client_date_manual_request) ? $container->client_date_manual_request->format('d.m.Y') : '',
                 "client_return_act" => $container->client_return_act,
-                "own_date_buy" => $container->own_date_buy,
-                "own_date_sell" => $container->own_date_sell,
+                "own_date_buy" => !is_null($container->own_date_buy) ? $container->own_date_buy->format('d.m.Y') : '',
+                "own_date_sell" => !is_null($container->own_date_sell) ? $container->own_date_sell->format('d.m.Y') : '',
                 "own_sale_price" => $container->own_sale_price,
                 "own_buyer" => $container->own_buyer,
                 "processing" => $container->processing,

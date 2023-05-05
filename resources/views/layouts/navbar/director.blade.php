@@ -80,6 +80,11 @@
                                 <p>{{ __('interface.important_tasks') }}</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('trash_tasks') }}" class="nav-link">
+                                <p>Корзина</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -97,8 +102,28 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('buy_sell_create') }}" class="nav-link">
+                                <p>Покупка / продажа</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('application.index') }}" class="nav-link">
                                 <p>Все заявки</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('application.index').'?active' }}" class="nav-link">
+                                <p>В работе</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('application.index').'?done' }}" class="nav-link">
+                                <p>Завершенные</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('application.index').'?trash' }}" class="nav-link">
+                                <p>Корзина</p>
                             </a>
                         </li>
                     </ul>
@@ -142,6 +167,11 @@
                                 <p>{{ __('interface.finished_projects') }}</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('project.index').'?trash' }}" class="nav-link">
+                                <p>Корзина</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -161,6 +191,11 @@
                         <li class="nav-item">
                             <a href="{{ route('client.index') }}" class="nav-link">
                                 <p>{{ __('interface.all_clients') }}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('client.index').'?trash' }}" class="nav-link">
+                                <p>Корзина</p>
                             </a>
                         </li>
                     </ul>
@@ -183,6 +218,11 @@
                         <li class="nav-item">
                             <a href="{{ route('supplier.index') }}" class="nav-link">
                                 <p>{{ __('interface.all_suppliers') }}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('supplier.index').'?trash' }}" class="nav-link">
+                                <p>Корзина</p>
                             </a>
                         </li>
                     </ul>
@@ -240,6 +280,11 @@
                         <li class="nav-item">
                             <a href="{{ route('invoice.index').'?paid' }}" class="nav-link">
                                 <p>{{ __('interface.paid_invoices') }}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('invoice.index').'?trash' }}" class="nav-link">
+                                <p>Корзина</p>
                             </a>
                         </li>
                     </ul>
@@ -435,8 +480,19 @@
                             <a href="{{ route('expense_type.index') }}" class="nav-link">
                                 <p>Классификатор расходов</p>
                             </a>
+                            <a href="{{ route('agree_invoices_settings') }}" class="nav-link">
+                                <p>Согласование счетов</p>
+                            </a>
                         </li>
                     </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('history') }}" class="nav-link">
+                        <i class="nav-icon fas fa-history"></i>
+                        <p>
+                            История действий
+                        </p>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a onclick="window.open('/filemanager','','Toolbar=0,Location=0,Directories=0,Status=0,Menubar=0,Scrollbars=0,Resizable=0,Width=1400,Height=740');"

@@ -21,6 +21,12 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::middleware(['role:manager|accountant|director|super-admin|special|logist|supply|equipment'])->prefix('/')->group(function (){
 
     Route::prefix('application')->middleware(['auth'])->group(function () {
+
+        Route::get('/buy_sell/create', 'App\Http\Controllers\Application\ApplicationController@buySellCreate')
+            ->name('buy_sell_create');
+        Route::get('/buy_sell/{id}/edit', 'App\Http\Controllers\Application\ApplicationController@buySellEdit')
+            ->name('buy_sell_edit');
+
         Route::get('/load_counterparty_contract', 'App\Http\Controllers\Application\ApplicationController@loadCounterpartyContract')
             ->name('load_counterparty_contract');
 
@@ -136,10 +142,7 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
     Route::get('invoice/get_invoice_for_project_analytics', 'App\Http\Controllers\Datatables\InvoiceTablesController@getInvoiceTableForProjectAnalytics')->name('get_invoice_for_project_analytics')->middleware(['auth']);
     Route::get('invoice/get_invoices_for_counterparty', 'App\Http\Controllers\Invoice\InvoiceController@get_invoices_for_counterparty')->name('get_invoices_for_counterparty')->middleware(['auth']);
 
-    Route::post('invoice/agree_rc', '\App\Http\Controllers\Invoice\InvoiceAgreeController@AgreeInvoice_rc_')->name('agree_invoice_rc')->middleware(['auth']);
-    Route::post('invoice/agree_rl', '\App\Http\Controllers\Invoice\InvoiceAgreeController@AgreeInvoice_rl_')->name('agree_invoice_rl')->middleware(['auth']);
-    Route::post('invoice/agree_ntc', '\App\Http\Controllers\Invoice\InvoiceAgreeController@AgreeInvoice_ntc_')->name('agree_invoice_ntc')->middleware(['auth']);
-    Route::post('invoice/agree_blc', '\App\Http\Controllers\Invoice\InvoiceAgreeController@AgreeInvoice_blc_')->name('agree_invoice_blc')->middleware(['auth']);
+    Route::post('invoice/agree', '\App\Http\Controllers\Invoice\InvoiceAgreeController@AgreeInvoice')->name('agree_invoice_rc')->middleware(['auth']);
     Route::post('invoice/potential_losess', '\App\Http\Controllers\Invoice\InvoiceController@potentialLossesUpdate')->name('potential_losess_update')->middleware(['auth']);
 
     Route::get('invoice/out', 'App\Http\Controllers\Invoice\InvoiceController@getOutInvoices')->name('out_invoices')->middleware(['auth']);
@@ -221,6 +224,7 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
     Route::get('task/create_task_modal', '\App\Http\Controllers\Task\TaskController@createTaskModal')->middleware(['auth']);
     Route::post('task/handler', '\App\Http\Controllers\Task\TaskController@handler')->middleware(['auth']);
     Route::post('upload_file_to_task', '\App\Http\Controllers\Task\TaskController@addFileToTask')->name('upload_file_to_task')->middleware(['auth']);
+    Route::get('task/trash', '\App\Http\Controllers\Task\TaskController@trashTask')->name('trash_tasks')->middleware(['auth']);
     Route::any('task/get_tasks_table', 'App\Http\Controllers\Task\TaskController@getTaskTable')->name('get_tasks_table')->middleware(['auth']);
     Route::resource('task', \App\Http\Controllers\Task\TaskController::class)->middleware(['auth']);
 
@@ -250,9 +254,6 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
     Route::any('yandexdisk','App\Http\Controllers\YandexDiskController@check' )->name('yandexdisk')->middleware(['auth']);
     Route::resource('countries',App\Http\Controllers\Setting\CountryController::class)->middleware(['auth']);
 
-    Route::get('settings/currency_ratio','App\Http\Controllers\Setting\CurrencyRatioController@index')->name('currency_ratio_settings')->middleware(['auth']);
-    Route::post('settings/update_currency_rates','App\Http\Controllers\Setting\CurrencyRatioController@updateRates')->name('update_currency_rates')->middleware(['auth']);
-
     Route::any('select2-autocomplete-ajax','App\Http\Controllers\Select2AutocompleteController@dataAjax' )->middleware(['auth']);
 
     //////////////////ajax routes invoices
@@ -268,17 +269,13 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
     Route::post('invoice/delete_row/{id}', '\App\Http\Controllers\Invoice\InvoiceController@deleteRow')->middleware(['auth']);
     Route::get('invoices/get_invoices_project', '\App\Http\Controllers\Datatables\InvoiceTablesController@get_invoices_with_filter')->name('get_invoices_project')->middleware(['auth']);
 
-    //////////////////ajax routes projects
+    //////////////////ajax remove
     Route::post('project/delete_row/{id}', '\App\Http\Controllers\Project\ProjectController@deleteRow')->middleware(['auth']);
-
-    //////////////////ajax routes tasks
     Route::post('task/delete_row/{id}', '\App\Http\Controllers\Task\TaskController@deleteRow')->middleware(['auth']);
-
-    //////////////////ajax routes work request
     Route::post('work_request/delete_row/{id}', '\App\Http\Controllers\WorkRequest\WorkRequestController@deleteRow')->middleware(['auth']);
-
-    //////////////////ajax routes work request
     Route::post('application/delete_row/{id}', '\App\Http\Controllers\Application\ApplicationController@deleteRow')->middleware(['auth']);
+    Route::post('client/delete_row/{id}', '\App\Http\Controllers\Client\ClientController@deleteRow')->middleware(['auth']);
+    Route::post('supplier/delete_row/{id}', '\App\Http\Controllers\Supplier\SupplierController@deleteRow')->middleware(['auth']);
 
     //////////////////ajax routes containers
     Route::get('container_group/load_table_row/{id}', '\App\Http\Controllers\Container\ContainerGroupController@loadTableRow')->middleware(['auth']);
@@ -351,4 +348,33 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
         ->middleware(['auth']);
 
     Route::resource('expense_type', \App\Http\Controllers\ExpenseTypeController::class)->middleware(['auth']);
+
+    Route::get('/history', 'App\Http\Controllers\Audit\AuditController@index')->middleware(['auth'])->name('history');
+    Route::get('/history/get_audits_table', 'App\Http\Controllers\Datatables\AuditTablesController@getAuditTable')->middleware(['auth'])->name('get_audits_table');
+    Route::get('/history/get_component_history_table', 'App\Http\Controllers\Datatables\AuditTablesController@getComponentHistoryTable')->middleware(['auth'])->name('get_component_history_table');
+
+    Route::prefix('settings')->middleware(['auth'])->group(function () {
+        Route::get('/currency_ratio','App\Http\Controllers\Setting\CurrencyRatioController@index')
+            ->name('currency_ratio_settings');
+        Route::post('/update_currency_rates','App\Http\Controllers\Setting\CurrencyRatioController@updateRates')
+            ->name('update_currency_rates');
+        Route::get('/agree_invoices_settings','App\Http\Controllers\Setting\AgreeInvoicesController@agreeInvoicesSettings')
+            ->name('agree_invoices_settings');
+        Route::post('/update_agree_invoices_settings','App\Http\Controllers\Setting\AgreeInvoicesController@updateAgreeInvoicesSettings')
+            ->name('update_agree_invoices_settings');
+        Route::get('/currency_ratio','App\Http\Controllers\Setting\CurrencyRatioController@index')->name('currency_ratio_settings');
+        Route::post('/update_currency_rates','App\Http\Controllers\Setting\CurrencyRatioController@updateRates')->name('update_currency_rates');
+    });
+
+
+
+
+    ///////////////////ajax restore
+    Route::post('project/restore_row/{id}', '\App\Http\Controllers\Project\ProjectController@restoreRow')->middleware(['auth']);
+    Route::post('task/restore_row/{id}', '\App\Http\Controllers\Task\TaskController@restoreRow')->middleware(['auth']);
+    Route::post('work_request/restore_row/{id}', '\App\Http\Controllers\WorkRequest\WorkRequestController@restoreRow')->middleware(['auth']);
+    Route::post('application/restore_row/{id}', '\App\Http\Controllers\Application\ApplicationController@restoreRow')->middleware(['auth']);
+    Route::post('client/restore_row/{id}', '\App\Http\Controllers\Client\ClientController@restoreRow')->middleware(['auth']);
+    Route::post('supplier/restore_row/{id}', '\App\Http\Controllers\Supplier\SupplierController@restoreRow')->middleware(['auth']);
+
 });

@@ -12,6 +12,7 @@ use App\Models\ContainerGroup;
 use App\Models\Invoice;
 use App\Models\Notification;
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\WorkRequest;
 use App\Models\User;
 use Carbon\Carbon;
@@ -225,9 +226,8 @@ class WorkRequestController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show(WorkRequest $work_request)
     {
-        $work_request = WorkRequest::findOrFail($id);
         $this->getUsersWorkRequests($work_request);
         $this->checkOverdue($work_request);
 
@@ -1465,6 +1465,20 @@ class WorkRequestController extends Controller
 
         else $work_request->overdue = false;
 
+    }
+
+
+    public function restoreRow($id){
+
+        $work_request = WorkRequest::withTrashed()->findOrFail($id);
+        $work_request_name = $work_request->name;
+        $work_request->restore();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('Запрос ' .$work_request_name. ' был успешно восстановлен')
+        ]);
     }
 
 }

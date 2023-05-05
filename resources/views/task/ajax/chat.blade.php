@@ -7,7 +7,7 @@
             <div class="comment-text">
                 <span class="username">
                     {{ optional(userInfo($comment['user']))->name }}
-                  <span class="text-muted float-right">{{ $comment['date'] }}</span>
+                  <span class="text-muted float-right">{{ \Carbon\Carbon::parse($comment['date'])->format('d.m.Y H:i:s') }}</span>
                 </span>
                 @php
                     $pos = strripos($comment['text'], auth()->user()->name);

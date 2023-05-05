@@ -65,6 +65,49 @@
             </div>
             <div class="card">
                 <div class="card-header">
+                    <h3 class="card-title">История действий</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse"
+                                title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped audits_table" id="audits_table" data-filter_type="user" data-id="{{ $user->id }}">
+                        <thead>
+                        <tr>
+                            <th style="width: 1%">
+                                #
+                            </th>
+                            <th style="width: 10%">
+                                Дата
+                            </th>
+                            <th style="width: 10%">
+                                Пользователь
+                            </th>
+                            <th style="width: 15%">
+                                Элемент
+                            </th>
+                            <th style="width: 10%">
+                                Действие
+                            </th>
+                            <th style="width: 30%">
+                                Версия до
+                            </th>
+                            <th style="width: 30%">
+                                Версия после
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
                     <h3 class="card-title">{{ __('user.all_projects') }}</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse"
@@ -135,7 +178,7 @@
             </div>
             <div class="card" id="active_projects">
                 <div class="card-header">
-                    <h3 class="card-title">{{ __('user.projects_in_work') }}</h3>
+                    <h3 class="card-title">{{ __('project.active_projects') }}</h3>
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse"
                                 title="Collapse">

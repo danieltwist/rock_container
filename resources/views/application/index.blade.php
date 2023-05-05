@@ -5,7 +5,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1 class="m-0">Все заявки</h1>
+                    @if (isset($_GET['trash']))
+                        <h1 class="m-0">Удаленные заявки</h1>
+                    @else
+                        <h1 class="m-0">Все заявки</h1>
+                    @endif
                 </div>
             </div>
         </div>
@@ -33,6 +37,15 @@
                                     </button>
                                 @endforeach
                             </div>
+                            <div class="btn-group">
+                                @foreach(['Покупка', 'Продажа'] as $application_type)
+                                    <button type="button" class="btn btn-default btn-sm applications_filters"
+                                            data-filter_type="type"
+                                            data-type="{{ $application_type }}">
+                                        {{ $application_type }}
+                                    </button>
+                                @endforeach
+                            </div>
                             <div class="mt-4">
                                 <table class="table table-striped applications_table" id="applications_table">
                                     <thead>
@@ -46,7 +59,7 @@
                                         <th style="width: 20%">
                                             Контрагент
                                         </th>
-                                        <th style="width: 20%">
+                                        <th style="width: 15%">
                                             Маршрут
                                         </th>
                                         <th style="width: 15%">
@@ -54,6 +67,9 @@
                                         </th>
                                         <th style="width: 15%">
                                             Контейнеры
+                                        </th>
+                                        <th style="width: 5%">
+                                            Статус
                                         </th>
                                         <th style="width: 24%">
                                             {{ __('general.actions') }}

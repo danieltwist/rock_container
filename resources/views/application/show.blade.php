@@ -18,8 +18,19 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header {{ is_null($application->deleted_at) ?: 'bg-danger' }}">
                             <h3 class="card-title">Информация по заявке</h3>
+                            <div class="card-tools">
+                                @can ('edit projects paid status')
+                                    <button type="button" data-toggle="modal" data-target="#view_component_history"
+                                            class="btn btn-default btn-sm"
+                                            data-component="application"
+                                            data-id="{{ $application->id }}">
+                                        <i class="fas fa-history"></i>
+                                        История
+                                    </button>
+                                @endcan
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -54,6 +65,13 @@
                                         </p>
                                     </div>
                                     <div class="text-muted mt-3">
+                                        <p class="text-sm">Дата
+                                            <b class="d-block">
+                                                {{ $application->created_at->format('d.m.Y') }}
+                                            </b>
+                                        </p>
+                                    </div>
+                                    <div class="text-muted mt-3">
                                         <p class="text-sm">Контрагент
                                             <b class="d-block">
                                                 @if($application->counterparty_type == 'Клиент')
@@ -68,7 +86,7 @@
                                     <div class="text-muted mt-3">
                                         <p class="text-sm">Договор
                                             <b class="d-block">
-                                                {{ $application->contract_info['name'] }} от {{ $application->contract_info['date'] }}
+                                                {{ $application->contract_info['name'] }} от {{ is_null($application->contract_info['date']) ?: \Carbon\Carbon::parse($application->contract_info['date'])->format('d.m.Y') }}
                                             </b>
                                         </p>
                                     </div>
@@ -99,43 +117,53 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="text-muted mt-3">
-                                        <p class="text-sm">Льготный период
-                                            <b class="d-block">{{ $application->grace_period }} дней</b>
-                                        </p>
-                                    </div>
-                                    <div class="text-muted mt-3">
-                                        <p class="text-sm">СНП
-                                            @if(!is_null($application->snp_range))
-                                                <b class="d-block">
-                                                    @foreach($application->snp_range as $range)
-                                                        {{ $range['range'] }} день - {{ $range['price'] }}{{ $application->snp_currency }}<br>
-                                                    @endforeach
-                                                    Далее - {{ $application->snp_after_range }}{{ $application->snp_currency }}
-                                                </b>
-                                            @else
-                                                <b class="d-block">{{ $application->snp_after_range }}{{ $application->snp_currency }}</b>
-                                            @endif
-                                        </p>
-                                    </div>
+                                    @if(!is_null($application->grace_period))
+                                        <div class="text-muted mt-3">
+                                            <p class="text-sm">Льготный период
+                                                <b class="d-block">{{ $application->grace_period }} дней</b>
+                                            </p>
+                                        </div>
+                                    @endif
+                                    @if(!is_null($application->snp_after_range))
+                                        <div class="text-muted mt-3">
+                                            <p class="text-sm">СНП
+                                                @if(!is_null($application->snp_range))
+                                                    <b class="d-block">
+                                                        @foreach($application->snp_range as $range)
+                                                            {{ $range['range'] }} день - {{ $range['price'] }}{{ $application->snp_currency }}<br>
+                                                        @endforeach
+                                                        Далее - {{ $application->snp_after_range }}{{ $application->snp_currency }}
+                                                    </b>
+                                                @else
+                                                    <b class="d-block">{{ $application->snp_after_range }}{{ $application->snp_currency }}</b>
+                                                @endif
+                                            </p>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="col-md-3">
                                     <div class="text-muted mt-3">
-                                        <p class="text-sm">Откуда
-                                            <b class="d-block">
-                                                {{ $application->send_from_country }}, {{ implode('/', $application->send_from_city) }}
-                                            </b>
-                                        </p>
-                                        <p class="text-sm">Куда
-                                            <b class="d-block">
-                                                {{ $application->send_to_country }}, {{ implode('/', $application->send_to_city) }}
-                                            </b>
-                                        </p>
-                                        <p class="text-sm">Депо сдачи
-                                            <b class="d-block">
-                                                {{ $application->place_of_delivery_country }}, {{ implode('/', $application->place_of_delivery_city) }}
-                                            </b>
-                                        </p>
+                                        @if(!is_null($application->send_from_country))
+                                            <p class="text-sm">Откуда
+                                                <b class="d-block">
+                                                    {{ $application->send_from_country }}, {{ implode('/', $application->send_from_city) }}
+                                                </b>
+                                            </p>
+                                        @endif
+                                        @if(!is_null($application->send_to_country))
+                                            <p class="text-sm">Куда
+                                                <b class="d-block">
+                                                    {{ $application->send_to_country }}, {{ implode('/', $application->send_to_city) }}
+                                                </b>
+                                            </p>
+                                        @endif
+                                        @if(!is_null($application->place_of_delivery_country))
+                                            <p class="text-sm">Депо сдачи
+                                                <b class="d-block">
+                                                    {{ $application->place_of_delivery_country }}, {{ implode('/', $application->place_of_delivery_city) }}
+                                                </b>
+                                            </p>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -148,7 +176,13 @@
                                     @endif
                                 </div>
                                 <div class="col-12 mt-2">
-                                    <a class="btn bg-indigo mt-2" href="{{ route('application.edit', $application->id) }}">
+                                    <a class="btn bg-indigo mt-2" href="
+                                        @if(in_array($application->type, ['Покупка', 'Продажа']))
+                                            {{ route('buy_sell_edit', $application->id) }}
+                                        @else
+                                            {{ route('application.edit', $application->id) }}
+                                        @endif
+                                        ">
                                         <i class="fas fa-edit"></i>
                                         Редактировать заявку
                                     </a>
@@ -182,14 +216,25 @@
                                             </a>
                                         </div>
                                     </div>
-                                    @if(is_null($application->containers_archived))
+                                    @if($application->status != 'Завершена')
                                         <form class="button-delete-inline float-right" action="{{ route('archive_containers_usage_info') }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="application_id" value="{{ $application->id }}">
-                                            <button type="submit" class="btn bg-orange mt-2" onClick='return confirmSubmit()'>
-                                                <i class="fas fa-inbox"></i> Перенести контейнеры в архив
-                                            </button>
+                                            @if($application->type == 'Покупка')
+                                                <button type="submit" class="btn bg-success mt-2 confirm-btn">
+                                                    <i class="fas fa-check"></i> Завершить работу с заявкой
+                                                </button>
+                                            @else
+                                                <button type="submit" class="btn bg-success mt-2" onClick="return confirmSubmit()">
+                                                    <i class="fas fa-check"></i> Завершить и переместить контейнеры в архив
+                                                </button>
+                                            @endif
                                         </form>
+                                    @endif
+                                    @if($application->status == 'Завершена')
+                                        <div class="mt-3 float-right">
+                                            Дата завершения: {{ $application->finished_at->format('d.m.Y H:i:s') }}
+                                        </div>
                                     @endif
                                 </div>
                             </div>
@@ -274,5 +319,6 @@
         @include('project.modals.confirm_invoice')
         @include('project.modals.make_invoice_model')
         @include('application.modals.add_invoices')
+        @include('audit.component_history_modal')
     </section>
 @endsection

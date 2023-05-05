@@ -263,4 +263,90 @@ if(!function_exists('can_edit_this_project')){
         return $user->telegram_chat_id;
     }
 
+    function agreeInfo($invoice_id){
+        $invoice = \App\Models\Invoice::find($invoice_id);
+        $agree_info = '';
+
+        if($invoice->agree_1 != ''){
+            $agree1 = @unserialize($invoice->agree_1);
+            if($agree1 !== false){
+                $agree1 = unserialize($invoice->agree_1);
+                $status = invoiceStatusSwitch($agree1['status']);
+                if(isset($agree1['user_id'])){
+                    $agree_info = User::withTrashed()->find($agree1['user_id'])->name.': '. $status. ' '.\Carbon\Carbon::parse($agree1['date'])->format('d.m.Y H:i:s').'<br>';
+                }
+                else {
+                    $agree_info = $status. ' '.\Carbon\Carbon::parse($agree1['date'])->format('d.m.Y H:i:s').'<br>';
+                }
+            }
+            else {
+                $agree_info = $invoice->agree_1.'<br>';
+            }
+        }
+        if($invoice->agree_2 != '') {
+            $agree2 = @unserialize($invoice->agree_2);
+            if ($agree2 !== false) {
+                $agree2 = unserialize($invoice->agree_2);
+                $status = invoiceStatusSwitch($agree2['status']);
+                if (isset($agree2['user_id'])) {
+                    $agree_info .= User::withTrashed()->find($agree2['user_id'])->name . ': ' . $status . ' ' . \Carbon\Carbon::parse($agree2['date'])->format('d.m.Y H:i:s') . '<br>';
+                } else {
+                    $agree_info .= $status . ' ' . \Carbon\Carbon::parse($agree2['date'])->format('d.m.Y H:i:s') . '<br>';
+                }
+            } else {
+                $agree_info .= $invoice->agree_2 . '<br>';
+            }
+        }
+
+        return $agree_info;
+    }
+
+    function invoiceStatusSwitch($status){
+        switch($status){
+            case('Счет на согласовании'):
+                $status = __('invoice.status_agree');
+                break;
+            case('Создан черновик инвойса'):
+                $status = __('invoice.status_draft_invoice');
+                break;
+            case('Ожидается счет от поставщика'):
+                $status = __('invoice.status_waiting_for_invoice');
+                break;
+            case('Ожидается создание инвойса'):
+                $status = __('invoice.status_waiting_for_create_invoice');
+                break;
+            case('Ожидается оплата'):
+                $status = __('invoice.status_waiting_for_payment');
+                break;
+            case('Ожидается загрузка счета'):
+                $status = __('invoice.status_waiting_upload_invoice');
+                break;
+            case('Счет согласован на оплату'):
+                $status = __('invoice.status_agreed');
+                break;
+            case('Согласована частичная оплата'):
+                $status = __('invoice.status_part_agreed');
+                break;
+            case('Частично оплачен'):
+                $status = __('invoice.status_part_paid');
+                break;
+            case('Оплачен'):
+                $status = __('invoice.status_paid');
+                break;
+            case('Срочно'):
+                $status = __('invoice.sub_status_urgent');
+                break;
+            case('Взаимозачет'):
+                $status = __('invoice.sub_status_compensation');
+                break;
+            case('Отложен'):
+                $status = __('invoice.sub_status_postponed');
+                break;
+            case('Без дополнительного статуса'):
+                $status = __('invoice.sub_status_without');
+                break;
+        }
+        return $status;
+    }
+
 }

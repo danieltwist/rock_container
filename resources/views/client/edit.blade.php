@@ -122,13 +122,13 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>{{ __('client.contract_sign_date') }}</label>
-                                                <input type="text" class="form-control" name="date_start" placeholder="{{ __('client.contract_sign_date') }}"
-                                                       value="{{ $contract->date_start }}">
+                                                <input type="text" class="form-control date_input" name="date_start" placeholder="{{ __('client.contract_sign_date') }}"
+                                                       value="{{ $contract->date_start->format('d.m.Y') }}" required>
                                             </div>
                                             <div class="form-group">
                                                 <label>{{ __('client.contract_validity_period') }}</label>
-                                                <input type="text" class="form-control" name="date_period" placeholder="{{ __('client.contract_validity_period') }}"
-                                                       value="{{ $contract->date_period }}">
+                                                <input type="text" class="form-control date_input" name="date_period" placeholder="{{ __('client.contract_validity_period') }}"
+                                                       value="{{ $contract->date_period->format('d.m.Y') }}" required>
                                             </div>
                                             <div class="form-group">
                                                 <label>{{ __('client.contract_type') }}</label>

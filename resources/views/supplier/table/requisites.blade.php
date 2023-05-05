@@ -4,9 +4,9 @@
 
 <div class="collapse mt-2" id="collapseRequisites{{$supplier->id}}">
     <div class="card card-body">
+        {{ __('general.inn_license_number') }}: {{ $supplier->inn }}
+        <br>
         @nl2br($supplier->requisites)
-        <br><br>
-            {{ __('general.inn_license_number') }}: {{ $supplier['inn'] }}
         <br>
         E-mail: {{ $supplier->email }}
     </div>

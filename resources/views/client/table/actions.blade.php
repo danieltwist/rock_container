@@ -3,13 +3,25 @@
     </i>
     {{ __('general.change') }}
 </a>
-<form class="button-delete-inline"
-      action="{{ route('client.destroy', $client->id) }}" method="POST">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="btn btn-app bg-danger delete-btn">
+@if(!is_null($client->deleted_at))
+    <button
+        class="btn btn-app bg-warning ajax-restore-row"
+        data-action="restore_row"
+        data-object="client"
+        data-type="ajax"
+        data-object-id="{{ $client->id }}">
+        <i class="fas fa-trash-restore"></i>
+        Восстановить
+    </button>
+@else
+    <button
+        class="btn btn-app bg-danger ajax-delete-row"
+        data-action="delete_row"
+        data-object="client"
+        data-type="ajax"
+        data-object-id="{{ $client->id }}">
         <i class="fas fa-trash">
         </i>
         {{ __('general.remove') }}
     </button>
-</form>
+@endif

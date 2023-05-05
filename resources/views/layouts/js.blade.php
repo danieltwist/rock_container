@@ -58,9 +58,11 @@
     $(function () {
         jQuery('.invoice_deadline').datetimepicker({
             timepicker: false,
-            format:'Y-m-d',
+            format:'d.m.Y',
             lang:'{{ auth()->user()->language }}',
-            minDate:0
+            minDate:0,
+            scrollMonth : false,
+            scrollInput : false
         });
 
         $('.collapsed').CardWidget('collapse');
@@ -84,6 +86,17 @@
             params: function(params) {
                 params.model = $(this).data('model');
                 return params;
+            },
+            success: function(response) {
+                if(!response.success){
+                    $(document).Toasts('create', {
+                        autohide: true,
+                        delay: 3000,
+                        class: 'bg-danger',
+                        title: 'Ошибка',
+                        body: response.error
+                    });
+                }
             }
         });
 
@@ -183,9 +196,11 @@
                 });
                 jQuery('.invoice_deadline').datetimepicker({
                     timepicker: false,
-                    format:'Y-m-d',
+                        format:'d.m.Y',
                     lang:'{{ auth()->user()->language }}',
-                    minDate:0
+                    minDate:0,
+                    scrollMonth : false,
+                    scrollInput : false
                 });
             },
             error: function (XMLHttprequest, textStatus, errorThrown) {
@@ -214,7 +229,7 @@
                         rightAlign: false
                     }
                 );
-                $(".date_input").inputmask('9999-99-99');
+                $(".date_input").inputmask('99.99.9999');
                 $('.select2').select2();
                 var actions = $("#update_invoice_form").data('action');
                 var type = button.data('type');
@@ -438,7 +453,7 @@
             '</div>'+
             '</div>'
         );
-        $(".date_input").inputmask('9999-99-99');
+        $(".date_input").inputmask('99.99.9999');
     });
 
     jQuery(document).on('click', '.remove_contract_item', function(){
@@ -595,7 +610,7 @@
 
         if (selected.val() !== 'RUB'){
             $('#'+expense_type+'_rate_div').removeClass('d-none');
-            $('#'+expense_type+'_rate').val(divided.toFixed(4));
+            $('#'+expense_type+'_rate').val(divided.toFixed(2));
             $('#ratio').html('(минус '+ratio+')');
         }
         else {
@@ -612,8 +627,8 @@
         price = $('#'+expense_type+'_price_1pc').val();
         rate = $('#'+expense_type+'_rate').val();
 
-        $('#'+expense_type+'_total_price_in_rub').val((quantity*price*rate).toFixed());
-        $('#'+expense_type+'_price_in_currency').val((quantity*price).toFixed());
+        $('#'+expense_type+'_total_price_in_rub').val((quantity*price*rate).toFixed(2));
+        $('#'+expense_type+'_price_in_currency').val((quantity*price).toFixed(2));
 
         costs = 0;
 
@@ -698,7 +713,7 @@
 
         if (selected.val() !== 'RUB'){
             $('#'+expense_type+'_rate_div').removeClass('d-none');
-            $('#'+expense_type+'_rate').val(divided.toFixed(4));
+            $('#'+expense_type+'_rate').val(divided.toFixed(2));
             $('#ratio').html('({{ __('general.minus') }} '+ratio+')');
         }
         else {
@@ -714,7 +729,7 @@
         price = $('#'+expense_type+'_price_in_currency_cp').val();
         rate = $('#'+expense_type+'_rate').val();
 
-        $('#'+expense_type+'_total_price_in_rub').val((price*rate).toFixed());
+        $('#'+expense_type+'_total_price_in_rub').val((price*rate).toFixed(2));
 
     });
 
@@ -744,7 +759,7 @@
         price = $('#invoice_amount_in_currency').val();
         rate = $('#invoice_rate').val();
 
-        $('#invoice_total_price_in_rub').val((price*rate).toFixed());
+        $('#invoice_total_price_in_rub').val((price*rate).toFixed(2));
 
     });
 
@@ -752,7 +767,7 @@
         price = $('#this_invoice_payment_in_currency').val();
         rate = $('#invoice_rate').val();
 
-        $('#this_invoice_payment_in_rubles').val((price*rate).toFixed());
+        $('#this_invoice_payment_in_rubles').val((price*rate).toFixed(2));
 
     });
 
@@ -762,7 +777,7 @@
         price = $('#edit_invoice_amount_out_date').val();
         rate = $('#rate_out_date').val();
 
-        $('#edit_invoice_amount_out_date_in_rubles').val((price*rate).toFixed());
+        $('#edit_invoice_amount_out_date_in_rubles').val((price*rate).toFixed(2));
 
     });
 
@@ -770,7 +785,7 @@
         price = $('#edit_invoice_amount_actual').val();
         rate = $('#rate_income_date').val();
 
-        $('#edit_invoice_amount_actual_in_rubles').val((price*rate).toFixed());
+        $('#edit_invoice_amount_actual_in_rubles').val((price*rate).toFixed(2));
 
     });
 
@@ -778,7 +793,7 @@
         price = $('#edit_invoice_amount_income_date').val();
         rate = $('#rate_income_date').val();
 
-        $('#edit_invoice_amount_income_date_in_rubles').val((price*rate).toFixed());
+        $('#edit_invoice_amount_income_date_in_rubles').val((price*rate).toFixed(2));
 
     });
 
@@ -809,7 +824,7 @@
     $(document).ready(function(){
         $(".digits_only").inputmask('9{1,}');
 
-        $(".date_input").inputmask('9999-99-99');
+        $(".date_input").inputmask('99.99.9999');
 
         $('.project-name').inputmask({regex: "([A-Za-zА-Яа-я0-9_-\\s]+)"});
 
@@ -912,9 +927,11 @@
                 if(data.div_id !== 'undefined'){
                     $('#'+data.div_id).html(data.ajax);
                     jQuery('.task_deadline').datetimepicker({
-                        format:'Y-m-d H:i',
+                        format:'d.m.Y H:i',
                         lang: '{{ auth()->user()->language }}',
-                        minDate:0
+                        minDate:0,
+                        scrollMonth : false,
+                        scrollInput : false
                     });
                 }
                 else{
@@ -1052,9 +1069,11 @@
         setTimeout(function(){
             jQuery.datetimepicker.setLocale('{{ auth()->user()->language }}');
             jQuery('.task_deadline').datetimepicker({
-                format: 'Y-m-d H:i',
+                format: 'd.m.Y H:i',
                 lang: '{{ auth()->user()->language }}',
-                minDate: 0
+                minDate: 0,
+                scrollMonth : false,
+                scrollInput : false
             });
             console.log('datetimepicker');
         }, 1000);
@@ -1108,9 +1127,11 @@
                 if(data.div_id !== 'undefined'){
                     $('#'+data.div_id).html(data.ajax);
                     jQuery('.work_request_deadline').datetimepicker({
-                        format:'Y-m-d H:i',
+                        format:'d.m.Y H:i',
                         lang: '{{ auth()->user()->language }}',
-                        minDate:0
+                        minDate:0,
+                        scrollMonth : false,
+                        scrollInput : false
                     });
                 }
                 else{
@@ -1213,9 +1234,11 @@
         setTimeout(function(){
             jQuery.datetimepicker.setLocale('{{ auth()->user()->language }}');
             jQuery('.work_request_deadline').datetimepicker({
-                format:'Y-m-d H:i',
+                format:'d.m.Y H:i',
                 lang:'{{ auth()->user()->language }}',
-                minDate:0
+                minDate:0,
+                scrollMonth : false,
+                scrollInput : false
             });
             console.log('datetimepicker');
         }, 1000);
@@ -1277,7 +1300,7 @@
     ///////создать инвойс
 
     $('#create_invoice_modal').on('show.bs.modal', function (event) {
-        $(".date_input").inputmask('9999-99-99');
+        $(".date_input").inputmask('99.99.9999');
         $('#view_invoice').modal('hide');
         var button = $(event.relatedTarget);
         var id = button.data('invoice-id');
@@ -1301,7 +1324,7 @@
     /////черновик инвойса
 
     $('#create_draft_invoice_modal').on('show.bs.modal', function (event) {
-        $(".date_input").inputmask('9999-99-99');
+        $(".date_input").inputmask('99.99.9999');
         $('#view_invoice').modal('hide');
         var button = $(event.relatedTarget);
         var id = button.data('invoice-id');
@@ -1328,7 +1351,7 @@
     /////редактировать черновик инвойса
 
     $('#edit_draft_invoice_modal').on('show.bs.modal', function (event) {
-        $(".date_input").inputmask('9999-99-99');
+        $(".date_input").inputmask('99.99.9999');
         $('#view_invoice').modal('hide');
         var button = $(event.relatedTarget);
         var id = button.data('invoice-id');
@@ -1369,8 +1392,8 @@
         var end = moment();
 
         function cb(start, end) {
-            $('#reportrange span').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
-            $('#datarange').val(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+            $('#reportrange span').html(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
+            $('#datarange').val(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
         }
 
         $('#reportrange').daterangepicker({
@@ -1385,7 +1408,7 @@
                 '{{ __('general.last_month') }}': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
             "locale": {
-                "format": "YYYY-MM-DD",
+                "format": "DD.MM.YYYY",
                 "separator": " - ",
                 "applyLabel": "{{ __('general.apply') }}",
                 "cancelLabel": "{{ __('general.cancel') }}",
@@ -1424,9 +1447,11 @@
         ///дедлайн для задач
         jQuery.datetimepicker.setLocale('{{ auth()->user()->language }}');
         jQuery('.task_deadline').datetimepicker({
-            format:'Y-m-d H:i',
+            format:'d.m.Y H:i',
             lang:'{{ auth()->user()->language }}',
-            minDate:0
+            minDate:0,
+            scrollMonth : false,
+            scrollInput : false
         });
         /////
 
@@ -1457,7 +1482,7 @@
         price = $('#sell_currency_amount').val();
         rate = $('#sell_currency_rate_sale_date').val();
 
-        $('#sell_currency_amount_sale_date').val((price*rate).toFixed());
+        $('#sell_currency_amount_sale_date').val((price*rate).toFixed(2));
 
     });
 
@@ -1656,28 +1681,28 @@
         let rate_in_usd = $('#rate_for_client_usd').val();
         let bank_rate = $('#rate_for_client_bank').val();
 
-        $('#rate_for_client_rub').val((rate_in_usd*bank_rate).toFixed());
+        $('#rate_for_client_rub').val((rate_in_usd*bank_rate).toFixed(2));
     }
 
     function fillSNPInRub(){
         let snp_amount_usd = $('#snp_amount_usd').val();
         let snp_bank = $('#snp_bank').val();
 
-        $('#snp_rub').val((snp_amount_usd*snp_bank).toFixed());
+        $('#snp_rub').val((snp_amount_usd*snp_bank).toFixed(2));
     }
 
     function fillRepairInRub(){
         let repair_usd = $('#repair_usd').val();
         let repair_bank = $('#repair_bank').val();
 
-        $('#repair_rub').val((repair_usd*repair_bank).toFixed());
+        $('#repair_rub').val((repair_usd*repair_bank).toFixed(2));
     }
 
     function fillPaidInRub(){
         let paid_usd = $('#paid_usd').val();
         let paid_bank = $('#paid_bank').val();
 
-        $('#paid_rub').val((paid_usd*paid_bank).toFixed());
+        $('#paid_rub').val((paid_usd*paid_bank).toFixed(2));
     }
 
     $(document).ready(function() {
@@ -1774,20 +1799,20 @@
             $('#client_select').prop('required', true);
             $('#supplier_group').addClass('d-none');
             $('#application_supplier_select').prop('required', false);
-            $('#application_supplier_select').val('');
-            $('#application_supplier_select').trigger('change');
-            $('#application_type').val('Клиент');
-            $('#application_type').trigger('change');
+            // $('#application_supplier_select').val('');
+            // $('#application_supplier_select').trigger('change');
+            // $('#application_type').val('Клиент');
+            // $('#application_type').trigger('change');
         }
         if ($(this).val() === 'Поставщик') {
             $('#supplier_group').removeClass('d-none');
             $('#supplier_select').prop('required', true);
             $('#client_group').addClass('d-none');
             $('#application_client_select').prop('required', false);
-            $('#application_client_select').val('');
-            $('#application_client_select').trigger('change');
-            $('#application_type').val('Поставщик');
-            $('#application_type').trigger('change');
+            // $('#application_client_select').val('');
+            // $('#application_client_select').trigger('change');
+            // $('#application_type').val('Поставщик');
+            // $('#application_type').trigger('change');
         }
     });
 
@@ -2029,8 +2054,10 @@
 
         $('.date_input').datetimepicker({
             timepicker: false,
-            format:'Y-m-d',
+            format:'d.m.Y',
             lang: '{{ auth()->user()->language }}',
+            scrollMonth : false,
+            scrollInput : false
         });
         $(".rate_input").inputmask(
             "decimal", {
@@ -2205,6 +2232,41 @@
         $('.select2').select2({
             "language": "ru",
         });
+    });
+
+    $(document).on('change', '#application_type', function () {
+        if($(this).val() === 'Подсыл'){
+            $('#send_to_div').removeClass('d-none');
+            $('#send_to_country').prop('required', true);
+            $('#send_to_city').prop('required', true);
+            $('#place_of_delivery_div').addClass('d-none');
+            $('#place_of_delivery_country').prop('required', false);
+            $('#place_of_delivery_city').prop('required', false);
+        }
+        if($(this).val() === 'Клиент'){
+            $('#send_to_div').addClass('d-none');
+            $('#send_to_country').prop('required', false);
+            $('#send_to_city').prop('required', false);
+            $('#place_of_delivery_div').removeClass('d-none');
+            $('#place_of_delivery_country').prop('required', true);
+            $('#place_of_delivery_city').prop('required', true);
+        }
+        if($(this).val() === 'Поставщик'){
+            $('#send_to_div').removeClass('d-none');
+            $('#place_of_delivery_div').removeClass('d-none');
+            $('#send_to_country').prop('required', true);
+            $('#send_to_city').prop('required', true);
+            $('#place_of_delivery_country').prop('required', true);
+            $('#place_of_delivery_city').prop('required', true);
+        }
+        if($(this).val() === 'Покупка'){
+            $('#application_direction').val('Поставщик');
+            $('#application_direction').trigger('change');
+        }
+        if($(this).val() === 'Продажа'){
+            $('#application_direction').val('Клиент');
+            $('#application_direction').trigger('change');
+        }
     });
 
 </script>

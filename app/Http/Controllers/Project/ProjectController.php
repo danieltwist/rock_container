@@ -287,6 +287,18 @@ class ProjectController extends Controller
             $group->containers_list = $containers_list;
 
         }
+        $access_to_project = [];
+
+        if(!is_null($project->access_to_project)){
+            foreach($project->access_to_project as $user_id){
+                $access_to_project [] = User::withTrashed()->find($user_id)->name;
+            }
+            $access_to_project = implode(', ', $access_to_project);
+        }
+        else {
+            $access_to_project = 'Не выбраны';
+        }
+
 
         return view('project.show',[
             'project' => $project,
@@ -304,7 +316,8 @@ class ProjectController extends Controller
             'comments' => $project->comments,
             'rates' => $currency_rates,
             'users' => User::all(),
-            'expense_types' => ExpenseType::all()
+            'expense_types' => ExpenseType::all(),
+            'access_to_project' => $access_to_project
         ]);
     }
 
@@ -554,7 +567,7 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        ProjectExpense::where('project_id', $project->id)->delete();
+        //ProjectExpense::where('project_id', $project->id)->delete();
 
         $project->delete();
 
@@ -1040,7 +1053,7 @@ class ProjectController extends Controller
 
         $project = Project::find($id);
 
-        ProjectExpense::where('project_id', $project->id)->delete();
+        //ProjectExpense::where('project_id', $project->id)->delete();
         $project->delete();
 
         return response()->json([
@@ -1092,6 +1105,19 @@ class ProjectController extends Controller
         }
 
         return redirect()->back()->withSuccess(__('project.remove_from_stat_successfully'));
+    }
+
+    public function restoreRow($id){
+
+        $project = Project::withTrashed()->findOrFail($id);
+        $project_name = $project->name;
+        $project->restore();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('Проект ' .$project_name. ' был успешно восстановлен')
+        ]);
     }
 
 }

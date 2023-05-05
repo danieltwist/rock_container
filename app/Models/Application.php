@@ -6,10 +6,23 @@ use App\Filters\QueryFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
-class Application extends Model
+class Application extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes;
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if(in_array(Auth::user()->getRoleNames()[0], ['super-admin','director']))
+            return $this->withTrashed()->where($field ?? $this->getRouteKeyName(), $value)->first();
+        else
+            return $this->where($field ?? $this->getRouteKeyName(), $value)->first();
+    }
 
     protected $casts = [
         'send_from_city' => 'array',
@@ -21,6 +34,8 @@ class Application extends Model
         'place_of_delivery_city' => 'array',
         'invoices_generate' => 'array'
     ];
+
+    protected $dates = ['finished_at'];
 
     protected $guarded = [];
 

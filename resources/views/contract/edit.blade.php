@@ -47,12 +47,12 @@
                         <div class="form-group">
                             <label>{{ __('contract.date_of_sign') }}</label>
                             <input type="text" class="form-control date_input" name="date_start"
-                                   placeholder="{{ __('contract.date_of_sign') }}" value="{{ $contract->date_start }}">
+                                   placeholder="{{ __('contract.date_of_sign') }}" value="{{ $contract->date_start->format('d.m.Y') }}" required>
                         </div>
                         <div class="form-group">
                             <label>{{ __('contract.valid_before') }}</label>
                             <input type="text" class="form-control date_input" name="date_period"
-                                   placeholder="{{ __('contract.valid_before') }}" value="{{ $contract->date_period }}">
+                                   placeholder="{{ __('contract.valid_before') }}" value="{{ $contract->date_period->format('d.m.Y') }}" required>
                         </div>
                         <div class="form-group">
                             <label>{{ __('contract.contract_type') }}</label>

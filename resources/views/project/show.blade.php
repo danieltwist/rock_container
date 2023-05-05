@@ -20,7 +20,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header {{ is_null($project->deleted_at) ?: 'bg-danger' }}">
                             <h3 class="card-title">{{ __('project.information') }}</h3>
                             @can ('edit projects paid status')
                                 <div class="card-tools">
@@ -40,11 +40,19 @@
                                                 </option>
                                             </select>
                                             <span class="input-group-append">
-                                        <button type="submit" class="btn btn-info btn-flat"
-                                                data-action='{"do_nothing":{"value": "true"}}'>{{ __('general.save') }}</button>
-                                    </span>
+                                                <button type="submit" class="btn btn-info btn-flat"
+                                                    data-action='{"do_nothing":{"value": "true"}}'>{{ __('general.save') }}</button>
+                                                <button type="button" data-toggle="modal" data-target="#view_component_history"
+                                                        class="btn btn-default btn-sm float-right"
+                                                        data-component="project"
+                                                        data-id="{{ $project->id }}">
+                                                    <i class="fas fa-history"></i>
+                                                    История
+                                                </button>
+                                            </span>
                                         </div>
                                     </form>
+
                                 </div>
                             @endcan
                         </div>
@@ -153,13 +161,7 @@
                                             <b class="d-block">{{ $project->user->name }} /
                                                 {{ $project->manager_id!='' ? optional($project->manager)->name : 'Не выбран' }}
                                                 /
-                                                @if(!is_null($project->access_to_project))
-                                                    @foreach($project->access_to_project as $user_id)
-                                                        {{ optional(\App\Models\User::where('id', $user_id)->first())->name }}
-                                                    @endforeach
-                                                @else
-                                                    Не выбраны
-                                                @endif
+                                                {{ $access_to_project }}
                                             </b>
                                         </p>
                                         <p class="text-sm">{{ __('project.current_stage') }}
@@ -179,7 +181,7 @@
                                             <b class="d-block">{{ !is_null($project->prepayment) ? $project->prepayment : __('general.not_set') }}</b>
                                         </p>
                                         <p class="text-sm">{{ __('project.planned_payment_date') }}
-                                            <b class="d-block">{{ !is_null($project->planned_payment_date) ? $project->planned_payment_date : __('general.not_set') }}</b>
+                                            <b class="d-block">{{ !is_null($project->planned_payment_date) ? $project->planned_payment_date->format('d.m.Y') : __('general.not_set') }}</b>
                                         </p>
                                         <p class="text-sm">{{ __('project.planned_income_in_rub') }}
                                             <b class="d-block">{{ !is_null($project->expense) ? number_format($project->expense->price_in_rub, 0, '.', ' ').'р.' : __('general.not_set') }}</b>
@@ -314,20 +316,20 @@
                                     @if (canWorkWithProject($project->id))
                                         <a href="#" class="xedit" data-pk="{{$project->id}}" data-name="created_at"
                                            data-model="Project">
-                                            {{ $project->created_at }}
+                                            {{ $project->created_at->format('d.m.Y H:i:s')}}
                                         </a>
                                     @else
-                                        {{ $project->created_at }}
+                                        {{ $project->created_at->format('d.m.Y H:i:s') }}
                                     @endif
                                     @if(!is_null($project->finished_at))
                                         <br>{{ __('project.finish_date') }}:
                                         @if (canWorkWithProject($project->id))
                                             <a href="#" class="xedit" data-pk="{{$project->id}}" data-name="finished_at"
                                                data-model="Project">
-                                                {{ $project->finished_at }}
+                                                {{ $project->finished_at->format('d.m.Y H:i:s') }}
                                             </a>
                                         @else
-                                            {{ $project->finished_at }}
+                                            {{ $project->finished_at->format('d.m.Y H:i:s') }}
                                         @endif
                                     @endif
                                     @if(!is_null($project->paid_at))
@@ -335,10 +337,10 @@
                                         @if (canWorkWithProject($project->id))
                                             <a href="#" class="xedit" data-pk="{{$project->id}}" data-name="paid_at"
                                                data-model="Project">
-                                                {{ $project->paid_at }}
+                                                {{ $project->paid_at->format('d.m.Y H:i:s') }}
                                             </a>
                                         @else
-                                            {{ $project->paid_at }}
+                                            {{ $project->paid_at->format('d.m.Y H:i:s') }}
                                         @endif
                                     @endif
                                 </div>
@@ -629,243 +631,9 @@
                     @if (canWorkWithProject($project->id))
                         @can ('work with projects')
                             <div class="row">
-                                <div class="col-md-8">
-                                    @livewire('upload-application')
-                                </div>
-                                <div class="col-md-4" id="upload_files_project">
+                                <div class="col-md-12" id="upload_files_project">
                                     <input type="hidden" id="upload_files_project_id" value="{{ $project->id }}">
                                     @livewire('upload-files')
-                                </div>
-                            </div>
-                        @endcan
-                    @endif
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">{{ __('project.applications_from_clients') }}</h3>
-                        </div>
-                        <div class="card-body" id="project_applications">
-                            @include('project.ajax.project_applications')
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <!-- Default box -->
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">{{ __('project.project_containers') }}</h3>
-                                    @if ($container_groups->isNotEmpty())
-                                        <div class="card-tools">
-                                            <form action="{{ route('containers_download') }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="filter" value="project">
-                                                <input type="hidden" name="project_id" value="{{ $project->id }}">
-                                                <button type="submit" class="btn btn-block btn-success btn-xs download_file_directly"
-                                                        data-action='{"download_file":{"need_download": "true"}}'>
-                                                    <i class="fas fa-file-excel"></i>
-                                                    {{ __('project.export_unreturned_containers_to_excel') }}
-                                                </button>
-                                            </form>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="card-body">
-                                    @if ($container_groups->isEmpty())
-                                        {{ __('project.create_containers_list') }}
-                                    @else
-                                        @foreach($container_groups as $group)
-                                            <div class="mt-3">
-                                                <b>{{$group->name}}:</b><br>
-                                                <div id="project_containers_group_table_{{$group->id}}"
-                                                     class="container_groups_project"
-                                                     data-type="group"
-                                                     data-group_id="{{ $group->id }}">
-                                                    @include('project.layouts.containers_table', ['filter' => 'container_group'])
-                                                </div>
-                                                <button class="btn btn-primary mt-4" type="button"
-                                                        data-toggle="collapse"
-                                                        data-target="#group_locations_{{$group->id}}"
-                                                        aria-expanded="false"
-                                                        aria-controls="collapse_locations_{{$group->id}}">
-                                                    {{ __('project.container_locations_list') }}
-                                                    @if ($group->container_group_locations_list->isNotEmpty())
-                                                        - {{ $group->container_group_locations_list->count() }}
-                                                    @endif
-                                                </button>
-                                                <div class="collapse" id="group_locations_{{$group->id}}">
-                                                    <div class="card card-body"
-                                                         id="project_group_locations_{{$group->id}}">
-                                                        @if ($group->container_group_locations_list->isEmpty())
-                                                            {{ __('project.container_locations_list_is_empty') }}
-                                                        @else
-                                                            @foreach($group->container_group_locations_list as $location)
-                                                                {{ $location->date }}: {{ $location->country }}, {{ $location->city }}
-                                                                @if($location->additional_info != '')
-                                                                    - {{ $location->additional_info}}
-                                                                @endif
-                                                                <br>
-                                                            @endforeach
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    @endif
-                                </div>
-                                <div class="card-footer">
-                                    @if (canWorkWithProject($project->id))
-                                        @can ('work with projects')
-                                            @if ($container_groups->isEmpty())
-                                                <a class="btn btn-primary float-right"
-                                                   href="{{ route('project.container_group.create',$project->id) }}">
-                                                    {{ __('project.create_list') }}
-                                                </a>
-                                            @else
-                                                <a class="btn btn-primary float-right"
-                                                   href="{{ route('project.container_group.create',$project->id) }}">
-                                                    {{ __('project.edit_list') }}
-                                                </a>
-                                            @endif
-                                        @endcan
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @if (canWorkWithProject($project->id))
-                        @can ('work with projects')
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <form action="{{ route('container_group_location.store') }}" method="POST">
-                                        @csrf
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">{{ __('project.add_location') }}</h3>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="form-group">
-                                                    <label for="container_group_id">{{ __('project.select_group') }}</label>
-                                                    <select class="form-control select2" name="container_group_id"
-                                                            data-placeholder="{{ __('project.select_containers_group') }}"
-                                                            style="width: 100%;"
-                                                            required>
-                                                        <option></option>
-                                                        @foreach($container_groups as $group)
-                                                            <option value="{{ $group->id }}">{{$group->name}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="country">{{ __('general.country') }}</label>
-                                                    <input class="form-control to_uppercase" type="text" name="country"
-                                                           placeholder="{{ __('general.country') }}" value="Россия" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="city">{{ __('general.city') }}</label>
-                                                    <input class="form-control to_uppercase" type="text" name="city"
-                                                           placeholder="{{ __('general.city') }}"
-                                                           required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>{{ __('general.additional_info') }}</label>
-                                                    <textarea class="form-control" rows="3" name="additional_info"
-                                                              placeholder="{{ __('general.additional_info') }}"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="card-footer">
-                                                <button type="submit" class="btn btn-primary float-right"
-                                                        data-action='{"update_div_container_group_locations":{"div_id":"project_group_locations_"},"reset_form":{"need_reset": "true"},"update_table":{"table_id":"containers_group_"}}'>
-                                                    {{ __('general.add') }}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="col-md-4">
-                                    <form class="inline-block"
-                                          action="{{ route('container_group_actions') }}"
-                                          method="POST">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h3 class="card-title">{{ __('project.actions_with_container') }}</h3>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="form-group">
-                                                    <label for="container_group_id">{{ __('project.select_group') }}</label>
-                                                    <select class="form-control select2" name="container_group_id"
-                                                            data-placeholder="{{ __('project.select_containers_group') }}"
-                                                            style="width: 100%;"
-                                                            required>
-                                                        <option></option>
-                                                        @foreach($container_groups as $group)
-                                                            <option
-                                                                value="{{ $group->id }}" {{ $group->return_date == '' ? '' : 'disabled="disabled"'}}>{{$group->name}}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="id">{{ __('project.select_action') }}</label>
-                                                    <select class="form-control select2" name="action"
-                                                            data-placeholder="{{ __('project.select_action') }}"
-                                                            style="width: 100%;"
-                                                            required>
-                                                        <option></option>
-                                                        <option value="start_usage_date">
-                                                            {{ __('project.set_start_date_for_client') }}
-                                                        </option>
-                                                        <option value="border_date">
-                                                            {{ __('project.set_border_date') }}
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="card-footer">
-                                                <button type="submit" class="btn btn-primary float-right"
-                                                        data-action='{"reset_form":{"need_reset": "true"},"update_div_container_group_table":{"div_id":"project_containers_group_table_"}}'>
-                                                    {{ __('general.execute') }}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <form action="{{ route('project.update', $project->id) }}" method="post"
-                                          enctype="multipart/form-data">
-                                        @csrf
-                                        @method('PUT')
-                                    <div class="card">
-                                        <div class="card-header">
-                                            <h3 class="card-title">{{ __('project.upload_lading_photos') }}</h3>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="p-0">
-                                                <input type="hidden" name="action" value="upload_lading_photos">
-                                                <div class="form-group">
-                                                    <label>{{ __('project.choose_container') }}</label>
-                                                    <select class="form-control select2" name="container_number"
-                                                            data-placeholder="{{ __('project.choose_container') }}" style="width: 100%;"
-                                                            required>
-                                                        <option></option>
-                                                        @foreach($project->containers as $container)
-                                                            <option value="{{ $container->name }}">
-                                                                {{$container->name}}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                <input name="photos[]" type="file" class="file" multiple>
-                                            </div>
-                                        </div>
-                                        <div class="card-footer">
-                                            <button type="submit" class="btn btn-primary float-right"
-                                                    data-action='{"update_div":{"div_id":"project_files"},"reset_form":{"need_reset": "true"}}'>
-                                                {{ __('project.upload_photo') }}
-                                            </button>
-                                        </div>
-                                    </div>
-                                    </form>
                                 </div>
                             </div>
                         @endcan
@@ -877,5 +645,6 @@
         @include('project.modals.confirm_invoice')
         @include('project.modals.make_invoice_model')
         @include('project.modals.add_file')
+        @include('audit.component_history_modal')
     </section>
 @endsection

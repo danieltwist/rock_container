@@ -86,4 +86,12 @@ return [
     'country_added_successfully' => 'Страна успешно добавлена в список',
     'country_removed_successfully' => 'Страна успешно удалена из списка',
     'currency_rates_updated_successfully' => 'Курсы валют были успешно обновлены',
+
+    'country_cn_name' => 'Название страны на китайском',
+    'agree_invoices' => 'Согласование счетов',
+    'agree_invoice_users_count' => 'Количество согласовывающих счета',
+    'choose_users' => 'Выберите пользователей',
+    'agree_settings_successfully_saved' => 'Настройки согласования были успешно сохранены',
+    'users_not_match' => 'Количество пользователей не соответствует выбранному значению'
+
 ];

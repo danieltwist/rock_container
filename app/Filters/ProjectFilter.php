@@ -2,6 +2,7 @@
 
 namespace App\Filters;
 
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class ProjectFilter extends QueryFilter
@@ -69,6 +70,12 @@ class ProjectFilter extends QueryFilter
         elseif($value == 'my_projects'){
             $user = auth()->user();
             return $this->builder->where('user_id', $user->id)->orWhere('manager_id', $user->id)->orWhere('logist_id', $user->id);
+        }
+
+        elseif($value == 'trash'){
+            if(in_array(Auth::user()->getRoleNames()[0], ['super-admin','director'])){
+                return $this->builder->onlyTrashed();
+            }
         }
 
         else return null;

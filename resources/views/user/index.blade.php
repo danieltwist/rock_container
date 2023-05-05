@@ -60,7 +60,7 @@
                                     <small>{{ $user->folder_on_yandex_disk }}</small>
                                 </td>
                                 <td>
-                                    {{ $user->created_at }}
+                                    {{ $user->created_at->format('d.m.Y') }}
                                 </td>
                                 <td>
                                     <a class="cursor-pointer" data-toggle="collapse" data-target="#collapsePermissions{{$user->id}}" aria-expanded="false" aria-controls="collapseExample">

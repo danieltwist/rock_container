@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Invoice;
 
 use App\Events\NotificationReceived;
+use App\Events\TelegramNotify;
 use App\Filters\InvoiceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\FinanceTrait;
@@ -12,6 +13,7 @@ use App\Models\CurrencyRate;
 use App\Models\ExpenseType;
 use App\Models\Invoice;
 use App\Models\Notification;
+use App\Models\Setting;
 use App\Models\Supplier;
 use App\Models\User;
 use Carbon\Carbon;
@@ -162,9 +164,8 @@ class InvoiceController extends Controller
 
     }
 
-    public function show($id)
+    public function show(Invoice $invoice)
     {
-        $invoice = Invoice::findOrFail($id);
 
         $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
@@ -184,7 +185,8 @@ class InvoiceController extends Controller
             'rates' => $currency_rates,
             'client_decision' => $client_decision,
             'client_payment_deadline' => $client_payment_deadline,
-            'income_invoice_id' => $income_invoice_id
+            'income_invoice_id' => $income_invoice_id,
+            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
         ]);
     }
 
@@ -395,6 +397,8 @@ class InvoiceController extends Controller
 
             $this->updateProjectFinance($invoice->project_id);
 
+            $this->notifyInvoicePaid($invoice);
+
             return response()->json([
                 'bg-class' => 'bg-success',
                 'from' => 'Система',
@@ -432,6 +436,7 @@ class InvoiceController extends Controller
 
             $this->updateProjectFinance($invoice->project_id);
 
+            $this->notifyInvoicePaid($invoice);
 
             return response()->json([
                 'bg-class' => 'bg-success',
@@ -508,7 +513,7 @@ class InvoiceController extends Controller
     public function get_invoice_by_id($id)
     {
 
-        $invoice = Invoice::find($id);
+        $invoice = Invoice::withTrashed()->find($id);
         $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
         $client_decision = '';
@@ -521,13 +526,14 @@ class InvoiceController extends Controller
             $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
         }
 
-        return view('project.layouts.'.config('app.prefix_view').'show_invoice_view', [
+        return view('project.layouts.show_invoice_view', [
             'invoice' => $invoice,
             'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
             'rates' => $currency_rates,
             'client_decision' => $client_decision,
             'client_payment_deadline' => $client_payment_deadline,
-            'income_invoice_id' => $income_invoice_id
+            'income_invoice_id' => $income_invoice_id,
+            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
         ]);
 
     }
@@ -535,7 +541,7 @@ class InvoiceController extends Controller
     public function edit_invoice_by_id($id)
     {
 
-        $invoice = Invoice::find($id);
+        $invoice = Invoice::withTrashed()->find($id);
         $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
         if ($invoice->client_id != '') {
@@ -1116,6 +1122,48 @@ class InvoiceController extends Controller
             }
 
 
+        }
+
+    }
+
+    public function notifyInvoicePaid(Invoice $invoice){
+
+        $notify_group = User::whereHas('roles', function ($query) {
+            $query->where('name', 'director');
+        })->get()->pluck('id');
+
+        is_null($invoice->user_id) ?: $notify_group [] = $invoice->user_id;
+
+        foreach ($notify_group as $user_id){
+            $notification = [
+                'from' => 'Система',
+                'to' => $user_id,
+                'text' => 'Счет №'.$invoice->id.' был оплачен',
+                'link' => 'invoice/'.$invoice->id,
+                'class' => 'bg-success'
+            ];
+
+            $notification['inline_keyboard'] = [
+                'inline_keyboard' => [
+                    [
+                        ['text' => 'Открыть', 'url' => config('app.url').$notification['link']],
+                    ],
+                ]
+            ];
+
+            $notification['action'] = 'notification';
+            $notification_channel = getNotificationChannel($user_id);
+
+            if($notification_channel == 'Система'){
+                event(new NotificationReceived($notification));
+            }
+            elseif($notification_channel == 'Telegram'){
+                event(new TelegramNotify($notification));
+            }
+            else {
+                event(new NotificationReceived($notification));
+                event(new TelegramNotify($notification));
+            }
         }
 
     }

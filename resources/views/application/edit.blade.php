@@ -80,7 +80,7 @@
                                                     @foreach($contracts as $contract)
                                                         <option value="{{ $contract->id }}"
                                                             {{ $contract->id != $application->contract_id ?: 'selected' }}>
-                                                            {{$contract->name}} от {{ $contract->date_start }}, действует до {{ $contract->date_period }}
+                                                            {{$contract->name}} от {{ $contract->date_start->format('d.m.Y') }}, действует до {{ $contract->date_period->format('d.m.Y') }}
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -90,7 +90,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="name">Название заявки</label>
                                             <input type="text" class="form-control" name="name"
@@ -99,7 +99,16 @@
                                                    required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="created_at">Дата заявки</label>
+                                            <input type="text" class="form-control date_input" name="created_at"
+                                                   placeholder="Дата заявки"
+                                                   value="{{ $application->created_at->format('d.m.Y') }}"
+                                                   required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="application_type">Тип заявки</label>
                                             <select class="form-control select2" name="type" id="application_type" required
@@ -212,122 +221,125 @@
 
                                     </div>
                                 </div>
-                                <strong>Маршрут предоставления - Куда</strong>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="send_to_country">Страна</label>
-                                            <select class="form-control select2"
-                                                    name="send_to_country"
-                                                    id="send_to_country"
-                                                    data-type="send_to"
-                                                    required
-                                                    data-placeholder="Выберите страну" style="width: 100%;" >
-                                                <option></option>
-                                                @foreach($countries as $country)
-                                                    <option value="{{ $country->name }}"
-                                                        {{ $country->name != $application->send_to_country ?: 'selected' }}>
-                                                        {{ $country->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8" id="send_to_country_div">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="send_to_city">Город / Станция</label>
-                                                    <select class="form-control select2"
-                                                            name="send_to_city[]"
-                                                            id="send_to_city"
-                                                            required
-                                                            multiple
-                                                            data-placeholder="Выберите города" style="width: 100%;" >
-                                                        <option></option>
-                                                        @if(!is_null($cities_to[0]))
-                                                            @foreach($cities_to[0] as $city)
-                                                                <option value="{{ $city }}"
-                                                                    {{ !in_array($city, $application->send_to_city) ?: 'selected' }}>
-                                                                    {{ $city }}
-                                                                </option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
-                                                </div>
+                                <div id="send_to_div" {{ $application->type == 'Клиент' ? 'class=d-none' : '' }}>
+                                    <strong>Маршрут предоставления - Куда</strong>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="send_to_country">Страна</label>
+                                                <select class="form-control select2"
+                                                        name="send_to_country"
+                                                        id="send_to_country"
+                                                        data-type="send_to"
+                                                        data-placeholder="Выберите страну" style="width: 100%;" >
+                                                    <option></option>
+                                                    @foreach($countries as $country)
+                                                        <option value="{{ $country->name }}"
+                                                            {{ $country->name != $application->send_to_country ?: 'selected' }}>
+                                                            {{ $country->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Добавить в список</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control to_uppercase" id="send_to_city_add_city" placeholder="Добавить в список" aria-label="Добавить в список">
-                                                        <div class="input-group-append">
-                                                            <button class="btn btn-outline-secondary add_city_to_country" data-country_type="send_to" type="button">Добавить</button>
+                                        </div>
+
+                                        <div class="col-md-8" id="send_to_country_div">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="send_to_city">Город / Станция</label>
+                                                        <select class="form-control select2"
+                                                                name="send_to_city[]"
+                                                                id="send_to_city"
+                                                                multiple
+                                                                data-placeholder="Выберите города" style="width: 100%;" >
+                                                            <option></option>
+                                                            @if($cities_to->isNotEmpty())
+                                                                @if(!is_null($cities_to[0]))
+                                                                    @foreach($cities_to[0] as $city)
+                                                                        <option value="{{ $city }}"
+                                                                            {{ !in_array($city, $application->send_to_city) ?: 'selected' }}>
+                                                                            {{ $city }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            @endif
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Добавить в список</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control to_uppercase" id="send_to_city_add_city" placeholder="Добавить в список" aria-label="Добавить в список">
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-secondary add_city_to_country" data-country_type="send_to" type="button">Добавить</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
-                                <strong>Маршрут предоставления - Депо сдачи</strong>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="place_of_delivery_country">Страна</label>
-                                            <select class="form-control select2"
-                                                    name="place_of_delivery_country"
-                                                    id="place_of_delivery_country"
-                                                    data-type="place_of_delivery"
-                                                    required
-                                                    data-placeholder="Выберите страну" style="width: 100%;" >
-                                                <option></option>
-                                                @foreach($countries as $country)
-                                                    <option value="{{ $country->name }}"
-                                                        {{ $country->name != $application->place_of_delivery_country ?: 'selected' }}>
-                                                        {{ $country->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-8" id="place_of_delivery_country_div">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label for="place_of_delivery_city">Город / Станция</label>
-                                                    <select class="form-control select2"
-                                                            name="place_of_delivery_city[]"
-                                                            id="place_of_delivery_city"
-                                                            required
-                                                            multiple
-                                                            data-placeholder="Выберите города" style="width: 100%;" >
-                                                        <option></option>
-                                                        @if(!empty($cities_place_of_delivery[0]))
-                                                            @foreach($cities_place_of_delivery[0] as $city)
-                                                                <option value="{{ $city }}"
-                                                                    {{ !in_array($city, $application->place_of_delivery_city) ?: 'selected' }}>
-                                                                    {{ $city }}
-                                                                </option>
-                                                            @endforeach
-                                                        @endif
-                                                    </select>
-                                                </div>
+                                <div id="place_of_delivery_div" {{ $application->type == 'Подсыл' ? 'class=d-none' : '' }} >
+                                    <strong>Маршрут предоставления - Депо сдачи</strong>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="place_of_delivery_country">Страна</label>
+                                                <select class="form-control select2"
+                                                        name="place_of_delivery_country"
+                                                        id="place_of_delivery_country"
+                                                        data-type="place_of_delivery"
+                                                        data-placeholder="Выберите страну" style="width: 100%;" >
+                                                    <option></option>
+                                                    @foreach($countries as $country)
+                                                        <option value="{{ $country->name }}"
+                                                            {{ $country->name != $application->place_of_delivery_country ?: 'selected' }}>
+                                                            {{ $country->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Добавить в список</label>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control to_uppercase" id="place_of_delivery_city_add_city" placeholder="Добавить в список" aria-label="Добавить в список">
-                                                        <div class="input-group-append">
-                                                            <button class="btn btn-outline-secondary add_city_to_country" data-country_type="place_of_delivery" type="button">Добавить</button>
+                                        </div>
+                                        <div class="col-md-8" id="place_of_delivery_country_div">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label for="place_of_delivery_city">Город / Станция</label>
+                                                        <select class="form-control select2"
+                                                                name="place_of_delivery_city[]"
+                                                                id="place_of_delivery_city"
+                                                                multiple
+                                                                data-placeholder="Выберите города" style="width: 100%;" >
+                                                            <option></option>
+                                                            @if($cities_place_of_delivery->isNotEmpty())
+                                                                @if(!is_null($cities_place_of_delivery[0]))
+                                                                    @foreach($cities_place_of_delivery[0] as $city)
+                                                                        <option value="{{ $city }}"
+                                                                            {{ !in_array($city, $application->place_of_delivery_city) ?: 'selected' }}>
+                                                                            {{ $city }}
+                                                                        </option>
+                                                                    @endforeach
+                                                                @endif
+                                                            @endif
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Добавить в список</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control to_uppercase" id="place_of_delivery_city_add_city" placeholder="Добавить в список" aria-label="Добавить в список">
+                                                            <div class="input-group-append">
+                                                                <button class="btn btn-outline-secondary add_city_to_country" data-country_type="place_of_delivery" type="button">Добавить</button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                                 <div class="row">

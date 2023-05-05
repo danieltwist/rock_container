@@ -21,11 +21,11 @@
             <div class="container-fluid">
                 @include('layouts.info_block')
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header {{ is_null($invoice->deleted_at) ?: 'bg-danger' }}">
                         <h3 class="card-title">{{ __('invoice.invoice_info') }}</h3>
                     </div>
                     <div class="card-body">
-                        @include('project.layouts.'.config('app.prefix_view').'show_invoice_view')
+                        @include('project.layouts.show_invoice_view')
                     </div>
                 </div>
             </div>

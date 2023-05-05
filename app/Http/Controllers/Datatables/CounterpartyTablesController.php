@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Datatables;
 
+use App\Filters\ClientFilter;
+use App\Filters\SupplierFilter;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Supplier;
@@ -9,7 +11,7 @@ use Illuminate\Http\Request;
 
 class CounterpartyTablesController extends Controller
 {
-    public function getClientTable(Request $request){
+    public function getClientTable(ClientFilter $filter, Request $request){
 
         $draw = $request->get('draw');
         $start = $request->get("start");
@@ -25,14 +27,14 @@ class CounterpartyTablesController extends Controller
         $columnSortOrder = $order_arr[0]['dir'];
         $searchValue = $search_arr['value'];
 
-        $totalRecords = Client::query();
+        $totalRecords = Client::filter($filter);
         if($request->country != '') {
             $totalRecords->where('country', $request->country);
         }
         $totalRecords = $totalRecords->count();
 
         if($searchValue != ''){
-            $withFilter = Client::orderBy($columnName, $columnSortOrder)
+            $withFilter = Client::filter($filter)->orderBy($columnName, $columnSortOrder)
                 ->where('clients.id', $searchValue)
                 ->orWhere('clients.name', 'like', '%' . $searchValue . '%')
                 ->orWhere('clients.requisites', 'like', '%' . $searchValue . '%')
@@ -55,13 +57,13 @@ class CounterpartyTablesController extends Controller
             $records = $withFilter->get();
         }
         else {
-            $totalRecordswithFilter = Client::query();
+            $totalRecordswithFilter = Client::filter($filter);
             if($request->country != '') {
                 $totalRecordswithFilter->where('country', $request->country);
             }
             $totalRecordswithFilter = $totalRecordswithFilter->count();
 
-            $records = Client::orderBy($columnName, $columnSortOrder);
+            $records = Client::filter($filter)->orderBy($columnName, $columnSortOrder);
             if($request->country != '') {
                 $records->where('country', $request->country);
             }
@@ -121,7 +123,7 @@ class CounterpartyTablesController extends Controller
         exit;
     }
 
-    public function getSupplierTable(Request $request){
+    public function getSupplierTable(SupplierFilter $filter, Request $request){
 
         $draw = $request->get('draw');
         $start = $request->get("start");
@@ -137,7 +139,7 @@ class CounterpartyTablesController extends Controller
         $columnSortOrder = $order_arr[0]['dir'];
         $searchValue = $search_arr['value'];
 
-        $totalRecords = Supplier::query();
+        $totalRecords = Supplier::filter($filter);
         if($request->country != '') {
             $totalRecords->where('country', $request->country);
         }
@@ -147,7 +149,7 @@ class CounterpartyTablesController extends Controller
         $totalRecords = $totalRecords->count();
 
         if($searchValue != ''){
-            $withFilter = Supplier::orderBy($columnName, $columnSortOrder)
+            $withFilter = Supplier::filter($filter)->orderBy($columnName, $columnSortOrder)
                 ->where('suppliers.id', $searchValue)
                 ->orWhere('suppliers.name', 'like', '%' . $searchValue . '%')
                 ->orWhere('suppliers.requisites', 'like', '%' . $searchValue . '%')
@@ -173,7 +175,7 @@ class CounterpartyTablesController extends Controller
             $records = $withFilter->get();
         }
         else {
-            $totalRecordswithFilter = Supplier::query();
+            $totalRecordswithFilter = Supplier::filter($filter);
             if($request->country != '') {
                 $totalRecordswithFilter->where('country', $request->country);
             }
@@ -182,7 +184,7 @@ class CounterpartyTablesController extends Controller
             }
             $totalRecordswithFilter = $totalRecordswithFilter->count();
 
-            $records = supplier::orderBy($columnName, $columnSortOrder);
+            $records = supplier::filter($filter)->orderBy($columnName, $columnSortOrder);
             if($request->country != '') {
                 $records->where('country', $request->country);
             }

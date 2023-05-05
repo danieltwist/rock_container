@@ -40,8 +40,8 @@
     @endif
 @endif
 @if(in_array($invoice->status, ['Счет на согласовании','Согласована частичная оплата','Счет согласован на оплату']))
-    @if ($invoice->agree_1 != '')
-        {{ __('general.date') }}: {{ unserialize($invoice->agree_1)['date'] }}
+    @if (!is_null($invoice->agreement_date))
+        <small>{{ $invoice->agreement_date->format('d.m.Y H:i:s') }}</small>
     @endif
 @endif
 @if (in_array($invoice->status, ['Оплачен', 'Частично оплачен', 'Не оплачен']))

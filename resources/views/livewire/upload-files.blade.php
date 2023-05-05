@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button type="submit" class="btn btn-primary float-right"
+                    <button type="submit" class="btn btn-primary"
                             data-action='{"update_div":{"div_id":"project_files"},"reset_form":{"need_reset": "true"}}'>{{ __('general.upload') }}</button>
                 </div>
             </form>

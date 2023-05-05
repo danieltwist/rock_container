@@ -6,16 +6,31 @@ use App\Filters\QueryFilter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Project extends Model
+class Project extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes;
 
     protected $casts = [
         'access_to_project' => 'array',
     ];
 
+    protected $dates = ['finished_at', 'paid_at', 'planned_payment_date'];
+
     protected $guarded = [];
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if(in_array(Auth::user()->getRoleNames()[0], ['super-admin','director']))
+            return $this->withTrashed()->where($field ?? $this->getRouteKeyName(), $value)->first();
+        else
+            return $this->where($field ?? $this->getRouteKeyName(), $value)->first();
+    }
 
     public function client(){
         return $this->belongsTo(Client::class);

@@ -1,4 +1,4 @@
-@foreach($files as $key=>$value)
+@forelse($files as $key=>$value)
     <div class="col-md-4 col-sm-6 col-12">
         <div class="card card-outline card-warning collapsed-card">
             <div class="card-header cursor-pointer" data-card-widget="collapse">
@@ -32,4 +32,8 @@
             </div>
         </div>
     </div>
-@endforeach
+@empty
+    <div class="col-md-12">
+        Файлы еще не были загружены
+    </div>
+@endforelse

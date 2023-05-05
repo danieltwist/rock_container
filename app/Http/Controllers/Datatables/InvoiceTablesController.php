@@ -155,7 +155,7 @@ class InvoiceTablesController extends Controller
                 "project_id" => $kontragent,
                 "amount" => $amount,
                 "amount_paid" => $paid,
-                "status" => $status,
+                "agreement_date" => $status,
                 "class" => $class,
                 "created_at" => $actions
             );
@@ -340,7 +340,7 @@ class InvoiceTablesController extends Controller
                 "amount" => $amount,
                 "class" => $class,
                 "amount_paid" => $paid,
-                "status" => $status,
+                "agreement_date" => $status,
                 "created_at" => $actions
             );
         }
@@ -512,7 +512,7 @@ class InvoiceTablesController extends Controller
                 "project_id" => $kontragent,
                 "amount" => $amount,
                 "amount_paid" => $paid,
-                "status" => $status,
+                "agreement_date" => $status,
                 "created_at" => $actions
             );
         }

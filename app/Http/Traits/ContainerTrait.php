@@ -1312,6 +1312,7 @@ trait ContainerTrait {
         $client_grace_period = $container->client_grace_period;
 
         if(!is_null($container->supplier_date_start_using)){
+            if(!is_null($container->client_date_return)) $today = $container->client_date_return;
             $supplier_date_start_using = new Carbon ($container->supplier_date_start_using);
             if(!is_null($supplier_grace_period)){
                 $end_grace_date_supplier = Carbon::parse($supplier_date_start_using)->addDays($supplier_grace_period)->format('Y-m-d');
@@ -1320,10 +1321,11 @@ trait ContainerTrait {
             else {
                 $end_grace_date_supplier = null;
             }
-            if(!is_null($end_grace_date_supplier) && date('Y-m-d') > $end_grace_date_supplier){
-                $supplier_overdue_days = $end_grace_date_supplier->diff($today)->days;
-                $supplier_days_using = $supplier_date_start_using->diff($today)->days;
+            if(!is_null($end_grace_date_supplier) && $today > $end_grace_date_supplier){
+                $supplier_overdue_days = $end_grace_date_supplier->subDays(1)->diff($today)->days;
             }
+            $supplier_days_using = $supplier_date_start_using->subDays(1)->diff($today)->days;
+
         }
 
         if(!is_null($container->relocation_date_send)){
@@ -1336,10 +1338,10 @@ trait ContainerTrait {
             else {
                 $end_grace_date_relocation = null;
             }
-            if(!is_null($end_grace_date_relocation) && date('Y-m-d') > $end_grace_date_relocation){
-                $relocation_overdue_days = $end_grace_date_relocation->diff($today)->days;
-                $relocation_days_using = $relocation_date_start_using->diff($today)->days;
+            if(!is_null($end_grace_date_relocation) && $today > $end_grace_date_relocation){
+                $relocation_overdue_days = $end_grace_date_relocation->subDays(1)->diff($today)->days;
             }
+            $relocation_days_using = $relocation_date_start_using->subDays(1)->diff($today)->days;
         }
 
         if(!is_null($container->client_date_get)){
@@ -1352,10 +1354,10 @@ trait ContainerTrait {
             else {
                 $end_grace_date_client = null;
             }
-            if(!is_null($end_grace_date_client) && date('Y-m-d') > $end_grace_date_client){
-                $client_overdue_days = $end_grace_date_client->diff($today)->days;
-                $client_days_using = $client_date_start_using->diff($today)->days;
+            if(!is_null($end_grace_date_client) && $today > $end_grace_date_client){
+                $client_overdue_days = $end_grace_date_client->subDays(1)->diff($today)->days;
             }
+            $client_days_using = $client_date_start_using->subDays(1)->diff($today)->days;
         }
 
         !is_null($container->supplier_snp_range) ? $range_supplier = true : $range_supplier = false;
@@ -1374,12 +1376,12 @@ trait ContainerTrait {
                     $days = explode('-', $item['range']);
                     if($supplier_overdue_days >= $days[0]) {
                         if($supplier_overdue_days >= $days[1]){
-                            $range_days = $days[1] - $days[0] + 1;
-                            $snp_amount_supplier += $range_days*$item['price'];
+                            $range_days = $days[1] - $days[0];
+                            $snp_amount_supplier += ((int)$range_days + 1)*$item['price'];
                         }
                         else {
                             $days_for_cals = $supplier_overdue_days - $days[0];
-                            $snp_amount_supplier += $days_for_cals*$item['price'];
+                            $snp_amount_supplier += ((int)$days_for_cals + 1)*$item['price'];
                         }
 
                     }
@@ -1406,12 +1408,12 @@ trait ContainerTrait {
                     $days = explode('-', $item['range']);
                     if($client_overdue_days >= $days[0]) {
                         if($client_overdue_days >= $days[1]){
-                            $range_days = $days[1] - $days[0] + 1;
-                            $snp_amount_client += $range_days*$item['price'];
+                            $range_days = $days[1] - $days[0];
+                            $snp_amount_client += ((int)$range_days + 1)*$item['price'];
                         }
                         else {
                             $days_for_cals = $supplier_overdue_days - $days[0];
-                            $snp_amount_client += $days_for_cals*$item['price'];
+                            $snp_amount_client += ((int)$days_for_cals + 1)*$item['price'];
                         }
 
                     }
@@ -1437,11 +1439,12 @@ trait ContainerTrait {
                 foreach ($range as $item){
                     $days = explode('-', $item['range']);
                     if($relocation_overdue_days >= $days[1]) {
-                        $range_days = $days[1] - $days[0] + 1;
-                        $snp_amount_relocation += $range_days*$item['price'];
+                        $range_days = $days[1] - $days[0];
+                        $snp_amount_relocation += ((int)$range_days + 1)*$item['price'];
                     }
                     else {
-                        $snp_amount_relocation += $relocation_overdue_days*$item['price'];
+                        $days_for_cals = $relocation_overdue_days - $days[0];
+                        $snp_amount_relocation += ((int)$days_for_cals + 1)*$item['price'];
                     }
                 }
 
@@ -1465,11 +1468,11 @@ trait ContainerTrait {
         $snp_amount_relocation != 0 ?: $snp_amount_relocation = null;
 
         return [
-            //'supplier_overdue_days' => $supplier_overdue_days,
-            //'relocation_overdue_days' => $relocation_overdue_days,
-            //'client_overdue_days' => $client_overdue_days,
+            'supplier_overdue_days' => $supplier_overdue_days,
+            'relocation_overdue_days' => $relocation_overdue_days,
+            'client_overdue_days' => $client_overdue_days,
             'supplier_days_using' => $supplier_days_using,
-            //'relocation_days_using' => $relocation_days_using,
+            'relocation_days_using' => $relocation_days_using,
             'client_days_using' => $client_days_using,
             'supplier_snp_total' => $snp_amount_supplier,
             'client_snp_total' => $snp_amount_client,
@@ -1612,4 +1615,3 @@ trait ContainerTrait {
     }
 
 }
-

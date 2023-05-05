@@ -22,7 +22,7 @@
                     <h3 class="card-title">{{ __('contract.all_contracts_list') }}</h3>
                 </div>
                 <div class="card-body">
-                    <table class="table table-striped projects">
+                    <table class="table table-striped datatable_with_paging">
                         <thead>
                         <tr>
                             <th style="width: 1%">
@@ -52,12 +52,12 @@
                                     {{ $contract->id }}
                                 </td>
                                 <td>
-                                    {{ $contract->name }} {{ __('general.from') }} {{ $contract->date_start }}<br><small>{{ $contract->additional_info }}</small>
+                                    {{ $contract->name }} {{ __('general.from') }} {{ $contract->date_start->format('d.m.Y') }}<br><small>{{ $contract->additional_info }}</small>
                                     <br>
                                     <small>
-                                        {{ __('general.added') }} {{ $contract['created_at'] }}
+                                        {{ __('general.added') }} {{ $contract['created_at']->format('d.m.Y') }}
                                         @if($contract['created_at'] != $contract['updated_at'])
-                                            / {{ __('general.updated') }} {{ $contract['updated_at'] }}
+                                            / {{ __('general.updated') }} {{ $contract['updated_at']->format('d.m.Y') }}
                                         @endif
                                     </small>
                                 </td>
@@ -89,22 +89,22 @@
                                 <td>
                                     @if($contract->type == 'Поставщик')
                                         @if (!is_null(optional($contract->supplier)->card))
-                                            <a href="{{ Storage::url($contract->supplier->card) }}" download>{{ __('general.counterparty_card') }}</a>
+                                            <a href="{{ Storage::url($contract->supplier->card) }}" download>{{ __('general.counterparty_card') }}</a><br>
                                         @endif
                                         @if($contract->file != '')
-                                            <br><a href="{{ Storage::url($contract->file) }}" download>{{ __('general.download_contract') }}</a><br>
+                                            <a href="{{ Storage::url($contract->file) }}" download>{{ __('general.download_contract') }}</a>
                                         @endif
                                     @elseif ($contract->type == 'Клиент')
                                         @if (optional($contract->client)->card !='')
-                                            <a href="{{ Storage::url($contract->client->card) }}" download>{{ __('general.counterparty_card') }}</a>
+                                            <a href="{{ Storage::url($contract->client->card) }}" download>{{ __('general.counterparty_card') }}</a><br>
                                         @endif
                                         @if($contract->file != '')
-                                            <br><a href="{{ Storage::url($contract->file) }}" download>{{ __('general.download_contract') }}</a><br>
+                                            <a href="{{ Storage::url($contract->file) }}" download>{{ __('general.download_contract') }}</a>
                                         @endif
                                     @endif
                                 </td>
                                 <td>
-                                    {{ $contract->date_period }}
+                                    {{ $contract->date_period->format('d.m.Y') }}
                                     @if ($contract->need_prolong == 1)
                                         <br><b>{{ __('contract.need_prolong') }}</b>
                                     @endif

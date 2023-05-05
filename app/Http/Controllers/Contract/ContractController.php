@@ -96,7 +96,7 @@ class ContractController extends Controller
 
         if ($request->action == 'client'){
 
-            $folder = preg_replace( "/[^(\w)|(\x7F-\xFF)|(\s)|(\-)]/", '', $contract->client->name);
+            $folder = preg_replace( "/[^(\w)|(\x7F-\xFF)|(\s)|(\-)]/", '', optional($contract->client)->name);
 
             if($request->hasFile('file')) {
                 Storage::delete($contract->file);
@@ -107,7 +107,7 @@ class ContractController extends Controller
 
         if ($request->action == 'supplier'){
 
-            $folder = preg_replace( "/[^(\w)|(\x7F-\xFF)|(\s)|(\-)]/", '', $contract->supplier->name);
+            $folder = preg_replace( "/[^(\w)|(\x7F-\xFF)|(\s)|(\-)]/", '', optional($contract->supplier)->name);
 
             if($request->hasFile('file')) {
                 Storage::delete($contract->file);

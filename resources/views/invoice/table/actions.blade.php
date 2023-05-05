@@ -75,8 +75,7 @@
             >
         @endif
     @endif
-        <i class="fas fa-briefcase">
-        </i>
+        <i class="fas fa-briefcase"></i>
         {{ __('general.task') }}
     </a>
 @endif
@@ -85,20 +84,30 @@
        data-type="ajax"
        data-target="#edit_invoice_modal"
        data-invoice-id="{{ $invoice['id'] }}">
-        <i class="fas fa-pencil-alt">
-        </i>
+        <i class="fas fa-pencil-alt"></i>
         {{ __('general.change') }}
     </a>
 @endcan
 @can ('remove invoices')
-    <button
-        class="btn btn-app bg-danger ajax-delete-row"
-        data-action="delete_row"
-        data-object="invoice"
-        data-type="ajax"
-        data-object-id="{{ $invoice->id }}">
-        <i class="fas fa-trash">
-        </i>
-        {{ __('general.remove') }}
-    </button>
+    @if(!is_null($invoice->deleted_at))
+        <button
+            class="btn btn-app bg-warning ajax-restore-row"
+            data-action="restore_row"
+            data-object="invoice"
+            data-type="ajax"
+            data-object-id="{{ $invoice->id }}">
+            <i class="fas fa-trash-restore"></i>
+            Восстановить
+        </button>
+    @else
+        <button
+            class="btn btn-app bg-danger ajax-delete-row"
+            data-action="delete_row"
+            data-object="invoice"
+            data-type="ajax"
+            data-object-id="{{ $invoice->id }}">
+            <i class="fas fa-trash"></i>
+            {{ __('general.remove') }}
+        </button>
+    @endif
 @endcan

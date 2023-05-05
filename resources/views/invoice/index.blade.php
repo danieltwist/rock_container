@@ -25,6 +25,8 @@
                         <h1 class="m-0">{{ __('invoice.income_invoices') }}</h1>
                     @elseif (isset($_GET['out']))
                         <h1 class="m-0">{{ __('invoice.outcome_invoices') }}</h1>
+                    @elseif (isset($_GET['trash']))
+                        <h1 class="m-0">Удаленные счета</h1>
                     @else
                         <h1 class="m-0">{{ __('invoice.all_invoices') }}</h1>
                     @endif
@@ -149,4 +151,5 @@
         </div>
     </section>
     @include('project.modals.confirm_invoice')
+    @include('audit.component_history_modal')
 @endsection

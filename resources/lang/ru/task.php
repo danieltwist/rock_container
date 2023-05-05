@@ -118,4 +118,5 @@ return [
     'and_waiting_for_approval' => 'и ожидает проверки',
     'was_reloaded' => 'была возобновлена',
     'send_message_in_task' => 'отправил сообщение в задаче №',
+    'all_tasks_with_you' => 'Задачи с моим участием'
 ];

@@ -22,7 +22,12 @@ class TaskFilter extends QueryFilter
                 ->whereIn('status', ['Выполнена', 'Отправлена на проверку']);
         }
 
-        if ($value == 'important'){
+        elseif ($value == 'trash') {
+            if(in_array(Auth::user()->getRoleNames()[0], ['super-admin','director']))
+                return $this->builder->onlyTrashed();
+        }
+
+        elseif ($value == 'important'){
             return $this->builder->where('to_users', '['.Auth::user()->id.']');
         }
 
@@ -32,6 +37,10 @@ class TaskFilter extends QueryFilter
 
     public function user_tasks($id){
         return $this->builder->whereJsonContains('to_users', (int)$id);
+    }
+
+    public function trash(){
+        return $this->builder->onlyTrashed();
     }
 
 }

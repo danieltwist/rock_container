@@ -94,6 +94,24 @@ class ApplicationTablesController extends Controller
                 'application' => $application
             ])->render();
 
+            switch($application->status){
+                case 'В работе':
+                    $class = 'primary';
+                    break;
+                case 'Черновик':
+                    $class = 'info';
+                    break;
+                case 'Завершена':
+                    $class = 'success';
+                    break;
+                default:
+                    $class = 'secondary';
+            }
+
+            $status = '<span class="badge badge-'. $class .'">'. $application->status .'</span>';
+            if(!is_null($application->finished_at))
+                $status .= '<br><small>'.$application->finished_at->format('d.m.Y').'</small>';
+
             $actions = view('application.table.actions', [
                 'application' => $application
             ])->render();
@@ -105,6 +123,7 @@ class ApplicationTablesController extends Controller
                 "send_from_country" => $places,
                 "price_amount" => $conditions,
                 "containers_amount" => $containers,
+                "status" => $status,
                 "created_at" => $actions
             );
 

@@ -9,6 +9,9 @@ class Contract extends Model
 {
     use HasFactory;
 
+    protected $dates = ['updated_at', 'date_period', 'date_start'];
+
+
     public function client(){
         return $this->belongsTo(Client::class);
     }

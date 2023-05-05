@@ -271,7 +271,7 @@
         </div>
         <div class="form-group">
             <label>{{ __('work_request.finish_before') }}</label>
-            <input type="text" class="form-control task_deadline" name="task_deadline" value="{{ $work_request->deadline }}" placeholder="{{ __('work_request.work_request_deadline') }}">
+            <input type="text" class="form-control task_deadline" name="task_deadline" value="{{ !is_null($work_request->deadline) ? $work_request->deadline->format('d.m.Y H:i') : "" }}" placeholder="{{ __('work_request.work_request_deadline') }}">
         </div>
         <div class="form-group">
             <label>{{ __('work_request.upload_files') }}</label>

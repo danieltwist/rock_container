@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1 class="m-0">{{ __('work_request.view_work_request') }} №{{ $task->id }} {{ $task->name }}
+                    <h1 class="m-0">{{ __('work_request.view_work_request') }} №{{ $task->id }} {{ $task->name }} {{ is_null($task->deleted_at) ?: '(удален)' }}
                         <a href="{{ route('work_request.index') }}" class="btn btn-default">
                             {{ __('work_request.all_work_requests') }}
                         </a>
@@ -26,12 +26,12 @@
                                 @if($task->type == 'Система')
                                         <img class="avatar elevation-2" src="/storage/avatars/system.jpg">
                                         <span class="username">{{ __('general.system') }}</span>
-                                        <span class="description">{{ $task->created_at }}</span>
+                                        <span class="description">{{ $task->created_at->format('d.m.Y H:i:s') }} }}</span>
                                     @else
                                         <img class="avatar elevation-2"
                                              src="{{ Storage::url(optional($task->from)->avatar) }}">
                                         <span class="username">{{ optional($task->from)->name }}</span>
-                                        <span class="description">{{ $task->created_at }}</span>
+                                        <span class="description">{{ $task->created_at->format('d.m.Y H:i:s') }} }}</span>
                                     @endif
                                 </div>
                                 <div class="card-tools">

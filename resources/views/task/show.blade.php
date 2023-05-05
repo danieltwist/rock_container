@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1 class="m-0">{{ __('task.view_task') }} №{{ $task->id }} {{ $task->name }}
+                    <h1 class="m-0">{{ __('task.view_task') }} №{{ $task->id }} {{ $task->name }} {{ is_null($task->deleted_at) ?: '(удалена)' }}
                         <a href="{{ route('task.index') }}" class="btn btn-default">
                             {{ __('task.all_tasks') }}
                         </a>
@@ -26,12 +26,12 @@
                                 @if($task->type == 'Система')
                                         <img class="avatar elevation-2" src="/storage/avatars/system.jpg">
                                         <span class="username">{{ __('general.system') }}</span>
-                                        <span class="description">{{ $task->created_at }}</span>
+                                        <span class="description">{{ $task->created_at->format('d.m.Y H:i:s') }}</span>
                                     @else
                                         <img class="avatar elevation-2"
                                              src="{{ Storage::url(optional($task->from)->avatar) }}">
                                         <span class="username">{{ optional($task->from)->name }}</span>
-                                        <span class="description">{{ $task->created_at }}</span>
+                                        <span class="description">{{ $task->created_at->format('d.m.Y H:i:s') }}</span>
                                     @endif
                                 </div>
                                 <div class="card-tools">
@@ -88,16 +88,7 @@
                                                      src="{{ $current_user_avatar }}" alt="Alt Text">
                                                 <div class="img-push">
                                                     <div class="input-group input-group-sm">
-                                                        <textarea class="form-control custom-control" rows="3" style="resize:none" name="comment" id="comment"></textarea>
-                                                        <span class="input-group-append">
-                                                            <button type="button"
-                                                                    id="task_handler_submit"
-                                                                    class="btn btn-primary btn-flat task_handler_comments"
-                                                                    data-task_id="{{ $task->id }}"
-                                                                    data-action="add_chat_record">
-                                                                {{ __('general.send') }}
-                                                            </button>
-                                                        </span>
+                                                        <textarea class="form-control custom-control" rows="5" name="comment" id="comment"></textarea>
                                                     </div>
                                                     <a class="cursor-pointer"
                                                        data-toggle="collapse"
@@ -114,6 +105,15 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
+                                                </div>
+                                                <div class="form-group mt-3">
+                                                    <button type="button"
+                                                            id="task_handler_submit"
+                                                            class="btn btn-primary btn-flat task_handler_comments float-right"
+                                                            data-task_id="{{ $task->id }}"
+                                                            data-action="add_chat_record">
+                                                        {{ __('general.send') }}
+                                                    </button>
                                                 </div>
                                             </form>
                                         </div>

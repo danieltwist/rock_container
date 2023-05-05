@@ -23,9 +23,8 @@ class TaskController extends Controller
 {
     public function index()
     {
-        $role = Auth::user()->getRoleNames()[0];
 
-        if(in_array($role,['super-admin','director'])){
+        if(in_array(Auth::user()->getRoleNames()[0], ['super-admin','director'])){
             $tasks = Task::orderBy('id','DESC')->get();
             $tasks = $this->giveClass($tasks);
 
@@ -179,8 +178,6 @@ class TaskController extends Controller
             ]);
         }
 
-
-
         foreach ($to_users as $user_id){
             $message = [
                 'bg_class' =>'bg-success',
@@ -225,9 +222,8 @@ class TaskController extends Controller
         ]);
     }
 
-    public function show($id)
+    public function show(Task $task)
     {
-        $task = Task::findOrFail($id);
         $this->getUsersTask($task);
         $this->checkOverdue($task);
 
@@ -1139,6 +1135,12 @@ class TaskController extends Controller
 
     }
 
+    public function trashTask(){
+
+        return view('task.trash');
+
+    }
+
     public function doneTask(){
 
         $done_tasks = Task::where('accepted_user_id', Auth::user()->id)
@@ -1471,6 +1473,20 @@ class TaskController extends Controller
 
         else $task->overdue = false;
 
+    }
+
+
+    public function restoreRow($id){
+
+        $task = Task::withTrashed()->findOrFail($id);
+        $task_name = $task->name;
+        $task->restore();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('Задача ' .$task_name. ' был успешно восстановлена')
+        ]);
     }
 
 }

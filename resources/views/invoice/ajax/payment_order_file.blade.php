@@ -23,7 +23,7 @@
     @else
         @foreach($invoice->payment_order_file as $key=>$payment_order)
             <div class="mt-2">
-                {{ __('invoice.upload_date') }} - {{ $payment_order['date'] }}<br>
+                {{ __('invoice.upload_date') }} - {{ \Carbon\Carbon::parse($payment_order['date'])->format('d.m.Y H:i:s') }}<br>
                 {{ __('invoice.uploaded_by') }} - {{ $payment_order['user'] }}<br>
                 @if(array_key_exists('amount', $payment_order))
                     {{ __('general.amount') }} - {{ $payment_order['amount'] }}<br>

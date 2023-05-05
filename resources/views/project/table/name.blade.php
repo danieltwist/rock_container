@@ -12,7 +12,7 @@
 <small>
     @if(!is_null(optional($project->user)->name))
         {{ __('project.created') }}: <a class="text-dark"
-                                        href="{{ route('get_user_statistic', optional($project->user)->id) }}">{{ optional($project->user)->name}}</a> {{ $project->created_at }}
+                                        href="{{ route('get_user_statistic', optional($project->user)->id) }}">{{ optional($project->user)->name}}</a> {{ $project->created_at->format('d.m.Y H:i') }}
     @endif
     @if(!is_null(optional($project->manager)->name) || !is_null(optional($project->logist)->name))
         <br>
@@ -72,10 +72,10 @@
         {{ __('project.finish_date') }}:
         @if (canWorkWithProject($project->id))
             <a href="#" class="xedit" data-pk="{{$project->id}}" data-name="finished_at" data-model="Project">
-                {{ $project->finished_at }}
+                {{ $project->finished_at->format('d.m.Y H:i') }}
             </a>
         @else
-            {{ $project->finished_at }}
+            {{ $project->finished_at->format('d.m.Y H:i') }}
         @endif
     @endif
 </div>

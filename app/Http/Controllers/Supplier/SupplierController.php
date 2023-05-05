@@ -110,10 +110,9 @@ class SupplierController extends Controller
 
     }
 
-    public function show($id)
+    public function show(Supplier $supplier)
     {
-        $supplier = Supplier::find($id);
-        $projects_id = Invoice::select('project_id')->where('supplier_id', $id)->groupBy('project_id')->get()->toArray();
+        $projects_id = Invoice::select('project_id')->where('supplier_id', $supplier->id)->groupBy('project_id')->get()->toArray();
 
         foreach ($projects_id as $item){
             $projects [] = $item['project_id'];
@@ -139,9 +138,9 @@ class SupplierController extends Controller
             }
         }
 
-        $invoices = Invoice::where('supplier_id', $id)->orderBy('created_at','desc')->get();
+        $invoices = Invoice::where('supplier_id', $supplier->id)->orderBy('created_at','desc')->get();
 
-        $not_paid_invoices_count = Invoice::where('supplier_id', $id)->where('status','<>','Оплачен')->get()->count();
+        $not_paid_invoices_count = Invoice::where('supplier_id', $supplier->id)->where('status','<>','Оплачен')->get()->count();
 
         foreach ($invoices as $invoice){
             switch($invoice->status){
@@ -300,4 +299,30 @@ class SupplierController extends Controller
 
         return redirect()->back()->withSuccess(__('supplier.was_deleted'));
     }
+
+
+    public function deleteRow($id){
+
+        Supplier::findOrFail($id)->delete();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('supplier.was_deleted')
+        ]);
+    }
+
+    public function restoreRow($id){
+
+        $supplier = Supplier::withTrashed()->findOrFail($id);
+        $supplier_name = $supplier->name;
+        $supplier->restore();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('Поставщик ' .$supplier_name. ' был успешно восстановлен')
+        ]);
+    }
+
 }

@@ -11,7 +11,7 @@ trait ProjectTrait {
 
     public function getProjectCompleteLevel($id)
     {
-        $project = Project::where('id',$id)->first();
+        $project = Project::where('id', $id)->withTrashed()->first();
         $blocks = Block::where('project_id', $project['id'])->get();
 
         $count = $blocks->count();
@@ -33,7 +33,7 @@ trait ProjectTrait {
 
     public function getApplications($id){
 
-        $project = Project::find($id);
+        $project = Project::where('id', $id)->withTrashed()->first();
 
         $applications = $project->applications;
 
@@ -52,7 +52,7 @@ trait ProjectTrait {
 
     public function getFiles($id){
 
-        $project = Project::find($id);
+        $project = Project::where('id', $id)->withTrashed()->first();
         $files = [];
 
         if($project->active == '1'){

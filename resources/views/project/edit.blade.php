@@ -139,7 +139,7 @@
                                         <div class="form-group">
                                             <label for="planned_payment_date">{{ __('project.planned_payment_date') }}</label>
                                             <input type="text" class="form-control date_input invoice_deadline" name="planned_payment_date"
-                                                   placeholder="{{ __('project.planned_payment_date') }}" value="{{ $project->planned_payment_date }}">
+                                                   placeholder="{{ __('project.planned_payment_date') }}" value="{{ $project->planned_payment_date != '' ? $project->planned_payment_date->format('d.m.Y') : '' }}">
                                         </div>
                                     </div>
                                 </div>

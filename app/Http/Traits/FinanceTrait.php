@@ -227,7 +227,7 @@ trait FinanceTrait {
     {
         $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
-        $project = Project::find($id);
+        $project = Project::where('id', $id)->withTrashed()->first();
 
         if ($project->currency == 'RUB'){
             $today_rate = 1;

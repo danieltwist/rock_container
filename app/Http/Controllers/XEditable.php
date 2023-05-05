@@ -67,12 +67,14 @@ class XEditable extends Controller
                 }
 
             }
-
             if ($request->input('model') == 'Project'){
-
-                Project::find($request->input('pk'))->update([$request->input('name') => $request->input('value')]);
-                return response()->json(['success' => true]);
-
+                try{
+                    Project::find($request->input('pk'))->update([$request->input('name') => $request->input('value')]);
+                    return response()->json(['success' => true]);
+                }
+                catch (\Exception $e){
+                    return response()->json(['success' => false, 'error' => 'Проверьте введенные данные и попробуйте еще раз']);
+                }
             }
 
             if ($request->input('model') == 'ProjectComment'){

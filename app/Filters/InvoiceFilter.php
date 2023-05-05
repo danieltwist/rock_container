@@ -2,6 +2,8 @@
 
 namespace App\Filters;
 
+use Illuminate\Support\Facades\Auth;
+
 class InvoiceFilter extends QueryFilter
 {
     public function project($value){
@@ -65,6 +67,12 @@ class InvoiceFilter extends QueryFilter
         return $this->builder->where('user_add', auth()->user()->name);
     }
 
+    public function trash(){
+        if(in_array(Auth::user()->getRoleNames()[0], ['super-admin','director'])){
+            return $this->builder->onlyTrashed();
+        }
+    }
+
     public function on_approval(){
     	return $this->builder->whereNotIn('status', ['Оплачен','Частично оплачен','Счет согласован на оплату','Ожидается оплата'])
     	->where(function ($query) {
@@ -111,6 +119,12 @@ class InvoiceFilter extends QueryFilter
 
         elseif($value == 'my'){
             return $this->builder->where('user_add', auth()->user()->name);
+        }
+
+        elseif($value == 'trash'){
+            if(in_array(Auth::user()->getRoleNames()[0], ['super-admin','director'])){
+                return $this->builder->onlyTrashed();
+            }
         }
 
         elseif($value == 'on_approval'){

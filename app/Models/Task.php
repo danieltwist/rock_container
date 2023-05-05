@@ -6,19 +6,28 @@ use App\Filters\QueryFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class Task extends Model
 {
     use HasFactory;
+    use SoftDeletes;
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if(in_array(Auth::user()->getRoleNames()[0], ['super-admin','director']))
+            return $this->withTrashed()->where($field ?? $this->getRouteKeyName(), $value)->first();
+        else
+            return $this->where($field ?? $this->getRouteKeyName(), $value)->first();
+    }
 
     protected $casts = [
         'to_users' => 'array',
         'responsible_user' => 'array',
         'additional_users' => 'array'
     ];
-
+    protected $dates = ['deadline', 'done'];
     protected $guarded = [];
 
     public function from(){

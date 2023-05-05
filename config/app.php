@@ -198,7 +198,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Barryvdh\Elfinder\ElfinderServiceProvider::class,
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
-
+        OwenIt\Auditing\AuditingServiceProvider::class,
 
     ],
 

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Notification;
+use App\Models\Setting;
 use App\Models\Task;
 use App\Models\WorkRequest;
 use Carbon\Carbon;
@@ -55,6 +56,7 @@ class ViewServiceProvider extends ServiceProvider
                     'current_user_position' => $currentUser->position,
                     'current_user_id' => $currentUser->id,
                     'role' => $role,
+                    'agree_invoice_users_count' => Setting::where('name', 'agree_invoice_users_count')->first()->toArray()['value']
                 ]);
             }
 

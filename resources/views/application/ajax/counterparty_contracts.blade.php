@@ -4,7 +4,7 @@
             data-placeholder="Выберите договор" style="width: 100%;">
         <option></option>
         @foreach($contracts as $contract)
-            <option value="{{ $contract->id }}">{{$contract->name}} от {{ $contract->date_start }}, действует до {{ $contract->date_period }}</option>
+            <option value="{{ $contract->id }}">{{$contract->name}} от {{ $contract->date_start->format('d.m.Y') }}, действует до {{ $contract->date_period->format('d.m.Y') }}</option>
         @endforeach
     </select>
 </div>

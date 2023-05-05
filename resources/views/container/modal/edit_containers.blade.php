@@ -171,7 +171,24 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
+                                            <div class="custom-control custom-switch custom-switch-off-default custom-switch-on-danger">
+                                                <input type="checkbox"
+                                                       class="custom-control-input"
+                                                       name="null_array[supplier_terminal]"
+                                                       id="supplier_terminal_null"
+                                                       value="yes">
+                                                <label class="custom-control-label" for="supplier_terminal_null">
+                                                    Терминал
+                                                </label>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <input type="text" class="form-control"
+                                                       name="supplier_terminal"
+                                                       placeholder="Терминал">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
                                             <div class="custom-control custom-switch custom-switch-off-default custom-switch-on-danger">
                                                 <input type="checkbox"
                                                        class="custom-control-input"
@@ -188,7 +205,7 @@
                                                        placeholder="Терминальное хранение">
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Валюта</label>
                                                 <select class="form-control select2" name="supplier_terminal_storage_currency"
@@ -701,8 +718,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+{{--                    <button type="submit" class="btn btn-primary" id="save_containers_list_edits"--}}
+{{--                            data-action='{"hide_modal":{"id": "edit_containers_list"}, "update_table":{"table_id":"containers_extended_ajax_table", "type":"ajax"},"reset_form":{"need_reset": "true"}}'>--}}
+{{--                        {{ __('general.save') }}--}}
+{{--                    </button>--}}
                     <button type="submit" class="btn btn-primary" id="save_containers_list_edits"
-                            data-action='{"hide_modal":{"id": "edit_containers_list"}, "update_table":{"table_id":"containers_extended_ajax_table", "type":"ajax"},"reset_form":{"need_reset": "true"}}'>
+                            data-action='{"update_table":{"table_id":"containers_extended_ajax_table", "type":"ajax"}}'>
                         {{ __('general.save') }}
                     </button>
                 </div>

@@ -30,7 +30,9 @@
 
     let containers_filters = {};
 
-    let applications_filters = {};
+    let applications_filters = {"filter": page_filter[1]};
+
+    let audits_filter = {};
 
     $(function () {
         let urlpath = window.location.pathname.replace('public/', '').split('/');
@@ -296,7 +298,11 @@
         });
     }
 
-    function sortInvoicesByDate() {
+    function sortInvoicesByDate(filter) {
+        let ordering = 0;
+        if(filter === 'Счет согласован на оплату'  || filter === 'Согласована частичная оплата' ){
+            ordering = 5;
+        }
         $('#get_excel_invoices').append('<input type="hidden" name="data_range" value="' + $('#reportrange span').html() + '">');
         if (getInvoicesPageType() === 'agree') getAgreedInvoicesAmount();
         $invoices_ajax_table.DataTable({
@@ -305,7 +311,7 @@
             serverSide: true,
             searching: true,
             ordering: true,
-            order: [0, 'desc'],
+            order: [ordering, 'desc'],
             info: true,
             autoWidth: false,
             responsive: true,
@@ -327,7 +333,7 @@
                 {data: 'project_id'},
                 {data: 'amount'},
                 {data: 'amount_paid'},
-                {data: 'status'},
+                {data: 'agreement_date'},
                 {data: 'created_at'},
             ],
             preDrawCallback: function () {
@@ -374,7 +380,7 @@
                 {data: 'project_id'},
                 {data: 'amount'},
                 {data: 'amount_paid'},
-                {data: 'status'},
+                {data: 'agreement_date'},
                 {data: 'created_at'},
             ],
             preDrawCallback: function () {
@@ -465,12 +471,16 @@
     }
 
     function initInvoiceDatatables(data, route_link, filter_type, table_id) {
+        let ordering = 0;
+        if(data.filter === 'agreed'){
+            ordering = 5;
+        }
         $('#' + table_id).DataTable({
             processing: true,
             serverSide: true,
             searching: true,
             ordering: true,
-            order: [0, 'desc'],
+            order: [ordering, 'desc'],
             info: true,
             autoWidth: false,
             responsive: true,
@@ -487,7 +497,7 @@
                 {data: 'project_id'},
                 {data: 'amount'},
                 {data: 'amount_paid'},
-                {data: 'status'},
+                {data: 'agreement_date'},
                 {data: 'created_at'},
             ],
             createdRow: function (row, data, dataIndex) {
@@ -511,7 +521,7 @@
             responsive: true,
             ajax: {
                 url: "{{ route('get_suppliers_table') }}",
-                data: {"country": supplier_filters.country, "type": supplier_filters.type},
+                data: {"country": supplier_filters.country, "type": supplier_filters.type, "filter": page_filter[1]},
             },
             language: {
                 "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
@@ -723,7 +733,38 @@
                 {data: "send_from_country"},
                 {data: "price_amount"},
                 {data: "containers_amount"},
+                {data: "status"},
                 {data: "created_at"}
+            ]
+        });
+    }
+
+    function initAuditsTables() {
+        $('#audits_table').DataTable({
+            destroy: true,
+            processing: true,
+            serverSide: true,
+            searching: false,
+            ordering: true,
+            pageLength: 10,
+            order: [0, 'desc'],
+            info: true,
+            ajax: {
+                url: "{{route('get_audits_table')}}",
+                type: "GET",
+                data: audits_filter
+            },
+            language: {
+                "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
+            },
+            columns: [
+                {data: "id"},
+                {data: "created_at"},
+                {data: "user"},
+                {data: "auditable_type"},
+                {data: "event"},
+                {data: "old_values"},
+                {data: "new_values"}
             ]
         });
     }
@@ -772,7 +813,6 @@
         });
 
         $('.invoices_filters').on('click', function () {
-            console.log($(this).data('filter'));
             $('.invoices_filters').each(function () {
                 $(this).removeClass('btn-secondary').addClass('btn-default');
             });
@@ -781,7 +821,7 @@
             invoice_second_filter.status = $(this).data('filter');
             $('#get_excel_invoices').append('<input type="hidden" name="status" value="' + $(this).data('filter') + '">');
 
-            sortInvoicesByDate();
+            sortInvoicesByDate($(this).data('filter'));
         });
 
         $('.invoices_agree_filters').on('click', function () {
@@ -804,7 +844,6 @@
             let route_link = "{{ route('get_invoices_with_filter') }}";
             let table_id = 'invoices_ajax_table_content_' + filter_type;
             setTimeout(function () {
-                console.log(filter_type);
                 initInvoiceDatatables(data, route_link, filter_type, table_id);
             }, 500 * i);
         });
@@ -1044,7 +1083,6 @@
         /////////////////////////////////////////////
         let fixed_header_enabled = true;
 
-
         $('.containers_archive_table').each(function () {
             let filter_type = $(this).data('filter_type');
             if(filter_type === 'application'){
@@ -1169,8 +1207,10 @@
                 applications_filters.supplier = $(this).data('supplier_id');
             }
             if(filter_type === 'client'){
-                applications_filters.supplier = $(this).data('client_id');
+                applications_filters.client = $(this).data('client_id');
             }
+
+            console.log(applications_filters);
             initApplicationTables();
         });
 
@@ -1295,6 +1335,15 @@
         ////////////////////////////////////////////////////////////////////////////////
 
 
+        $('.audits_table').each(function () {
+            let filter_type = $(this).data('filter_type');
+            if(filter_type !== undefined){
+                audits_filter[filter_type] = $(this).data('id');
+            }
+            console.log(audits_filter);
+            initAuditsTables();
+        });
+
         $('.projects_ajax_table').DataTable({
             processing: true,
             serverSide: true,
@@ -1335,7 +1384,7 @@
 
         if (jQuery.isEmptyObject(task_global_filter)) {
             task_global_filter = {
-                "filter": task_filter[2]
+                "filter": task_filter[2],
             };
         }
 
@@ -1521,6 +1570,20 @@
 
         });
 
+        $('.datatable_with_paging').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "language": {
+                "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
+            }
+
+        });
+
         $('#users_table').DataTable({
             "paging": true,
             "lengthChange": false,
@@ -1579,7 +1642,8 @@
             autoWidth: false,
             responsive: true,
             ajax: {
-                url: "{{ route('get_clients_table') }}"
+                url: "{{ route('get_clients_table') }}",
+                data: {"filter": page_filter[1]},
             },
             language: {
                 "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
@@ -1612,7 +1676,7 @@
                 responsive: true,
                 ajax: {
                     url: "{{ route('get_clients_table') }}",
-                    data: {"country": $(this).data('filter')},
+                    data: {"country": $(this).data('filter'), "filter": page_filter[1]},
                 },
                 language: {
                     "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
@@ -1645,7 +1709,8 @@
             autoWidth: false,
             responsive: true,
             ajax: {
-                url: "{{ route('get_suppliers_table') }}"
+                url: "{{ route('get_suppliers_table') }}",
+                data: {"filter": page_filter[1]},
             },
             language: {
                 "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
@@ -1900,6 +1965,40 @@
                 console.log(filter_type);
                 initInvoiceDatatables(data, route_link, filter_type, table_id);
             }, 500 * i);
+        });
+
+        /// просмотр истории
+        $('#view_component_history').on('show.bs.modal', function (event) {
+            let button = $(event.relatedTarget);
+            audits_filter[button.data('component')] = button.data('id');
+            console.log(audits_filter);
+            $('#audits_table_component_history').DataTable({
+                destroy: true,
+                processing: true,
+                serverSide: true,
+                searching: false,
+                ordering: true,
+                pageLength: 10,
+                lengthChange: false,
+                order: [0, 'desc'],
+                info: true,
+                ajax: {
+                    url: "{{route('get_component_history_table')}}",
+                    type: "GET",
+                    data: audits_filter
+                },
+                language: {
+                    "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
+                },
+                columns: [
+                    {data: "created_at"},
+                    {data: "old_values"},
+                    {data: "new_values"}
+                ],
+                drawCallback: function () {
+                    console.log('draw complete')
+                },
+            });
         });
     });
 </script>

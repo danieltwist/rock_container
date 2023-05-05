@@ -5,7 +5,6 @@
             <select class="form-control select2"
                     name="send_to_city[]"
                     id="send_to_city"
-                    required
                     multiple
                     data-placeholder="Выберите города" style="width: 100%;" >
                 <option></option>

@@ -12,10 +12,13 @@
         @break
     @endswitch
 @endif
-<small>{{ __('general.from') }} {{ $invoice['created_at'] }}</small>
+<small>{{ __('general.from') }} {{ $invoice['created_at']->format('d.m.Y H:i:s') }}</small>
 @if($invoice->edited != '')
-    <a class="cursor-pointer" data-toggle="modal" data-target="#view_invoice_changes" data-invoice-id="{{ $invoice->id }}">
-        <i class="fas fa-clock"></i>
+    <a data-toggle="modal" data-target="#view_component_history"
+            class="text-dark cursor-pointer"
+            data-component="invoice"
+            data-id="{{ $invoice->id }}">
+        <i class="fas fa-history"></i>
     </a>
 @endif
 @if($invoice->expense_type != '' || $invoice->expense_category != '')
@@ -25,11 +28,13 @@
     <br><a href="{{ route('project.show', $invoice->project->id) }}">{{ $invoice->project->name }}</a>
 @endif
 @if (!is_null($invoice->application))
-    / <a href="{{ route('application.show', $invoice->application->id) }}">Заявка {{ $invoice->application->name }}</a><br>
+    / <a href="{{ route('application.show', $invoice->application->id) }}">Заявка {{ $invoice->application->name }}</a>
+    <br>
+@else
+    <br>
 @endif
 <small>
     @if ($invoice->additional_info !='')
-        <br>
         @if(mb_strlen($invoice->additional_info)>100)
             <div id="collapse_task_text_compact_{{ $invoice->id }}">
                 {{ \Illuminate\Support\Str::limit($invoice->additional_info, 100, $end='...') }}
@@ -44,16 +49,19 @@
                 </a>
             </div>
         @else
-            {{ $invoice->additional_info }}<br>
+            {{ $invoice->additional_info }}
+            <br>
         @endif
     @endif
-    @if($invoice->upd != '' || $invoice->upd_file != '')
-        {{ __('general.upd') }}
-    @endif
-    @if($invoice->file != '' || $invoice->invoice_file != '')
-        {{ __('general.invoice') }}
-    @endif
-    @if($invoice->payment_order != '' || $invoice->payment_order_file != '')
-        {{ __('general.pp') }}
-    @endif
+    <i>
+        @if($invoice->upd != '' || $invoice->upd_file != '')
+            {{ __('general.upd') }}
+        @endif
+        @if($invoice->file != '' || $invoice->invoice_file != '')
+            {{ __('general.invoice') }}
+        @endif
+        @if($invoice->payment_order != '' || $invoice->payment_order_file != '')
+            {{ __('general.pp') }}
+        @endif
+    </i>
 </small>

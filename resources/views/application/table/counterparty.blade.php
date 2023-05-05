@@ -7,7 +7,7 @@
 @if(!is_null($application->contract_info))
     <br>
     <small>
-        Договор: {{ $application->contract_info['name'] }} от {{ $application->contract_info['date'] }}
+        Договор: {{ $application->contract_info['name'] }} от {{ is_null($application->contract_info['date']) ?: \Carbon\Carbon::parse($application->contract_info['date'])->format('d.m.Y') }}
     </small>
 @endif
 @if(!is_null($application->additional_info))

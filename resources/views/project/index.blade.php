@@ -17,6 +17,8 @@
                         <h1 class="m-0">{{ __('project.finished_projects') }}</h1>
                     @elseif (isset($_GET['done_unpaid']))
                         <h1 class="m-0">{{ __('project.done_unpaid_projects') }}</h1>
+                    @elseif (isset($_GET['trash']))
+                        <h1 class="m-0">Удаленные проекты</h1>
                     @else
                         <h1 class="m-0">{{ $page_title }}</h1>
                     @endif

@@ -65,7 +65,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="name">Название заявки</label>
                                             <input type="text" class="form-control" name="name"
@@ -74,7 +74,16 @@
                                                    required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="created_at">Дата заявки</label>
+                                            <input type="text" class="form-control date_input" name="created_at"
+                                                   placeholder="Дата заявки"
+                                                   value="{{ \Carbon\Carbon::now()->format('d.m.Y') }}"
+                                                   required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="form-group" id="supplier_group">
                                             <label for="application_type">Тип заявки</label>
                                             <select class="form-control select2" name="application_type" id="application_type" required
@@ -138,45 +147,47 @@
                                     </div>
                                     <div class="col-md-8" id="send_from_country_div"></div>
                                 </div>
-                                <strong>Маршрут предоставления - Куда</strong>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="send_to_country">Страна</label>
-                                            <select class="form-control select2"
-                                                    name="send_to_country"
-                                                    id="send_to_country"
-                                                    data-type="send_to"
-                                                    required
-                                                    data-placeholder="Выберите страну" style="width: 100%;" >
-                                                <option></option>
-                                                @foreach($countries as $country)
-                                                    <option value="{{ $country->name }}">{{ $country->name }}</option>
-                                                @endforeach
-                                            </select>
+                                <div class="d-none" id="send_to_div">
+                                    <strong>Маршрут предоставления - Куда</strong>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="send_to_country">Страна</label>
+                                                <select class="form-control select2"
+                                                        name="send_to_country"
+                                                        id="send_to_country"
+                                                        data-type="send_to"
+                                                        data-placeholder="Выберите страну" style="width: 100%;" >
+                                                    <option></option>
+                                                    @foreach($countries as $country)
+                                                        <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
+                                        <div class="col-md-8" id="send_to_country_div"></div>
                                     </div>
-                                    <div class="col-md-8" id="send_to_country_div"></div>
                                 </div>
-                                <strong>Маршрут предоставления - Депо сдачи</strong>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="place_of_delivery_country">Страна</label>
-                                            <select class="form-control select2"
-                                                    name="place_of_delivery_country"
-                                                    id="place_of_delivery_country"
-                                                    data-type="place_of_delivery"
-                                                    required
-                                                    data-placeholder="Выберите страну" style="width: 100%;" >
-                                                <option></option>
-                                                @foreach($countries as $country)
-                                                    <option value="{{ $country->name }}">{{ $country->name }}</option>
-                                                @endforeach
-                                            </select>
+                                <div class="d-none" id="place_of_delivery_div">
+                                    <strong>Маршрут предоставления - Депо сдачи</strong>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="place_of_delivery_country">Страна</label>
+                                                <select class="form-control select2"
+                                                        name="place_of_delivery_country"
+                                                        id="place_of_delivery_country"
+                                                        data-type="place_of_delivery"
+                                                        data-placeholder="Выберите страну" style="width: 100%;" >
+                                                    <option></option>
+                                                    @foreach($countries as $country)
+                                                        <option value="{{ $country->name }}">{{ $country->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
+                                        <div class="col-md-8" id="place_of_delivery_country_div"></div>
                                     </div>
-                                    <div class="col-md-8" id="place_of_delivery_country_div"></div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">

@@ -4,8 +4,12 @@
     <div class="content-header">
         <div class="container-fluid">
             <div class="row mb-2">
-                <div class="col-sm-6">
-                    <h1 class="m-0">{{ __('client.all_clients') }}</h1>
+                <div class="col-sm-12">
+                    @if (isset($_GET['trash']))
+                        <h1 class="m-0">Удаленные клиенты</h1>
+                    @else
+                        <h1 class="m-0">{{ __('client.all_clients') }}</h1>
+                    @endif
                 </div>
             </div>
         </div>
