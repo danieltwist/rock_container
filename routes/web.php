@@ -371,6 +371,7 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
 
     ///////////////////ajax restore
     Route::post('project/restore_row/{id}', '\App\Http\Controllers\Project\ProjectController@restoreRow')->middleware(['auth']);
+    Route::post('invoice/restore_row/{id}', '\App\Http\Controllers\Invoice\InvoiceController@restoreRow')->middleware(['auth']);
     Route::post('task/restore_row/{id}', '\App\Http\Controllers\Task\TaskController@restoreRow')->middleware(['auth']);
     Route::post('work_request/restore_row/{id}', '\App\Http\Controllers\WorkRequest\WorkRequestController@restoreRow')->middleware(['auth']);
     Route::post('application/restore_row/{id}', '\App\Http\Controllers\Application\ApplicationController@restoreRow')->middleware(['auth']);

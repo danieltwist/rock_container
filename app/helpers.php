@@ -264,7 +264,7 @@ if(!function_exists('can_edit_this_project')){
     }
 
     function agreeInfo($invoice_id){
-        $invoice = \App\Models\Invoice::find($invoice_id);
+        $invoice = \App\Models\Invoice::withTrashed()->find($invoice_id);
         $agree_info = '';
 
         if($invoice->agree_1 != ''){

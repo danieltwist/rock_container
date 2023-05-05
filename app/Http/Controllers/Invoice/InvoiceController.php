@@ -1168,4 +1168,16 @@ class InvoiceController extends Controller
 
     }
 
+    public function restoreRow($id){
+
+        $invoice = Invoice::withTrashed()->findOrFail($id);
+        $invoice->restore();
+
+        return response()->json([
+            'bg-class' => 'bg-success',
+            'from' => 'Система',
+            'message' => __('Счет ' .$invoice->id. ' был успешно восстановлен')
+        ]);
+    }
+
 }
