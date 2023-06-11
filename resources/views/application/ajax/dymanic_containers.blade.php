@@ -19,4 +19,13 @@
             <br>{{ implode(', ', $not_correct_format) }}
         </div>
     @endif
+    @if(!is_null($already_used))
+        <div class="mt-2">
+            <strong>Используются в других заявках: <br></strong>
+            @foreach($already_used as $key => $value)
+                {{ $value['container_name'] }} - <a href="/application/{{ $value['application_id'] }}" target="_blank">в заявке {{ $value['application_name'] }}</a>
+                {!! $key != array_key_last($already_used) ? '<br>' : '' !!}
+            @endforeach
+        </div>
+    @endif
 </div>

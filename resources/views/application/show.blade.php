@@ -60,7 +60,17 @@
                                     <div class="text-muted mt-3">
                                         <p class="text-sm">Тип заявки
                                             <b class="d-block">
-                                                {{ $application->type }}
+                                                @switch($application->type)
+                                                    @case('Поставщик')
+                                                        Взять в аренду
+                                                        @break
+                                                    @case('Клиент')
+                                                        Выдать в аренду
+                                                        @break
+                                                    @default
+                                                        {{ $application->type }}
+                                                @endswitch
+                                                    {{ !is_null($application->surcharge) ? ' / Доплатная' : '' }}
                                             </b>
                                         </p>
                                     </div>

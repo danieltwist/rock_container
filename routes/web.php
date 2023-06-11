@@ -114,7 +114,7 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
     Route::get('project/draft', 'App\Http\Controllers\Project\ProjectController@getDraftProjects')->name('draft_projects')->middleware(['auth']);
     Route::get('project/finished', 'App\Http\Controllers\Project\ProjectController@getFinishedProjects')->name('finished_projects')->middleware(['auth']);
 
-    Route::get('project/getProject', 'App\Http\Controllers\Project\ProjectController@getProjectTable')->name('get_projects_table')->middleware(['auth']);
+    Route::get('project/getProject', 'App\Http\Controllers\Datatables\ProjectTablesController@getProjectTable')->name('get_projects_table')->middleware(['auth']);
     Route::get('project/get_projects_table_with_filter', 'App\Http\Controllers\Datatables\ProjectTablesController@getProjectsWithFilter')->name('get_projects_table_with_filter')->middleware(['auth']);
 
     Route::resource('project', \App\Http\Controllers\Project\ProjectController::class)->middleware(['auth']);
@@ -306,9 +306,15 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
         ]);
     })->name('report_user_invoices_choose_type')->middleware(['auth']);
 
+    Route::get('report/expenses_by_types', function (){
+        return view('report.expenses_by_types');
+    })->name('report_expenses_by_types')->middleware(['auth']);
+
     Route::get('report/user_invoices', 'App\Http\Controllers\Report\ReportController@ReportUserInvoices')->name('report_user_invoices_choose_type')->middleware(['auth']);
 
     Route::any('report/user_invoices/result', 'App\Http\Controllers\Report\ReportController@getReportUserInvoices')->name('get_report_user_invoices')->middleware(['auth']);
+
+    Route::get('report/get_expenses_by_types', 'App\Http\Controllers\Report\ReportController@expensesByTypes')->name('get_report_expenses_by_types')->middleware(['auth']);
 
     //////////////////ajax routes containers
     Route::post('container/delete_row/{id}', '\App\Http\Controllers\Container\ContainerController@deleteRow')->middleware(['auth']);
@@ -319,6 +325,11 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
     Route::any('invoices/download/losses_table', '\App\Http\Controllers\ExportToExcel\InvoiceExportController@exportLosses')
         ->name('losses_table_invoices_download')->middleware(['auth']);
 
+    Route::get('expense_type/load_expense_types_by_category', 'App\Http\Controllers\ExpenseTypeController@loadExpenseTypesByCategory')
+        ->name('load_expense_types_by_category')
+        ->middleware(['auth']);
+
+    Route::get('/history/get_component_history_table', 'App\Http\Controllers\Datatables\AuditTablesController@getComponentHistoryTable')->middleware(['auth'])->name('get_component_history_table');
 
 });
 
@@ -343,15 +354,10 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
         ->name('unblock_processing')
         ->middleware(['auth']);
 
-    Route::get('expense_type/load_expense_types_by_category', 'App\Http\Controllers\ExpenseTypeController@loadExpenseTypesByCategory')
-        ->name('load_expense_types_by_category')
-        ->middleware(['auth']);
-
     Route::resource('expense_type', \App\Http\Controllers\ExpenseTypeController::class)->middleware(['auth']);
 
     Route::get('/history', 'App\Http\Controllers\Audit\AuditController@index')->middleware(['auth'])->name('history');
     Route::get('/history/get_audits_table', 'App\Http\Controllers\Datatables\AuditTablesController@getAuditTable')->middleware(['auth'])->name('get_audits_table');
-    Route::get('/history/get_component_history_table', 'App\Http\Controllers\Datatables\AuditTablesController@getComponentHistoryTable')->middleware(['auth'])->name('get_component_history_table');
 
     Route::prefix('settings')->middleware(['auth'])->group(function () {
         Route::get('/currency_ratio','App\Http\Controllers\Setting\CurrencyRatioController@index')
@@ -366,8 +372,14 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
         Route::post('/update_currency_rates','App\Http\Controllers\Setting\CurrencyRatioController@updateRates')->name('update_currency_rates');
     });
 
+    /////////1с
+    Route::get('1c/get_bank_accounts_balance', 'App\Http\Controllers\Invoice\BankAccountsController@getBankAccountsBalance')->name('get_bank_accounts_balance')->middleware(['auth']);
 
+    Route::get('1c/bank_accounts_balance', 'App\Http\Controllers\Datatables\BankAccountsTablesController@bankAccountsBalance')->name('bank_accounts_balance')->middleware(['auth']);
+    Route::get('1c/bank_accounts_payments', 'App\Http\Controllers\Datatables\BankAccountsTablesController@bankAccountsPayments')->name('bank_accounts_payments')->middleware(['auth']);
 
+    Route::get('1c/get_bank_accounts_payments_table', 'App\Http\Controllers\Datatables\BankAccountsTablesController@getBankAccountsPaymentsTable')->name('get_bank_accounts_payments_table')->middleware(['auth']);
+    Route::get('1c/get_bank_accounts_balances_table', 'App\Http\Controllers\Datatables\BankAccountsTablesController@getBankAccountsBalanceTable')->name('get_bank_accounts_balances_table')->middleware(['auth']);
 
     ///////////////////ajax restore
     Route::post('project/restore_row/{id}', '\App\Http\Controllers\Project\ProjectController@restoreRow')->middleware(['auth']);

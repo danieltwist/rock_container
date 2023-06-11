@@ -45,58 +45,93 @@ if(!function_exists('can_edit_this_project')){
 
         $user = auth()->user();
         $role = $user->getRoleNames()[0];
-        $supply = User::role('supply')->pluck('id')->toArray();
 
         $project = \App\Models\Project::find($project_id);
 
         if(!is_null($project)){
-            $project_create_user = User::findOrFail($project->user_id);
-            $project_create_user_role = $project_create_user->getRoleNames()[0];
-
             if(config('app.prefix_view') == 'rl_' || config('app.prefix_view') == 'ntc_'){
-                    if (in_array($role, ['super-admin','director']) ||
-                        in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
-                        $project->management_expenses == 'on' ||
-                        $user->id == '13' ||
-                        $user->id == '14' ||
-                        ($role == 'logist' && $project_create_user_role == 'logist')){
-
-                        return true;
-
-                    }
-
-                    else return false;
+                if (in_array($role, ['super-admin','director']) ||
+                    $user->can('view and access all projects') ||
+                    in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
+                    $project->management_expenses == 'on')
+                {
+                    return true;
+                }
+                else return false;
             }
             elseif (config('app.prefix_view') == 'rc_'){
-                    is_null($project->access_to_project) ? $access_to_projects = $project->access_to_project = [] : $access_to_projects = $project->access_to_project;
-                    if (in_array($role, ['super-admin','director']) ||
-                        in_array($user->id, [$project->user_id, $project->manager_id]) ||
-                        in_array($user->id, $access_to_projects) ||
-                        in_array($project->user_id, ['21', '40']) ||
-                        $project->management_expenses == 'on' ||
-                        ($role == 'supply' && $project_create_user_role == 'supply'))
-                    {
-
-                        return true;
-
-                    }
+                is_null($project->access_to_project) ? $access_to_projects = $project->access_to_project = [] : $access_to_projects = $project->access_to_project;
+                if (in_array($role, ['super-admin','director']) ||
+                    $user->can('view and access all projects') ||
+                    in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
+                    in_array($user->id, $access_to_projects) ||
+                    $project->management_expenses == 'on')
+                {
+                    return true;
+                }
                 else return false;
             }
             elseif (config('app.prefix_view') == 'blc_'){
-                    if (in_array($role, ['super-admin','director']) ||
-                        in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
-                        $project->management_expenses == 'on' ||
-                        in_array($role, ['logist', 'accountant']))
-                    {
-                        return true;
+                if (in_array($role, ['super-admin','director']) ||
+                    $user->can('view and access all projects') ||
+                    in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
+                    $project->management_expenses == 'on')
+                {
+                    return true;
 
-                    }
+                }
 
                 else return false;
             }
         }
         else return false;
 
+    }
+
+    function canViewProject($project_id){
+
+        $user = auth()->user();
+        $role = $user->getRoleNames()[0];
+
+        $project = \App\Models\Project::find($project_id);
+
+        if(!is_null($project)){
+            if(config('app.prefix_view') == 'rl_' || config('app.prefix_view') == 'ntc_'){
+                if (in_array($role, ['super-admin','director','accountant']) ||
+                    $user->can('view and access all projects') ||
+                    in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
+                    $project->management_expenses == 'on')
+                {
+                    return true;
+                }
+                else return false;
+            }
+            elseif (config('app.prefix_view') == 'rc_'){
+                is_null($project->access_to_project) ? $access_to_projects = $project->access_to_project = [] : $access_to_projects = $project->access_to_project;
+                if (in_array($role, ['super-admin','director','accountant']) ||
+                    $user->can('view and access all projects') ||
+                    in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
+                    in_array($user->id, $access_to_projects) ||
+                    $project->management_expenses == 'on')
+                {
+                    return true;
+                }
+                else return false;
+            }
+            elseif (config('app.prefix_view') == 'blc_'){
+                if (in_array($role, ['super-admin','director','accountant']) ||
+                    $user->can('view and access all projects') ||
+                    in_array($user->id, [$project->user_id, $project->manager_id, $project->logist_id]) ||
+                    $project->management_expenses == 'on')
+                {
+                    return true;
+
+                }
+
+                else return false;
+            }
+        }
+        else return false;
     }
 
     function containerHasProject($container_id, $project_id){

@@ -24,7 +24,35 @@
                             @csrf
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="application_type">Тип заявки</label>
+                                            <select class="form-control select2" name="type" id="application_type" required
+                                                    data-placeholder="Тип заявки" style="width: 100%;" >
+                                                <option></option>
+                                                @foreach([
+                                                            [
+                                                                'type' => 'Поставщик',
+                                                                'name' => 'Взять в аренду'
+                                                            ],
+                                                            [
+                                                                'type' => 'Клиент',
+                                                                'name' => 'Выдать в аренду'
+                                                            ],
+                                                            [
+                                                                'type' => 'Подсыл',
+                                                                'name' => 'Подсыл'
+                                                            ]
+                                                        ] as $key => $application_type)
+                                                    <option value="{{ $application_type['type'] }}"
+                                                        {{ $application_type['type'] != $application->type ?: 'selected' }}>
+                                                        {{ $application_type['name'] }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="counterparty_type">Тип контрагента</label>
                                             <select class="form-control select2" name="counterparty_type" id="application_direction" required
@@ -39,7 +67,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group {{ $application->counterparty_type != 'Поставщик' ?: 'd-none' }}"
                                              id="client_group">
                                             <label for="client_id">{{ __('general.client') }}</label>
@@ -70,7 +98,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div id="application_counterparty_contracts">
                                             <div class="form-group">
                                                 <label for="contract_id">Договор</label>
@@ -90,7 +118,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="name">Название заявки</label>
                                             <input type="text" class="form-control" name="name"
@@ -99,28 +127,13 @@
                                                    required>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="created_at">Дата заявки</label>
                                             <input type="text" class="form-control date_input" name="created_at"
                                                    placeholder="Дата заявки"
                                                    value="{{ $application->created_at->format('d.m.Y') }}"
                                                    required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="application_type">Тип заявки</label>
-                                            <select class="form-control select2" name="type" id="application_type" required
-                                                    data-placeholder="Тип заявки" style="width: 100%;" >
-                                                <option></option>
-                                                @foreach(['Поставщик', 'Клиент', 'Подсыл'] as $application_type)
-                                                    <option value="{{ $application_type }}"
-                                                        {{ $application_type != $application->type ?: 'selected' }}>
-                                                        {{ $application_type }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -481,6 +494,12 @@
                                 <div class="form-group">
                                     <label>{{ __('general.additional_info') }}</label>
                                     <textarea class="form-control to_uppercase" rows="3" name="additional_info" placeholder="{{ __('general.additional_info') }}">{{ $application->additional_info }}</textarea>
+                                </div>
+                                <div class="form-group clearfix">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="surcharge" name="surcharge" {{ !is_null($application->surcharge) ? 'checked' : '' }}>
+                                        <label for="surcharge">Доплатная заявка</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-footer">

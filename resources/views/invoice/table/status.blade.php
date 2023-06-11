@@ -40,8 +40,20 @@
     @endif
 @endif
 @if(in_array($invoice->status, ['Счет на согласовании','Согласована частичная оплата','Счет согласован на оплату']))
-    @if (!is_null($invoice->agreement_date))
-        <small>{{ $invoice->agreement_date->format('d.m.Y H:i:s') }}</small>
+    @if ($invoice->agree_1 != '' || $invoice->agree_2 != '')
+        <a class="cursor-pointer text-sm text-dark"
+           data-toggle="collapse"
+           data-target="#collapse_invoice_agree_info_{{ $invoice->id }}"
+           aria-expanded="false"
+           aria-controls="collapseExample">
+            <i class="fa fa-angle-down"></i>
+            {{ __('general.info') }}
+        </a>
+        <div class="collapse mt-2" id="collapse_invoice_agree_info_{{ $invoice->id }}">
+            <small>
+                {!! agreeInfo($invoice->id) !!}
+            </small>
+        </div>
     @endif
 @endif
 @if (in_array($invoice->status, ['Оплачен', 'Частично оплачен', 'Не оплачен']))

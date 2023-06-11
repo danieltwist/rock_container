@@ -44,6 +44,11 @@ class InvoiceTablesController extends Controller
         if($request->direction != ''){
             $totalRecords->where('direction', $request->direction);
         }
+        if(!in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+            $totalRecords->where(function ($query) {
+                $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+            });
+        }
         $totalRecords = $totalRecords->whereDate('created_at', '>=', $range_from)
             ->whereDate('created_at', '<=', $range_to)
             ->count();
@@ -78,9 +83,14 @@ class InvoiceTablesController extends Controller
                             $q->where('name', 'like', '%' . $searchValue . '%');
                         });
                 });
-                if($request->direction != ''){
-                    $withFilter->where('direction', $request->direction);
-                }
+            if($request->direction != ''){
+                $withFilter->where('direction', $request->direction);
+            }
+            if(!in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+                $withFilter->where(function ($query) {
+                    $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+                });
+            }
             $withFilter = $withFilter->filter($filter)
                 ->whereDate('created_at', '>=', $range_from)
                 ->whereDate('created_at', '<=', $range_to)
@@ -96,6 +106,11 @@ class InvoiceTablesController extends Controller
             if($request->direction != ''){
                 $totalRecordswithFilter->where('direction', $request->direction);
             }
+            if(!in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+                $totalRecordswithFilter->where(function ($query) {
+                    $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+                });
+            }
             $totalRecordswithFilter= $totalRecordswithFilter->whereDate('created_at', '>=', $range_from)
                 ->whereDate('created_at', '<=', $range_to)
                 ->count();
@@ -103,6 +118,11 @@ class InvoiceTablesController extends Controller
             $records = Invoice::filter($filter);
             if($request->direction != ''){
                 $records->where('direction', $request->direction);
+            }
+            if(!in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+                $records->where(function ($query) {
+                    $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+                });
             }
 
             $records = $records->whereDate('created_at', '>=', $range_from)
@@ -385,6 +405,12 @@ class InvoiceTablesController extends Controller
 
         // Total records
         $totalRecords = Invoice::query();
+        if(!in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+            $totalRecords->where(function ($query) {
+                $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+            });
+        }
+
         $totalRecords->whereDate('created_at', '>=', $range_from)
             ->whereDate('created_at', '<=', $range_to);
 
@@ -402,6 +428,12 @@ class InvoiceTablesController extends Controller
 
         if($searchValue != ''){
             $withFilter = Invoice::query();
+            if(!in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+                $withFilter->where(function ($query) {
+                    $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+                });
+            }
+
             $withFilter->orWhere(function ($query) use ($searchValue) {
                     $query->where('invoices.amount', 'like', '%' . $searchValue . '%')
                     ->orWhere('invoices.id', $searchValue)
@@ -447,6 +479,11 @@ class InvoiceTablesController extends Controller
         }
         else {
             $totalRecordswithFilter = Invoice::query();
+            if(!in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+                $totalRecordswithFilter->where(function ($query) {
+                    $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+                });
+            }
             $totalRecordswithFilter->whereDate('created_at', '>=', $range_from)
                 ->whereDate('created_at', '<=', $range_to);
             if($request->invoice_status !=''){
@@ -455,6 +492,11 @@ class InvoiceTablesController extends Controller
             $totalRecordswithFilter = $totalRecordswithFilter->filter($filter)->count();
 
             $records = Invoice::query();
+            if(!in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+                $records->where(function ($query) {
+                    $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+                });
+            }
             $records = $records->whereDate('created_at', '>=', $range_from)
                 ->whereDate('created_at', '<=', $range_to)
                 ->orderBy($columnName, $columnSortOrder)
@@ -468,7 +510,6 @@ class InvoiceTablesController extends Controller
                 ->skip($start)
                 ->take($rowperpage)
                 ->get();
-
         }
 
         $data_arr = array();

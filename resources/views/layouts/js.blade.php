@@ -65,8 +65,6 @@
             scrollInput : false
         });
 
-        $('.collapsed').CardWidget('collapse');
-
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -191,7 +189,7 @@
                     "autoWidth": false,
                     "responsive": true,
                     "language": {
-                        "url": "/admin/plugins/datatables-ru-lang/russian.json"
+                        "url": "/admin/plugins/datatables-ru-lang/ru.json"
                     }
                 });
                 jQuery('.invoice_deadline').datetimepicker({
@@ -270,7 +268,7 @@
                     "autoWidth": false,
                     "responsive": true,
                     "language": {
-                        "url": "/admin/plugins/datatables-ru-lang/russian.json"
+                        "url": "/admin/plugins/datatables-ru-lang/ru.json"
                     }
                 });
             },
@@ -2268,5 +2266,21 @@
             $('#application_direction').trigger('change');
         }
     });
+
+
+    $(document).on('click', '#get_bank_account_balances', function () {
+        $('#bank_account_balances').html(loading_spinner);
+        $.ajax({
+            type: "GET",
+            url: "{{ route('get_bank_accounts_balance') }}",
+            success: function (response) {
+                $('#bank_account_balances').html(response);
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    });
+
 
 </script>

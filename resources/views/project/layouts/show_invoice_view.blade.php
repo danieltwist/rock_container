@@ -348,10 +348,10 @@
                                 else {
                                     $rate_minus_one = $rates->cny_divided;
                                 }
-                                $total_price_in_rubles = round($invoice->amount_in_currency * $rate_minus_one);
+                                $total_price_in_rubles = round($invoice->amount_in_currency * $rate_minus_one, 2);
                             }
                             else{
-                                $total_price_in_rubles = round($invoice->amount);
+                                $total_price_in_rubles = round($invoice->amount, 2);
                             }
                         @endphp
                         @if ($currency != 'RUB')
@@ -403,7 +403,7 @@
                                    id="invoice_total_price_in_rub"
                                    placeholder="{{ __('invoice.amount_actual_in_rubles') }}"
                                    inputmode="numeric"
-                                   value="{{ $total_price_in_rubles }}" required>
+                                   value="{{ number_format($total_price_in_rubles, 2, '.', '') }}" required>
                         </div>
                         @if ($currency != 'RUB')
                             <div class="form-group">
@@ -421,7 +421,7 @@
                                    id="this_invoice_payment_in_rubles"
                                    name="amount_income_date"
                                    placeholder="{{ __('invoice.this_payment_amount_in_rub') }}"
-                                   value="{{ $total_price_in_rubles }}" required>
+                                   value="{{ number_format($total_price_in_rubles, 2, '.', '') }}" required>
                         </div>
                         <div class="form-group">
                             <label>{{ __('invoice.status') }}</label>
@@ -460,10 +460,10 @@
                                 else {
                                     $rate_minus_one = $rates->cny_divided;
                                 }
-                                $total_price_in_rubles = round($invoice->amount_in_currency * $rate_minus_one);
+                                $total_price_in_rubles = round($invoice->amount_in_currency * $rate_minus_one, 2);
                             }
                             else{
-                                $total_price_in_rubles = round($invoice->amount);
+                                $total_price_in_rubles = round($invoice->amount, 2);
                             }
                         @endphp
                         @if ($currency != 'RUB')
@@ -515,7 +515,7 @@
                                    name="amount_income_date"
                                    id="invoice_total_price_in_rub"
                                    placeholder="{{ __('invoice.this_payment_amount_in_rub') }}"
-                                   value="{{ $total_price_in_rubles }}" required>
+                                   value="{{ number_format($total_price_in_rubles, 2, '.', '') }}" required>
                         </div>
                         <div class="form-group">
                             <label>Статус счета</label>

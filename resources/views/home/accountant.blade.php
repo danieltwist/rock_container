@@ -187,5 +187,6 @@
             </div>
         </div>
         @include('project.modals.confirm_invoice')
+        @include('audit.component_history_modal')
     </section>
 @endsection

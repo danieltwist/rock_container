@@ -48,11 +48,14 @@ class AuditTablesController extends Controller
 
         $sno = $start + 1;
 
-        foreach ($records as $audit) {
+        foreach ($records as $key => $audit) {
 
             $audit = $this->prepareForTable($audit);
 
-            if($audit->skip) continue;
+            if($audit->skip) {
+                $records->forget($key);
+                continue;
+            }
 
             $id = $audit->id;
 
@@ -87,6 +90,7 @@ class AuditTablesController extends Controller
             );
 
         }
+
 
         $response = array(
             "draw" => intval($draw),

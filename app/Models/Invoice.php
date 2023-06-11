@@ -24,7 +24,7 @@ class Invoice extends Model implements Auditable
             return $this->where($field ?? $this->getRouteKeyName(), $value)->first();
     }
 
-    protected $dates = ['agreement_date'];
+    protected $dates = ['agreement_date', 'deadline'];
 
     protected $casts = [
         'losses_potential' => 'array',

@@ -63,7 +63,8 @@
                         @include('project.layouts.projects_table')
                     </div>
                 </div>
-                <div class="card-footer">
+                @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                    <div class="card-footer">
                     <form action="{{ route('projects_export_with_filter_to_excel') }}" id="get_excel_projects" method="GET">
                         @csrf
                         @if (isset($_GET['draft']))
@@ -117,6 +118,7 @@
                         </button>
                     </form>
                 </div>
+                @endif
             </div>
         </div>
     </section>

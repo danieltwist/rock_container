@@ -23,7 +23,19 @@
                             @csrf
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="application_type">Тип заявки</label>
+                                            <select class="form-control select2" name="application_type" id="application_type" required
+                                                    data-placeholder="Тип заявки" style="width: 100%;" >
+                                                <option></option>
+                                                <option value="Поставщик">Взять в аренду</option>
+                                                <option value="Клиент">Выдать в аренду</option>
+                                                <option value="Подсыл">Подсыл</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="counterparty_type">Тип контрагента</label>
                                             <select class="form-control select2" name="counterparty_type" id="application_direction" required
@@ -34,7 +46,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group d-none" id="client_group">
                                             <label for="client_id">{{ __('general.client') }}</label>
                                             <select class="form-control select2 application_load_contract" name="client_id"
@@ -60,12 +72,12 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div id="application_counterparty_contracts"></div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="name">Название заявки</label>
                                             <input type="text" class="form-control" name="name"
@@ -74,25 +86,13 @@
                                                    required>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="created_at">Дата заявки</label>
                                             <input type="text" class="form-control date_input" name="created_at"
                                                    placeholder="Дата заявки"
                                                    value="{{ \Carbon\Carbon::now()->format('d.m.Y') }}"
                                                    required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group" id="supplier_group">
-                                            <label for="application_type">Тип заявки</label>
-                                            <select class="form-control select2" name="application_type" id="application_type" required
-                                                    data-placeholder="Тип заявки" style="width: 100%;" >
-                                                <option></option>
-                                                <option value="Поставщик">Поставщик</option>
-                                                <option value="Клиент">Клиент</option>
-                                                <option value="Подсыл">Подсыл</option>
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -251,6 +251,12 @@
                                 <div class="form-group">
                                     <label>{{ __('general.additional_info') }}</label>
                                     <textarea class="form-control to_uppercase" rows="3" name="additional_info" placeholder="{{ __('general.additional_info') }}"></textarea>
+                                </div>
+                                <div class="form-group clearfix">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="surcharge" name="surcharge">
+                                        <label for="surcharge">Доплатная заявка</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-footer">

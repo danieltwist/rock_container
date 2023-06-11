@@ -53,6 +53,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('task:notify_client_about_payment')->dailyAt('9:30');
         $schedule->command('task:have_overdue_task')->dailyAt('9:45');
         $schedule->command('update:usage_info')->dailyAt('00:10');
+        $schedule->command('bank_accounts:get_balances')->everyFiveMinutes();
+        $schedule->command('bank_accounts:get_payments')->everyFiveMinutes();
+        $schedule->command('notify:bank_accounts_balances')->dailyAt('18:00');
     }
 
     protected function shortSchedule(ShortSchedule $shortSchedule)

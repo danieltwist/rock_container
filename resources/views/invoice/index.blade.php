@@ -43,7 +43,9 @@
                     <div id="loading_spinner"></div>
                 </div>
                 <div class="card-body">
-                    <div id="invoices_agree_amount"></div>
+                    @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                        <div id="invoices_agree_amount"></div>
+                    @endif
                     @if (!isset($_GET['client']) && !isset($_GET['supplier']))
                         <div class="row">
                             <div class="col-md-8">
@@ -68,85 +70,87 @@
                         @include('invoice.table.invoice_ajax_table')
                     </div>
                 </div>
-                <div class="card-footer">
-                    <form action="{{ route('invoices_export_with_filter_to_excel') }}" id="get_excel_invoices" method="GET">
-                        @csrf
-                        @if (isset($_GET['for_approval']))
-                            @php
-                                $parameters = [
-                                    'filename' => 'счета_на_согласовании',
-                                    'sorting_type' => 'Ожидается согласование'
-                                ];
-                                $filter = 'for_approval';
-                            @endphp
-                        @elseif (isset($_GET['agreed']))
-                            @php
-                                $parameters = [
-                                    'filename' => 'согласованные_счета',
-                                    'sorting_type' => 'Согласованы на оплату'
-                                ];
-                                $filter = 'agreed';
-                            @endphp
-                        @elseif (isset($_GET['paid']))
-                            @php
-                                $parameters = [
-                                    'filename' => 'оплаченные_счета',
-                                    'sorting_type' => 'Оплаченные счета'
-                                ];
-                                $filter = 'paid';
-                            @endphp
-                        @elseif (isset($_GET['my']))
-                            @php
-                                $parameters = [
-                                    'filename' => 'мои_счета',
-                                    'sorting_type' => 'Счета, добавленные пользователем '.auth()->user()->name
-                                ];
-                                $filter = 'my';
-                            @endphp
-                        @elseif (isset($_GET['on_approval']))
-                            @php
-                                $parameters = [
-                                    'filename' => 'в_процессе_согласования',
-                                    'sorting_type' => 'В процессе согласования'
-                                ];
-                                $filter = 'on_approval';
-                            @endphp
-                        @elseif (isset($_GET['in']))
-                            @php
-                                $parameters = [
-                                    'filename' => 'входящие_счета',
-                                    'sorting_type' => 'Входящие счета'
-                                ];
-                                $filter = 'in';
-                            @endphp
-                        @elseif (isset($_GET['out']))
-                            @php
-                                $parameters = [
-                                    'filename' => 'исходящие_счета',
-                                    'sorting_type' => 'Исходящие счета'
-                                ];
-                                $filter = 'out';
-                            @endphp
-                        @else
-                            @php
-                                $parameters = [
-                                    'filename' => 'все_счета',
-                                    'sorting_type' => 'Все счета',
-                                ];
-                            @endphp
-                        @endif
+                @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                    <div class="card-footer">
+                        <form action="{{ route('invoices_export_with_filter_to_excel') }}" id="get_excel_invoices" method="GET">
+                            @csrf
+                            @if (isset($_GET['for_approval']))
+                                @php
+                                    $parameters = [
+                                        'filename' => 'счета_на_согласовании',
+                                        'sorting_type' => 'Ожидается согласование'
+                                    ];
+                                    $filter = 'for_approval';
+                                @endphp
+                            @elseif (isset($_GET['agreed']))
+                                @php
+                                    $parameters = [
+                                        'filename' => 'согласованные_счета',
+                                        'sorting_type' => 'Согласованы на оплату'
+                                    ];
+                                    $filter = 'agreed';
+                                @endphp
+                            @elseif (isset($_GET['paid']))
+                                @php
+                                    $parameters = [
+                                        'filename' => 'оплаченные_счета',
+                                        'sorting_type' => 'Оплаченные счета'
+                                    ];
+                                    $filter = 'paid';
+                                @endphp
+                            @elseif (isset($_GET['my']))
+                                @php
+                                    $parameters = [
+                                        'filename' => 'мои_счета',
+                                        'sorting_type' => 'Счета, добавленные пользователем '.auth()->user()->name
+                                    ];
+                                    $filter = 'my';
+                                @endphp
+                            @elseif (isset($_GET['on_approval']))
+                                @php
+                                    $parameters = [
+                                        'filename' => 'в_процессе_согласования',
+                                        'sorting_type' => 'В процессе согласования'
+                                    ];
+                                    $filter = 'on_approval';
+                                @endphp
+                            @elseif (isset($_GET['in']))
+                                @php
+                                    $parameters = [
+                                        'filename' => 'входящие_счета',
+                                        'sorting_type' => 'Входящие счета'
+                                    ];
+                                    $filter = 'in';
+                                @endphp
+                            @elseif (isset($_GET['out']))
+                                @php
+                                    $parameters = [
+                                        'filename' => 'исходящие_счета',
+                                        'sorting_type' => 'Исходящие счета'
+                                    ];
+                                    $filter = 'out';
+                                @endphp
+                            @else
+                                @php
+                                    $parameters = [
+                                        'filename' => 'все_счета',
+                                        'sorting_type' => 'Все счета',
+                                    ];
+                                @endphp
+                            @endif
 
-                        @if(isset($filter))
-                            <input type="hidden" name="filter" value="{{ $filter }}">
-                        @endif
-                        <input type="hidden" name="parameters" value="{{ serialize($parameters) }}">
-                        <button type="submit" class="btn btn-success download_file_directly"
-                                data-action='{"download_file":{"need_download": "true"}}'>
-                            <i class="fas fa-file-excel"></i>
-                            {{ __('general.export_invoice_to_excel') }}
-                        </button>
-                    </form>
-                </div>
+                            @if(isset($filter))
+                                <input type="hidden" name="filter" value="{{ $filter }}">
+                            @endif
+                            <input type="hidden" name="parameters" value="{{ serialize($parameters) }}">
+                            <button type="submit" class="btn btn-success download_file_directly"
+                                    data-action='{"download_file":{"need_download": "true"}}'>
+                                <i class="fas fa-file-excel"></i>
+                                {{ __('general.export_invoice_to_excel') }}
+                            </button>
+                        </form>
+                    </div>
+                @endif
             </div>
         </div>
     </section>

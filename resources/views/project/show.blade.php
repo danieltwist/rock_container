@@ -575,7 +575,8 @@
                                         @include('project.layouts.invoices_two_columns.invoices_two_columns')
                                     </div>
                                 </div>
-                                <div class="card-footer">
+                                @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                                    <div class="card-footer">
                                     <form action="{{ route('invoices_export_with_filter_to_excel') }}" method="GET">
                                         @csrf
                                         @php
@@ -597,6 +598,7 @@
                                         </button>
                                     </form>
                                 </div>
+                                @endif
                             </div>
                         </div>
                     </div>

@@ -29,11 +29,24 @@
                                         data-filter_type="type"
                                         data-type="Все">{{ __('general.all') }}
                                 </button>
-                                @foreach(['Поставщик', 'Клиент', 'Подсыл'] as $application_type)
+                                @foreach([
+                                            [
+                                                'type' => 'Поставщик',
+                                                'name' => 'Взять в аренду'
+                                            ],
+                                            [
+                                                'type' => 'Клиент',
+                                                'name' => 'Выдать в аренду'
+                                            ],
+                                            [
+                                                'type' => 'Подсыл',
+                                                'name' => 'Подсыл'
+                                            ]
+                                        ] as $key => $application_type)
                                     <button type="button" class="btn btn-default btn-sm applications_filters"
                                             data-filter_type="type"
-                                            data-type="{{ $application_type }}">
-                                        {{ $application_type }}
+                                            data-type="{{ $application_type['type'] }}">
+                                        {{ $application_type['name'] }}
                                     </button>
                                 @endforeach
                             </div>
@@ -53,7 +66,7 @@
                                         <th style="width: 1%">
                                             #
                                         </th>
-                                        <th style="width: 9%">
+                                        <th style="width: 13%">
                                             Название
                                         </th>
                                         <th style="width: 20%">
@@ -71,7 +84,7 @@
                                         <th style="width: 5%">
                                             Статус
                                         </th>
-                                        <th style="width: 24%">
+                                        <th style="width: 20%">
                                             {{ __('general.actions') }}
                                         </th>
                                     </tr>

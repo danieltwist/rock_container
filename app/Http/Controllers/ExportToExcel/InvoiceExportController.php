@@ -116,7 +116,7 @@ class InvoiceExportController extends Controller
                     $amount_in_currency = $invoice->amount;
                 }
 
-                $amount_paid_in_currency = (int)$invoice->amount_income_date;
+                $amount_paid_in_currency = (float)$invoice->amount_income_date;
 
             }
             else{
@@ -128,7 +128,7 @@ class InvoiceExportController extends Controller
                 }
 
                 !is_null($invoice->amount_in_currency_income_date)
-                    ? $amount_paid_in_currency = (int)$invoice->amount_in_currency_income_date
+                    ? $amount_paid_in_currency = (float)$invoice->amount_in_currency_income_date
                     : $amount_paid_in_currency = 0;
 
             }
@@ -138,7 +138,7 @@ class InvoiceExportController extends Controller
                 : $amount = $invoice->amount;
 
             !is_null($invoice->amount_income_date)
-                ? $amount_paid = (int)$invoice->amount_income_date
+                ? $amount_paid = (float)$invoice->amount_income_date
                 : $amount_paid = 0;
 
             $array [] = [
@@ -150,12 +150,13 @@ class InvoiceExportController extends Controller
                 'deadline' => $invoice->deadline,
                 'amount_in_currency' => $amount_in_currency,
                 'amount_paid_in_currency' => $amount_paid_in_currency,
-                'amount_balance_in_currency' => (int)$amount_in_currency - $amount_paid_in_currency,
+                'amount_balance_in_currency' => (float)$amount_in_currency - $amount_paid_in_currency,
                 'currency' => $invoice->currency,
                 'amount' => $amount,
                 'amount_paid' => $amount_paid,
-                'amount_balance' => (int)$amount - $amount_paid,
-                'status' => $invoice->status
+                'amount_balance' => (float)$amount - $amount_paid,
+                'status' => $invoice->status,
+                'info' => $invoice->additional_info,
             ];
 
             $url [] = [
@@ -172,7 +173,7 @@ class InvoiceExportController extends Controller
         $sheet->setCellValue('B2', $dates);
         $sheet->setCellValue('B3', $sorting_type);
 
-        $sheet->getStyle('A4:N4')
+        $sheet->getStyle('A4:O4')
             ->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()
@@ -205,7 +206,7 @@ class InvoiceExportController extends Controller
         $sheet->setCellValue('L'.$i, $total_amount_paid);
         $sheet->setCellValue('M'.$i, $total_amount_balance);
 
-        $sheet->getStyle('A'.$i.':N'.$i)
+        $sheet->getStyle('A'.$i.':O'.$i)
             ->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()
@@ -215,7 +216,7 @@ class InvoiceExportController extends Controller
             ->getFont()
             ->setBold(true);
 
-        $sheet->getStyle('K'.$i.':M'.$i)
+        $sheet->getStyle('K'.$i.':N'.$i)
             ->getNumberFormat()
             ->setFormatCode('#,##0.00_-"₽"');
 
@@ -292,7 +293,7 @@ class InvoiceExportController extends Controller
                     $amount_in_currency = $invoice->amount;
                 }
 
-                $amount_paid_in_currency = (int)$invoice->amount_income_date;
+                $amount_paid_in_currency = (float)$invoice->amount_income_date;
 
             }
             else{
@@ -304,7 +305,7 @@ class InvoiceExportController extends Controller
                 }
 
                 !is_null($invoice->amount_in_currency_income_date)
-                    ? $amount_paid_in_currency = (int)$invoice->amount_in_currency_income_date
+                    ? $amount_paid_in_currency = (float)$invoice->amount_in_currency_income_date
                     : $amount_paid_in_currency = 0;
 
             }
@@ -314,7 +315,7 @@ class InvoiceExportController extends Controller
                 : $amount = $invoice->amount;
 
             !is_null($invoice->amount_income_date)
-                ? $amount_paid = (int)$invoice->amount_income_date
+                ? $amount_paid = (float)$invoice->amount_income_date
                 : $amount_paid = 0;
 
             $array [] = [
@@ -326,12 +327,13 @@ class InvoiceExportController extends Controller
                 'deadline' => $invoice->deadline,
                 'amount_in_currency' => $amount_in_currency,
                 'amount_paid_in_currency' => $amount_paid_in_currency,
-                'amount_balance_in_currency' => (int)$amount_in_currency - $amount_paid_in_currency,
+                'amount_balance_in_currency' => (float)$amount_in_currency - $amount_paid_in_currency,
                 'currency' => $invoice->currency,
                 'amount' => $amount,
                 'amount_paid' => $amount_paid,
                 'losses_amount' => abs($invoice->losses_amount),
-                'status' => $invoice->status
+                'status' => $invoice->status,
+                'info' => $invoice->additional_info
             ];
 
             $url [] = [
@@ -348,7 +350,7 @@ class InvoiceExportController extends Controller
         $sheet->setCellValue('B2', 'Все');
         $sheet->setCellValue('B3', $parameters['sorting_type']);
 
-        $sheet->getStyle('A4:N4')
+        $sheet->getStyle('A4:04')
             ->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()
@@ -381,7 +383,7 @@ class InvoiceExportController extends Controller
         $sheet->setCellValue('L'.$i, $total_amount_paid);
         $sheet->setCellValue('M'.$i, $total_amount_balance);
 
-        $sheet->getStyle('A'.$i.':N'.$i)
+        $sheet->getStyle('A'.$i.':O'.$i)
             ->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()
@@ -391,7 +393,7 @@ class InvoiceExportController extends Controller
             ->getFont()
             ->setBold(true);
 
-        $sheet->getStyle('K'.$i.':M'.$i)
+        $sheet->getStyle('K'.$i.':N'.$i)
             ->getNumberFormat()
             ->setFormatCode('#,##0.00_-"₽"');
 

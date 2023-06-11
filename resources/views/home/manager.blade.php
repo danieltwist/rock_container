@@ -62,7 +62,7 @@
                         {{ __('home.no_my_projects') }}
                     @endif
                 </div>
-                @if($my_projects_count != 0)
+                @if(in_array($role, ['director', 'accountant', 'super-admin']))
                     <div class="card-footer">
                         <form action="{{ route('projects_export_with_filter_to_excel') }}" method="GET">
                             @csrf
@@ -84,5 +84,6 @@
             </div>
         </div>
         @include('project.modals.confirm_invoice')
+        @include('audit.component_history_modal')
     </section>
 @endsection

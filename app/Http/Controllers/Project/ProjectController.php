@@ -105,8 +105,14 @@ class ProjectController extends Controller
         $new_project->prepayment = $request->prepayment;
         $new_project->status = $status;
         !isset($request->management_expenses) ?: $new_project->management_expenses = $request->management_expenses;
-        $new_project->access_to_project = $request->access_to_project;
-
+        if(isset($request->access_to_project)){
+            if(is_array($request->access_to_project)){
+                $new_project->access_to_project = array_map('intval', $request->access_to_project);
+            }
+            else {
+                $new_project->access_to_project = (int)$request->access_to_project;
+            }
+        }
 
         $new_project->save();
 
@@ -202,123 +208,127 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        $blocks = Block::where('project_id', $project->id)->get();
+        if(canViewProject($project->id)){
+            $blocks = Block::where('project_id', $project->id)->get();
 
-        $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
+            $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
-        foreach ($project->all_clients() as $id){
-            $this_project_clients [] = Client::find($id);
-        }
+            foreach ($project->all_clients() as $id){
+                $this_project_clients [] = Client::find($id);
+            }
 
-        /*
-        $can_finish_project = false;
+            /*
+            $can_finish_project = false;
 
-        if($project->active == '1'){
-            if($blocks->isNotEmpty()){
+            if($project->active == '1'){
+                if($blocks->isNotEmpty()){
 
-                foreach ($blocks as $block){
-                    if ($block['status']=='Завершен') {
-                        $can_finish_project = true;
-                        continue;
-                    }
-                    else {
-                        $can_finish_project = false;
+                    foreach ($blocks as $block){
+                        if ($block['status']=='Завершен') {
+                            $can_finish_project = true;
+                            continue;
+                        }
+                        else {
+                            $can_finish_project = false;
+                        }
                     }
                 }
+                else $can_finish_project = true;
             }
-            else $can_finish_project = true;
-        }
-        */
+            */
 
-        $project->active == '1' ? $can_finish_project = true : $can_finish_project = false;
+            $project->active == '1' ? $can_finish_project = true : $can_finish_project = false;
 
-        $clients = Client::orderBy('created_at','desc')->get();
-        $suppliers = Supplier::orderBy('created_at','desc')->get();
+            $clients = Client::orderBy('created_at','desc')->get();
+            $suppliers = Supplier::orderBy('created_at','desc')->get();
 
-        $role = auth()->user()->getRoleNames()[0];
+            $role = auth()->user()->getRoleNames()[0];
 
-        if(!in_array($role,['super-admin','director'])){
-            $invoices = $project->invoices->where('user_add', auth()->user()->name);
-        }
-        else $invoices = $project->invoices;
+            if(!in_array($role,['super-admin','director'])){
+                $invoices = $project->invoices->where('user_add', auth()->user()->name);
+            }
+            else $invoices = $project->invoices;
 
-        foreach ($invoices as $invoice){
-            switch($invoice->status){
-                case 'Удален': case 'Не оплачен':
+            foreach ($invoices as $invoice){
+                switch($invoice->status){
+                    case 'Удален': case 'Не оплачен':
                     $invoice->class = 'danger';
                     break;
-                case 'Частично оплачен': case 'Оплачен':
+                    case 'Частично оплачен': case 'Оплачен':
                     $invoice->class = 'success';
                     break;
-                case 'Ожидается счет от поставщика': case 'Ожидается создание инвойса': case 'Создан черновик инвойса': case 'Ожидается загрузка счета':
+                    case 'Ожидается счет от поставщика': case 'Ожидается создание инвойса': case 'Создан черновик инвойса': case 'Ожидается загрузка счета':
                     $invoice->class = 'warning';
                     break;
-                case 'Согласована частичная оплата': case 'Счет согласован на оплату':
+                    case 'Согласована частичная оплата': case 'Счет согласован на оплату':
                     $invoice->class = 'info';
                     break;
-                case 'Ожидается оплата':
-                    $invoice->class = 'primary';
-                    break;
-                case 'Счет на согласовании':
-                    $invoice->class = 'secondary';
-                    break;
-                default:
-                    $invoice->class = 'secondary';
-            }
-        }
-
-        $container_groups = ContainerGroup::where('project_id', $project->id)->get();
-
-        foreach ($container_groups as $group){
-            $containers = unserialize($group->containers);
-            $group->container_group_locations_list = ContainerGroupLocation::where('container_group_id', $group['id'])->get();
-
-            $containers_list = array();
-
-            foreach ($containers as $container){
-                $container = Container::find($container);
-                if(!is_null($container)){
-                    $container->usage_statistic = ContainerUsageStatistic::where('project_id', $project->id)->where('container_id', $container->id)->get();
-                    $container->usage_dates = $this->getContainerUsageDates($container->id);
-                    $containers_list[] = $container;
+                    case 'Ожидается оплата':
+                        $invoice->class = 'primary';
+                        break;
+                    case 'Счет на согласовании':
+                        $invoice->class = 'secondary';
+                        break;
+                    default:
+                        $invoice->class = 'secondary';
                 }
             }
 
-            $group->containers_list = $containers_list;
+            $container_groups = ContainerGroup::where('project_id', $project->id)->get();
 
-        }
-        $access_to_project = [];
+            foreach ($container_groups as $group){
+                $containers = unserialize($group->containers);
+                $group->container_group_locations_list = ContainerGroupLocation::where('container_group_id', $group['id'])->get();
 
-        if(!is_null($project->access_to_project)){
-            foreach($project->access_to_project as $user_id){
-                $access_to_project [] = User::withTrashed()->find($user_id)->name;
+                $containers_list = array();
+
+                foreach ($containers as $container){
+                    $container = Container::find($container);
+                    if(!is_null($container)){
+                        $container->usage_statistic = ContainerUsageStatistic::where('project_id', $project->id)->where('container_id', $container->id)->get();
+                        $container->usage_dates = $this->getContainerUsageDates($container->id);
+                        $containers_list[] = $container;
+                    }
+                }
+
+                $group->containers_list = $containers_list;
+
             }
-            $access_to_project = implode(', ', $access_to_project);
-        }
-        else {
-            $access_to_project = 'Не выбраны';
-        }
+            $access_to_project = [];
+
+            if(!is_null($project->access_to_project)){
+                foreach($project->access_to_project as $user_id){
+                    $access_to_project [] = User::withTrashed()->find($user_id)->name;
+                }
+                $access_to_project = implode(', ', $access_to_project);
+            }
+            else {
+                $access_to_project = 'Не выбраны';
+            }
 
 
-        return view('project.show',[
-            'project' => $project,
-            'blocks' => $blocks,
-            'this_project_clients' => $this_project_clients,
-            'finance' => $this->getProjectFinance($project->id),
-            'complete_level' => $this->getProjectCompleteLevel($project->id),
-            'invoices' => $invoices,
-            'files' => $this->getFiles($project->id),
-            'clients' => $clients,
-            'suppliers' => $suppliers,
-            'container_groups' => $container_groups,
-            'can_finish_project' => $can_finish_project,
-            'applications' => $this->getApplications($project->id),
-            'comments' => $project->comments,
-            'rates' => $currency_rates,
-            'users' => User::all(),
-            'expense_types' => ExpenseType::all(),
-            'access_to_project' => $access_to_project
-        ]);
+            return view('project.show',[
+                'project' => $project,
+                'blocks' => $blocks,
+                'this_project_clients' => $this_project_clients,
+                'finance' => $this->getProjectFinance($project->id),
+                'complete_level' => $this->getProjectCompleteLevel($project->id),
+                'invoices' => $invoices,
+                'files' => $this->getFiles($project->id),
+                'clients' => $clients,
+                'suppliers' => $suppliers,
+                'container_groups' => $container_groups,
+                'can_finish_project' => $can_finish_project,
+                'applications' => $this->getApplications($project->id),
+                'comments' => $project->comments,
+                'rates' => $currency_rates,
+                'users' => User::all(),
+                'expense_types' => ExpenseType::all(),
+                'access_to_project' => $access_to_project
+            ]);
+        }
+        else abort(403);
+
     }
 
     public function edit(Project $project)
@@ -539,7 +549,14 @@ class ProjectController extends Controller
             $project->prepayment = $request->prepayment;
             $project->additional_info = $request->additional_info;
             isset($request->management_expenses) ? $project->management_expenses = $request->management_expenses : $project->management_expenses = null;
-            $project->access_to_project = $request->access_to_project;
+            if(isset($request->access_to_project)){
+                if(is_array($request->access_to_project)){
+                    $project->access_to_project = array_map('intval', $request->access_to_project);
+                }
+                else {
+                    $project->access_to_project = (int)$request->access_to_project;
+                }
+            }
 
             if (can_edit_this_project_price($project->id) || (can_edit_this_project($project->id) && ($project->status == 'Черновик'))){
 
@@ -863,181 +880,6 @@ class ProjectController extends Controller
         ]);
 
         return redirect()->back()->withSuccess(__('project.update_paid_status_successfully'));
-
-    }
-
-    public function getProjectTable(ProjectFilter $filter, Request $request){
-
-        if($request->data_range != '' && $request->data_range !='Все'){
-            $range = explode(' - ', $request->data_range);
-            $range_from = $range[0];
-            $range_to = $range[1];
-        }
-        else {
-            $range_from = '2000-01-01';
-            $range_to = '3000-01-01';
-        }
-
-        $draw = $request->get('draw');
-        $start = $request->get("start");
-        $rowperpage = $request->get("length"); // Rows display per page
-
-        $columnIndex_arr = $request->get('order');
-        $columnName_arr = $request->get('columns');
-        $order_arr = $request->get('order');
-        $search_arr = $request->get('search');
-
-        $columnIndex = $columnIndex_arr[0]['column']; // Column index
-        $columnName = $columnName_arr[$columnIndex]['data']; // Column name
-        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-        $searchValue = $search_arr['value']; // Search value
-
-        // Total records
-        $totalRecords = Project::filter($filter);
-        if($request->data_range != ''){
-            $totalRecords->whereDate('finished_at', '>=', $range_from)
-                ->whereDate('finished_at', '<=', $range_to);
-        }
-        $totalRecords = $totalRecords->count();
-
-        if($searchValue != ''){
-            $totalRecordswithFilter = Project::where('projects.name', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.from', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.to', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.additional_info', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.status', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.created_at', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.finished_at', 'like', '%' . $searchValue . '%')
-                ->orWhereHas('client', function ($q) use($searchValue)
-                {
-                    $q->where('name', 'like', '%' . $searchValue . '%');
-                })
-                ->orWhereHas('user', function ($q) use($searchValue)
-                {
-                    $q->where('name', 'like', '%' . $searchValue . '%');
-                });
-                if($request->data_range != ''){
-                    $totalRecordswithFilter->whereDate('finished_at', '>=', $range_from)
-                        ->whereDate('finished_at', '<=', $range_to);
-                }
-            $totalRecordswithFilter = $totalRecordswithFilter->filter($filter)
-            ->count();
-
-
-            // Fetch records
-            $records = Project::where('projects.name', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.from', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.to', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.additional_info', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.status', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.created_at', 'like', '%' . $searchValue . '%')
-                ->orWhere('projects.finished_at', 'like', '%' . $searchValue . '%')
-                ->orWhereHas('client', function ($q) use($searchValue)
-                {
-                    $q->where('name', 'like', '%' . $searchValue . '%');
-                })
-                ->orWhereHas('user', function ($q) use($searchValue)
-                {
-                    $q->where('name', 'like', '%' . $searchValue . '%');
-                })
-                ->orWhereHas('manager', function ($q) use($searchValue)
-                {
-                    $q->where('name', 'like', '%' . $searchValue . '%');
-                })
-                ->orWhereHas('logist', function ($q) use($searchValue)
-                {
-                    $q->where('name', 'like', '%' . $searchValue . '%');
-                });
-
-                if($request->data_range != ''){
-                    $records->whereDate('finished_at', '>=', $range_from)
-                        ->whereDate('finished_at', '<=', $range_to);
-                }
-
-                $records = $records
-                ->filter($filter)
-                ->orderBy($columnName, $columnSortOrder)
-                ->select('projects.*')
-                ->skip($start)
-                ->take($rowperpage)
-                ->get();
-        }
-        else {
-            $totalRecordswithFilter = Project::filter($filter);
-            if($request->data_range != ''){
-                $totalRecordswithFilter->whereDate('finished_at', '>=', $range_from)
-                    ->whereDate('finished_at', '<=', $range_to);
-            }
-            $totalRecordswithFilter = $totalRecordswithFilter->count();
-
-            $records = Project::orderBy($columnName, $columnSortOrder);
-
-            if($request->data_range != ''){
-                $records->whereDate('finished_at', '>=', $range_from)
-                    ->whereDate('finished_at', '<=', $range_to);
-            }
-
-            $records = $records
-                ->filter($filter)
-                ->select('projects.*')
-                ->skip($start)
-                ->take($rowperpage)
-                ->get();
-        }
-
-
-        $data_arr = array();
-
-        $sno = $start + 1;
-
-        foreach ($records as $project) {
-
-            $project->finance = $this->getProjectFinance($project['id']);
-            $project->complete_level = $this->getProjectCompleteLevel($project['id']);
-
-            $id = $project->id;
-
-            $name = view('project.table.name', [
-                'project' => $project
-            ])->render();
-
-            $info = view('project.table.info', [
-                'project' => $project
-            ])->render();
-
-            $finance = view('project.table.finance', [
-                'project' => $project
-            ])->render();
-
-            $status = view('project.table.status', [
-                'project' => $project
-            ])->render();
-
-            $actions = view('project.table.actions', [
-                'project' => $project
-            ])->render();
-
-
-            $data_arr[] = array(
-                "id" => $id,
-                "name" => $name,
-                "client_id" => $info,
-                "freight_amount" => $finance,
-                "status" => $status,
-                "created_at" => $actions
-            );
-        }
-
-        $response = array(
-            "draw" => intval($draw),
-            "iTotalRecords" => $totalRecords,
-            "iTotalDisplayRecords" => $totalRecordswithFilter,
-            "aaData" => $data_arr
-        );
-
-
-        echo json_encode($response);
-        exit;
 
     }
 

@@ -19,6 +19,7 @@ class ProjectExportController extends Controller
 {
     use FinanceTrait;
 
+
     public function exportProject($id)
     {
         $project = Project::find($id);
@@ -26,72 +27,77 @@ class ProjectExportController extends Controller
 
         $out_array = [];
         $in_array = [];
+        $total_in = 0;
+        $total_out = 0;
+
         foreach ($invoices as $invoice){
-
-            $invoice->supplier_id != '' ? $company_name = optional($invoice->supplier)->name : $company_name = optional($invoice->client)->name;
-
+            if($invoice->client_id != '') {
+                optional($invoice->client)->short != ''
+                    ? $company_name = optional($invoice->client)->short
+                    : $company_name = optional($invoice->client)->name;
+            }
+            else {
+                optional($invoice->supplier)->short != ''
+                    ? $company_name = optional($invoice->supplier)->short
+                    : $company_name = optional($invoice->supplier)->name;
+            }
+            $amount = $this->getInvoiceAmountForReport($invoice)['planned_amount'];
             if ($invoice->direction == 'Расход'){
-
-                //$invoice->amount_income_date == '' ? $amount = $invoice->amount : $amount = $invoice->amount_income_date;
-
-                $amount = $this->getInvoiceAmountForReport($invoice)['planned_amount'];
-
                 $in_array [] = [
                     'company' => $company_name,
                     'id' => $invoice->id,
                     'details' => $invoice->additional_info,
-                    'amount' => $amount
+                    'amount' => $amount,
+                    'status' => $invoice->status
                 ];
+                $total_in += $amount;
             }
 
             if ($invoice->direction == 'Доход'){
-//                if($invoice->status == 'Оплачен'){
-//                    if ($invoice->amount_sale_date != '') {
-//                        $amount = $invoice->amount_sale_date;
-//                    }
-//                    else{
-//                        $amount = $invoice->amount_income_date;
-//                    }
-//                }
-//                else {
-//                    if($invoice->amount_actual != ''){
-//                        $amount = $invoice->amount_actual;
-//                    }
-//                    else {
-//                        $amount = $invoice->amount;
-//                    }
-//                }
-
-                $amount = $this->getInvoiceAmountForReport($invoice)['planned_amount'];
-
                 $out_array [] = [
                     'company' => $company_name,
                     'id' => $invoice->id,
-                    'amount' => $amount
+                    'details' => $invoice->additional_info,
+                    'amount' => $amount,
+                    'status' => $invoice->status
                 ];
+                $total_out += $amount;
             }
         }
 
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("storage/templates/project_template.xlsx");
+        $total = $total_out - $total_in;
+
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("storage/templates/project_new_template.xlsx");
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->setCellValue('B2', $project->created_at)
-            ->setCellValue('F2', $project->name)
-            ->setCellValue('C4', $project->client->name)
-            ->setCellValue('C5', $project->from.' - '.$project->to)
-            ->setCellValue('C6', $project->additional_info);
+        $sheet->setCellValue('C2', $project->created_at->format('d.m.Y'))
+            ->setCellValue('C1', $project->name)
+            ->setCellValue('E1', $project->client->name)
+            ->setCellValue('E2', $project->from.' - '.$project->to)
+            ->setCellValue('E3', $total)
+            ->setCellValue('E6', $total_out)
+            ->setCellValue('C3', $project->additional_info);
 
-        $sheet->insertNewRowBefore(13, max(count($in_array), count($out_array)));
+        !empty($out_array) ? $rows = count($out_array) : $rows = 0;
 
-        $i = 12;
-        foreach ($in_array as $string){
-            $sheet->fromArray([$string], NULL, 'D'.$i);
-            $i++;
+        $i = 7;
+        if($rows != 0){
+            $sheet->insertNewRowBefore(8, $rows);
+            foreach ($out_array as $string){
+                $sheet->fromArray([$string], NULL, 'B'.$i);
+                $i++;
+            }
         }
 
-        $k = 12;
-        foreach ($out_array as $string){
-            $sheet->fromArray([$string], NULL, 'A'.$k);
-            $k++;
+        $k = $i+3;
+
+        !empty($in_array) ? $rows = count($in_array) : $rows = 0;
+        if($rows != 0) {
+            $sheet->insertNewRowBefore($i+4, $rows);
+            foreach ($in_array as $string){
+                $sheet->fromArray([$string], NULL, 'B'.$k);
+                $k++;
+            }
+            $sheet->setCellValue('E'.($i+2), $total_in);
         }
 
         if ($project->active == '1') {

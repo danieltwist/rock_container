@@ -64,7 +64,9 @@ class InvoiceFilter extends QueryFilter
     }
 
     public function my(){
-        return $this->builder->where('user_add', auth()->user()->name);
+        return $this->builder->where(function ($query) {
+            $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+        });
     }
 
     public function trash(){
@@ -118,7 +120,9 @@ class InvoiceFilter extends QueryFilter
         }
 
         elseif($value == 'my'){
-            return $this->builder->where('user_add', auth()->user()->name);
+            return $this->builder->where(function ($query) {
+                $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+            });
         }
 
         elseif($value == 'trash'){
@@ -204,7 +208,9 @@ class InvoiceFilter extends QueryFilter
     public function second_filter($value){
 
         if($value == 'my'){
-            return $this->builder->where('user_add', auth()->user()->name);
+            return $this->builder->where(function ($query) {
+                $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+            });
         }
 
         else return null;

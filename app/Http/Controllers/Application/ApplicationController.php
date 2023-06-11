@@ -123,6 +123,7 @@ class ApplicationController extends Controller
         $application->additional_info = $request->additional_info;
         $application->created_at = $request->created_at;
         $application->status = 'В работе';
+        isset($request->surcharge) ? $application->surcharge = 1 : $application->surcharge = null;
 
         $application->save();
         if(!is_null($request->containers)){
@@ -500,6 +501,7 @@ class ApplicationController extends Controller
 
         $application->additional_info = $request->additional_info;
         $application->created_at = $request->created_at;
+        isset($request->surcharge) ? $application->surcharge = 1 : $application->surcharge = null;
 
         $application->save();
 
@@ -719,6 +721,7 @@ class ApplicationController extends Controller
         $used_delimiter = null;
         $not_found = null;
         $not_correct_format = null;
+        $already_used = null;
 
         foreach ($probable_delimiters as $delimiter){
             if(strpos($request->containers_list, $delimiter) !== false ){
@@ -764,6 +767,44 @@ class ApplicationController extends Controller
                         }
                         $not_found [] = $container_name;
                     }
+                    else {
+                        if($request->application_type == 'Поставщик'){
+                            if(!is_null($container->supplier_application_id)){
+                                if (($key = array_search($container_name, $containers)) !== false) {
+                                    unset($containers[$key]);
+                                }
+                                $already_used [] = [
+                                    'container_name' => $container_name,
+                                    'application_name' => $container->supplier_application_name,
+                                    'application_id' => $container->supplier_application_id
+                                ];
+                            }
+                        }
+                        if($request->application_type == 'Клиент'){
+                            if(!is_null($container->client_application_id)){
+                                if (($key = array_search($container_name, $containers)) !== false) {
+                                    unset($containers[$key]);
+                                }
+                                $already_used [] = [
+                                    'container_name' => $container_name,
+                                    'application_name' => $container->client_application_name,
+                                    'application_id' => $container->client_application_id
+                                ];
+                            }
+                        }
+                        if($request->application_type == 'Подсыл'){
+                            if(!is_null($container->relocation_application_id)){
+                                if (($key = array_search($container_name, $containers)) !== false) {
+                                    unset($containers[$key]);
+                                }
+                                $already_used [] = [
+                                    'container_name' => $container_name,
+                                    'application_name' => $container->relocation_application_name,
+                                    'application_id' => $container->relocation_application_id
+                                ];
+                            }
+                        }
+                    }
                 }
             }
             else {
@@ -778,7 +819,8 @@ class ApplicationController extends Controller
             'view' => view('application.ajax.dymanic_containers', [
                 'containers' => array_unique($containers),
                 'not_found' => $not_found,
-                'not_correct_format' => $not_correct_format
+                'not_correct_format' => $not_correct_format,
+                'already_used' => $already_used
             ])->render()
         ]);
 
@@ -811,10 +853,71 @@ class ApplicationController extends Controller
         if(!is_null($containers_removed)){
             foreach ($containers_removed as $container){
                 $container = Container::where('name', $container)->first();
-                $this->saveContainerUsageHistory($container, $application->id);
-                $container->update([
-                    'archive' => 'yes'
-                ]);
+                if($application->type == 'Подсыл'){
+                    $container->update([
+                        'relocation_counterparty_id' => null,
+                        'relocation_counterparty_name' => null,
+                        'relocation_counterparty_type' => null,
+                        'relocation_application_id' => null,
+                        'relocation_application_name' => null,
+                        'relocation_price_amount' => null,
+                        'relocation_price_currency' => null,
+                        'relocation_price_in_rubles' => null,
+                        'relocation_date_send' => null,
+                        'relocation_date_arrival_to_terminal' => null,
+                        'relocation_delivery_time_days' => null,
+                        'relocation_snp' => null,
+                        'relocation_snp_range' => null,
+                        'relocation_snp_after_range' => null,
+                        'relocation_snp_currency' => null,
+                        'relocation_snp_total' => null,
+                        'relocation_place_of_delivery_city' => null,
+                        'relocation_place_of_delivery_terminal' => null,
+                        'relocation_repair_amount' => null,
+                        'relocation_repair_currency' => null,
+                        'relocation_repair_in_rubles' => null,
+                        'relocation_repair_status' => null,
+                        'relocation_repair_confirmation' => null,
+                        'removed' => null,
+                    ]);
+                }
+                if($application->type == 'Клиент'){
+                    $container->update([
+                        'client_counterparty_id' => null,
+                        'client_counterparty_name' => null,
+                        'client_application_id' => null,
+                        'client_application_name' => null,
+                        'client_price_in_rubles' => null,
+                        'client_grace_period' => null,
+                        'client_snp_range' => null,
+                        'client_snp_after_range' => null,
+                        'client_snp_currency' => null,
+                        'client_snp_in_rubles' => null,
+                        'client_date_get' => null,
+                        'client_date_return' => null,
+                        'client_place_of_delivery_country' => null,
+                        'client_place_of_delivery_city' => null,
+                        'client_days_using' => null,
+                        'client_snp_total' => null,
+                        'client_repair_amount' => null,
+                        'client_repair_currency' => null,
+                        'client_repair_in_rubles' => null,
+                        'client_repair_status' => null,
+                        'client_repair_confirmation' => null,
+                        'client_smgs' => null,
+                        'client_manual' => null,
+                        'client_location_request' => null,
+                        'client_date_manual_request' => null,
+                        'client_return_act' => null,
+                        'removed' => null,
+                    ]);
+                }
+                if($application->type == 'Поставщик'){
+                    $this->saveContainerUsageHistory($container, $application->id);
+                    $container->update([
+                        'archive' => 'yes'
+                    ]);
+                }
             }
         }
 
@@ -860,6 +963,9 @@ class ApplicationController extends Controller
     }
 
     public function getApplicationInvoices($application){
+
+        !is_null($application->surcharge) ? $surcharge_application = true : $surcharge_application = false;
+
         $invoices = [];
 
         switch ($application->counterparty_type){
@@ -880,15 +986,17 @@ class ApplicationController extends Controller
 
         if($application->type == 'Поставщик'){
 
+            $surcharge_application ? $direction = 'Доход' : $direction = 'Расход';
+
             $invoices [] = [
-                'type' => 'Расход',
+                'type' => $direction,
                 'counterparty_type' => $counterparty_type,
                 'counterparty_id' => $counterparty_id,
                 'counterparty_name' => $counterparty_name,
                 'amount_in_currency' => $price_amount,
                 'currency' => $application->price_currency,
                 'amount_in_rubles' => $amount_in_rubles,
-                'info' => 'Базовая ставка взятие ктк у поставщика'
+                'info' => $surcharge_application ? 'Базовая ставка взятие ктк у поставщика (доплатная заявка)' : 'Базовая ставка взятие ктк у поставщика'
             ];
 
             if(!is_null($application->containers)){
@@ -1054,15 +1162,17 @@ class ApplicationController extends Controller
 
         if($application->type == 'Подсыл'){
 
+            $surcharge_application ? $direction = 'Доход' : $direction = 'Расход';
+
             $invoices [] = [
-                'type' => 'Расход',
+                'type' => $direction,
                 'counterparty_type' => $counterparty_type,
                 'counterparty_id' => $counterparty_id,
                 'counterparty_name' => $counterparty_name,
                 'amount_in_currency' => $price_amount,
                 'currency' => $application->price_currency,
                 'amount_in_rubles' => $amount_in_rubles,
-                'info' => 'Перевозка до терминала выдачи клиенту'
+                'info' => $surcharge_application ? 'Перевозка до терминала выдачи клиенту (доплатная заявка)' : 'Перевозка до терминала выдачи клиенту'
             ];
 
             if(!is_null($application->containers)){
@@ -1168,15 +1278,17 @@ class ApplicationController extends Controller
 
         if($application->type == 'Клиент'){
 
+            $surcharge_application ? $direction = 'Расход' : $direction = 'Доход';
+
             $invoices [] = [
-                'type' => 'Доход',
+                'type' => $direction,
                 'counterparty_type' => $counterparty_type,
                 'counterparty_id' => $counterparty_id,
                 'counterparty_name' => $counterparty_name,
                 'amount_in_currency' => $price_amount,
                 'currency' => $application->price_currency,
                 'amount_in_rubles' => $amount_in_rubles,
-                'info' => 'Базовая ставка выдачи ктк клиенту'
+                'info' => $surcharge_application ? 'Базовая ставка выдачи ктк клиенту (доплатная заявка)' : 'Базовая ставка выдачи ктк клиенту'
             ];
 
             if(!is_null($application->containers)){

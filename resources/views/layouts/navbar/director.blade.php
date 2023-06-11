@@ -397,6 +397,13 @@
                             </a>
                         </li>
                     </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('report_expenses_by_types') }}" class="nav-link">
+                                <p>Сводка по расходам</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="nav-item">
@@ -482,6 +489,25 @@
                             </a>
                             <a href="{{ route('agree_invoices_settings') }}" class="nav-link">
                                 <p>Согласование счетов</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fa fa-credit-card"></i>
+                        <p>
+                            Данные из 1С
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('bank_accounts_balance') }}" class="nav-link">
+                                <p>Баланс счетов</p>
+                            </a>
+                            <a href="{{ route('bank_accounts_payments') }}" class="nav-link">
+                                <p>История платежей</p>
                             </a>
                         </li>
                     </ul>

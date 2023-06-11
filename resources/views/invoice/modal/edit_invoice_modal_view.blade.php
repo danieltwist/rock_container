@@ -178,7 +178,7 @@
         <input type="text" class="form-control date_input invoice_deadline"
                name="deadline"
                placeholder="{{ __('invoice.payment_deadline') }}"
-               value="{{ $invoice->deadline }}">
+               value="{{ !is_null($invoice->deadline) ? $invoice->deadline->format('d.m.Y') : '' }}">
     </div>
     <div class="form-group">
         <label>{{ __('general.additional_info') }}</label>

@@ -44,6 +44,18 @@ class Container extends Model
         return $query->whereNotNull('svv');
     }
 
+    public function application_supplier(){
+        return $this->belongsTo(Application::class, 'supplier_application_id');
+    }
+
+    public function application_client(){
+        return $this->belongsTo(Application::class, 'client_application_id');
+    }
+
+    public function application_relocation(){
+        return $this->belongsTo(Application::class, 'relocation_application_id');
+    }
+
     public function scopeApplication($query, $application_id)
     {
         return $query->where('supplier_application_id', $application_id)

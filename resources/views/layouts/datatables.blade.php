@@ -1,5 +1,4 @@
 <script>
-
     let page_href = window.location.href;
     let page_filter = page_href.split('?');
     let task_filter = window.location.pathname.replace('public/', '').split('/');
@@ -36,7 +35,6 @@
 
     $(function () {
         let urlpath = window.location.pathname.replace('public/', '').split('/');
-
         if (urlpath[1] === 'invoice') {
             if (getInvoicesPageType() === 'agree') getAgreedInvoicesAmount();
         }
@@ -1009,7 +1007,7 @@
                     {data: 'project_id'},
                     {data: 'amount'},
                     {data: 'amount_paid'},
-                    {data: 'status'},
+                    {data: 'agreement_date'},
                     {data: 'created_at'},
                 ],
                 createdRow: function (row, data, dataIndex) {
@@ -1342,6 +1340,56 @@
             }
             console.log(audits_filter);
             initAuditsTables();
+        });
+
+
+        /////////////////////////////////////////////////////// 1C
+
+        $('.bank_account_payments').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: true,
+            ordering: true,
+            pageLength: 10,
+            order: [0, 'desc'],
+            info: true,
+            ajax: {
+                url: "{{route('get_bank_accounts_payments_table')}}",
+                type: "GET",
+            },
+            language: {
+                "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
+            },
+            columns: [
+                {data: "id"},
+                {data: "date"},
+                {data: "payment_type"},
+                {data: "company"},
+                {data: "counterparty"},
+                {data: "amount"},
+            ]
+        });
+
+        $('.bank_account_balances').DataTable({
+            processing: true,
+            serverSide: true,
+            searching: true,
+            ordering: true,
+            pageLength: 10,
+            order: [0, 'desc'],
+            info: true,
+            ajax: {
+                url: "{{route('get_bank_accounts_balances_table')}}",
+                type: "GET",
+            },
+            language: {
+                "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
+            },
+            columns: [
+                {data: "id"},
+                {data: "date"},
+                {data: "info"},
+            ]
         });
 
         $('.projects_ajax_table').DataTable({
@@ -1972,33 +2020,36 @@
             let button = $(event.relatedTarget);
             audits_filter[button.data('component')] = button.data('id');
             console.log(audits_filter);
-            $('#audits_table_component_history').DataTable({
-                destroy: true,
-                processing: true,
-                serverSide: true,
-                searching: false,
-                ordering: true,
-                pageLength: 10,
-                lengthChange: false,
-                order: [0, 'desc'],
-                info: true,
-                ajax: {
-                    url: "{{route('get_component_history_table')}}",
-                    type: "GET",
-                    data: audits_filter
-                },
-                language: {
-                    "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
-                },
-                columns: [
-                    {data: "created_at"},
-                    {data: "old_values"},
-                    {data: "new_values"}
-                ],
-                drawCallback: function () {
-                    console.log('draw complete')
-                },
-            });
+            setTimeout(function () {
+                $('#audits_table_component_history').DataTable({
+                    destroy: true,
+                    processing: true,
+                    serverSide: true,
+                    searching: false,
+                    ordering: true,
+                    pageLength: 10,
+                    lengthChange: false,
+                    order: [0, 'desc'],
+                    info: true,
+                    ajax: {
+                        url: "{{route('get_component_history_table')}}",
+                        type: "GET",
+                        data: audits_filter
+                    },
+                    language: {
+                        "url": "/admin/plugins/datatables-ru-lang/{{ auth()->user()->language }}.json"
+                    },
+                    columns: [
+                        {data: "created_at"},
+                        {data: "old_values"},
+                        {data: "new_values"}
+                    ],
+                    drawCallback: function () {
+                        console.log('draw complete')
+                    },
+                });
+            }, 500);
+
         });
     });
 </script>

@@ -51,6 +51,9 @@
     {{ __('settings.role_edit_own_containers') }}
     @break
     @case('Менять статус оплаты завершенных проектов')
-    {{ __('settings.role_edit_projects_paid_status') }}
-    @break
+        {{ __('settings.role_edit_projects_paid_status') }}
+        @break
+    @case('Доступ ко всем проектам')
+        Доступ ко всем проектам
+        @break
 @endswitch

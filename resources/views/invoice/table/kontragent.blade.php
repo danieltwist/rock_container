@@ -18,5 +18,5 @@
 @endif
 <small>
     <br>
-    {{ !is_null($invoice->deadline) ? __('invoice.pay_before').' '.$invoice->deadline : '' }}
+    {{ !is_null($invoice->deadline) ? __('invoice.pay_before').' '.$invoice->deadline->format('d.m.Y') : '' }}
 </small>

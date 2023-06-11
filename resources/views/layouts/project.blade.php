@@ -99,6 +99,14 @@
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
             <!-- Messages Dropdown Menu -->
+            @if(in_array($role,['super-admin','director']))
+                <li class="nav-item dropdown">
+                    <a class="nav-link" data-toggle="dropdown" href="#" id="get_bank_account_balances">
+                        <i class="fa fa-credit-card" aria-hidden="true"></i>
+                    </a>
+                    <div class="dropdown-menu min-width-400 dropdown-menu-lg dropdown-menu-right" id="bank_account_balances"></div>
+                </li>
+            @endif
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="far fa-bell">

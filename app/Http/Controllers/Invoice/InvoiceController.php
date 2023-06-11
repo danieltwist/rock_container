@@ -166,28 +166,32 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
+        if(in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin']) || ($invoice->user_id == auth()->user()->id || $invoice->user_add == auth()->user()->name)){
+            $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
-        $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
+            $client_decision = '';
+            $client_payment_deadline = '';
+            $income_invoice_id = '';
 
-        $client_decision = '';
-        $client_payment_deadline = '';
-        $income_invoice_id = '';
+            if (!is_null($invoice->losses_potential)) {
+                $client_decision = $invoice->losses_potential['client_decision'];
+                $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
+                $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
+            }
 
-        if (!is_null($invoice->losses_potential)) {
-            $client_decision = $invoice->losses_potential['client_decision'];
-            $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
-            $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
+            return view('invoice.show', [
+                'invoice' => $invoice,
+                'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
+                'rates' => $currency_rates,
+                'client_decision' => $client_decision,
+                'client_payment_deadline' => $client_payment_deadline,
+                'income_invoice_id' => $income_invoice_id,
+                'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
+            ]);
         }
-
-        return view('invoice.show', [
-            'invoice' => $invoice,
-            'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
-            'rates' => $currency_rates,
-            'client_decision' => $client_decision,
-            'client_payment_deadline' => $client_payment_deadline,
-            'income_invoice_id' => $income_invoice_id,
-            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
-        ]);
+        else {
+            abort(403);
+        }
     }
 
     public function edit($id)
@@ -281,7 +285,9 @@ class InvoiceController extends Controller
                 $invoice->invoice_file = $invoice_file;
 
                 if($invoice->direction == 'Доход'){
-                    $status = 'Ожидается оплата';
+                    in_array($invoice->status, ['Счет согласован на оплату', 'Согласована частичная оплата', 'Оплачен', 'Частично оплачен'])
+                        ? $status = $invoice->status
+                        : $status = 'Ожидается оплата';
                 }
                 else {
                     in_array($invoice->status, ['Счет согласован на оплату', 'Согласована частичная оплата', 'Оплачен', 'Частично оплачен'])
@@ -373,6 +379,10 @@ class InvoiceController extends Controller
             if ($invoice->currency != 'RUB') {
                 $invoice->rate_income_date = $request->rate_income_date;
                 $invoice->amount_in_currency_income_date = $invoice->amount_in_currency_income_date + $request->amount_in_currency_income_date;
+                $paid_amount = $invoice->amount_in_currency_income_date.$invoice->currency.' ('.$request->amount_income_date.'р.)';
+            }
+            else {
+                $paid_amount = $request->amount_income_date.'р.';
             }
 
             $invoice->amount_income_date = $invoice->amount_income_date + $request->amount_income_date;
@@ -397,7 +407,7 @@ class InvoiceController extends Controller
 
             $this->updateProjectFinance($invoice->project_id);
 
-            $this->notifyInvoicePaid($invoice);
+            $this->notifyInvoicePaid($invoice, $paid_amount);
 
             return response()->json([
                 'bg-class' => 'bg-success',
@@ -411,6 +421,10 @@ class InvoiceController extends Controller
             if ($invoice->currency != 'RUB') {
                 $invoice->rate_income_date = $request->rate_income_date;
                 $invoice->amount_in_currency_income_date = $invoice->amount_in_currency_income_date + $request->amount_in_currency_income_date;
+                $paid_amount = $invoice->amount_in_currency_income_date.$invoice->currency.' ('.$request->amount_income_date.'р.)';
+            }
+            else {
+                $paid_amount = $request->amount_income_date.'р.';
             }
 
             $invoice->amount_actual = $request->amount_actual;
@@ -436,7 +450,7 @@ class InvoiceController extends Controller
 
             $this->updateProjectFinance($invoice->project_id);
 
-            $this->notifyInvoicePaid($invoice);
+            $this->notifyInvoicePaid($invoice, $paid_amount);
 
             return response()->json([
                 'bg-class' => 'bg-success',
@@ -512,29 +526,31 @@ class InvoiceController extends Controller
 
     public function get_invoice_by_id($id)
     {
-
         $invoice = Invoice::withTrashed()->find($id);
-        $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
+        if(in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin']) || ($invoice->user_id == auth()->user()->id || $invoice->user_add == auth()->user()->name)) {
+            $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
-        $client_decision = '';
-        $client_payment_deadline = '';
-        $income_invoice_id = '';
+            $client_decision = '';
+            $client_payment_deadline = '';
+            $income_invoice_id = '';
 
-        if (!is_null($invoice->losses_potential)) {
-            $client_decision = $invoice->losses_potential['client_decision'];
-            $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
-            $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
+            if (!is_null($invoice->losses_potential)) {
+                $client_decision = $invoice->losses_potential['client_decision'];
+                $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
+                $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
+            }
+
+            return view('project.layouts.show_invoice_view', [
+                'invoice' => $invoice,
+                'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
+                'rates' => $currency_rates,
+                'client_decision' => $client_decision,
+                'client_payment_deadline' => $client_payment_deadline,
+                'income_invoice_id' => $income_invoice_id,
+                'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
+            ]);
         }
-
-        return view('project.layouts.show_invoice_view', [
-            'invoice' => $invoice,
-            'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
-            'rates' => $currency_rates,
-            'client_decision' => $client_decision,
-            'client_payment_deadline' => $client_payment_deadline,
-            'income_invoice_id' => $income_invoice_id,
-            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
-        ]);
+        else abort(403);
 
     }
 
@@ -1126,7 +1142,7 @@ class InvoiceController extends Controller
 
     }
 
-    public function notifyInvoicePaid(Invoice $invoice){
+    public function notifyInvoicePaid(Invoice $invoice, $amount){
 
         $notify_group = User::whereHas('roles', function ($query) {
             $query->where('name', 'director');
@@ -1134,11 +1150,17 @@ class InvoiceController extends Controller
 
         is_null($invoice->user_id) ?: $notify_group [] = $invoice->user_id;
 
+        $text = $invoice->direction.' №'.$invoice->id.' был оплачен';
+
+        $text .= PHP_EOL .'Проект: '.optional($invoice->project)->name;
+        $text .= PHP_EOL .'Контрагент: '.$this->getInvoiceCounterparty($invoice);
+        $text .= PHP_EOL .'Сумма: '.$amount;
+
         foreach ($notify_group as $user_id){
             $notification = [
                 'from' => 'Система',
                 'to' => $user_id,
-                'text' => 'Счет №'.$invoice->id.' был оплачен',
+                'text' => $text,
                 'link' => 'invoice/'.$invoice->id,
                 'class' => 'bg-success'
             ];
@@ -1180,4 +1202,14 @@ class InvoiceController extends Controller
         ]);
     }
 
+    public function getInvoiceCounterparty(Invoice $invoice){
+        if(!is_null($invoice->client_id)){
+            $counterparty_name = optional($invoice->client)->name;
+        }
+        else {
+            $counterparty_name = optional($invoice->supplier)->name;
+        }
+
+        return $counterparty_name;
+    }
 }

@@ -7,6 +7,7 @@ use App\Filters\ProjectFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\FinanceTrait;
 use App\Models\Client;
+use App\Models\ExpenseType;
 use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\Supplier;
@@ -677,5 +678,243 @@ class ReportController extends Controller
         return view('report.user_invoices_choose',[
             'users' => \App\Models\User::all()
         ]);
+    }
+
+    public function expensesByTypes(Request $request){
+
+        $expense_types = ExpenseType::all();
+
+        $categories = [];
+
+        foreach ($expense_types as $type){
+            if (is_null($type->category)){
+                $categories []['category_name'] = $type->name;
+            }
+        }
+
+        foreach ($categories as $key => $value){
+            foreach ($expense_types as $type){
+                if($type->category == $value['category_name']){
+                    $categories[$key]['types'][] = $type->name;
+                }
+            }
+        }
+
+        $expense_types = ExpenseType::whereNotNull('category')->orderBy('category', 'ASC')->get()->toArray();
+
+        $output_array = [];
+
+        $i = 0;
+        foreach ($expense_types as $key => $type){
+            $output_array[$i]['type'] = $type['name'];
+            $output_array[$i]['category'] = $type['category'];
+            $output_array[$i]['type_total'] = 0;
+            $output_array[$i]['month_1'] = 0;
+            $output_array[$i]['month_2'] = 0;
+            $output_array[$i]['month_3'] = 0;
+            $output_array[$i]['month_4'] = 0;
+            $output_array[$i]['month_5'] = 0;
+            $output_array[$i]['month_6'] = 0;
+            $output_array[$i]['month_7'] = 0;
+            $output_array[$i]['month_8'] = 0;
+            $output_array[$i]['month_9'] = 0;
+            $output_array[$i]['month_10'] = 0;
+            $output_array[$i]['month_11'] = 0;
+            $output_array[$i]['month_12'] = 0;
+            $output_array[$i]['month_13'] = 0;
+            if(array_key_last($expense_types) > $key){
+                if($expense_types[$key+1]['category'] != $output_array[$i]['category']){
+                    $i++;
+                    $output_array[$i]['type'] = 'ИТОГО';
+                    $output_array[$i]['category'] = $type['category'];
+                    $output_array[$i]['type_total'] = 0;
+                    $output_array[$i]['month_1'] = 0;
+                    $output_array[$i]['month_2'] = 0;
+                    $output_array[$i]['month_3'] = 0;
+                    $output_array[$i]['month_4'] = 0;
+                    $output_array[$i]['month_5'] = 0;
+                    $output_array[$i]['month_6'] = 0;
+                    $output_array[$i]['month_7'] = 0;
+                    $output_array[$i]['month_8'] = 0;
+                    $output_array[$i]['month_9'] = 0;
+                    $output_array[$i]['month_10'] = 0;
+                    $output_array[$i]['month_11'] = 0;
+                    $output_array[$i]['month_12'] = 0;
+                    $output_array[$i]['month_13'] = 0;
+                    $output_array[$i]['bold'] = true;
+                }
+            }
+            if(array_key_last($expense_types) == $key){
+                $i++;
+                $output_array[$i]['type'] = 'ИТОГО';
+                $output_array[$i]['category'] = $type['category'];
+                $output_array[$i]['type_total'] = 0;
+                $output_array[$i]['month_1'] = 0;
+                $output_array[$i]['month_2'] = 0;
+                $output_array[$i]['month_3'] = 0;
+                $output_array[$i]['month_4'] = 0;
+                $output_array[$i]['month_5'] = 0;
+                $output_array[$i]['month_6'] = 0;
+                $output_array[$i]['month_7'] = 0;
+                $output_array[$i]['month_8'] = 0;
+                $output_array[$i]['month_9'] = 0;
+                $output_array[$i]['month_10'] = 0;
+                $output_array[$i]['month_11'] = 0;
+                $output_array[$i]['month_12'] = 0;
+                $output_array[$i]['month_13'] = 0;
+                $output_array[$i]['bold'] = true;
+            }
+            $i++;
+        }
+
+        if($request->report_type == 'this_year'){
+            $start_month = Carbon::today()->startOfYear()->subMonth();
+        }
+        else {
+            $start_month = Carbon::today()->startOfYear()->subYear()->subMonth();
+        }
+        $end_month = $start_month->copy()->endOfMonth();
+
+        for ($i=1; $i<=13; $i++){
+            $this_month_invoices = Invoice::query()->whereBetween('created_at', [$start_month, $end_month])->get();
+            foreach ($output_array as $key => $value) {
+                foreach ($this_month_invoices as $invoice){
+                    $invoice_amount = $this->getInvoiceAmountForReport($invoice)['actual_amount'];
+                    if ($invoice->expense_category == $value['category'] && $invoice->expense_type == $value['type']) {
+                        $output_array[$key]['month_'.$i] += $invoice_amount;
+                        $output_array[$key]['type_total'] += $invoice_amount;
+
+                        $search = ['type' => 'ИТОГО', 'category' => $value['category']];
+                        foreach($output_array as $k => $v) {
+                            if ($search === array_intersect($v, $search)){
+                                $output_array[$k]['month_'.$i] += $invoice_amount;
+                                $output_array[$k]['type_total'] += $invoice_amount;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            $start_month = $start_month->copy()->addMonth();
+            $end_month = $end_month->copy()->addMonth();
+        }
+
+        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("storage/templates/expenses_by_types_template.xlsx");
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $i = 2;
+        $months_total = [
+            'average' => 0,
+            'total' => 0,
+            'month_1' => 0,
+            'month_2' => 0,
+            'month_3' => 0,
+            'month_4' => 0,
+            'month_5' => 0,
+            'month_6' => 0,
+            'month_7' => 0,
+            'month_8' => 0,
+            'month_9' => 0,
+            'month_10' => 0,
+            'month_11' => 0,
+            'month_12' => 0,
+            'month_13' => 0,
+        ];
+        foreach ($output_array as $key => $row){
+            $sheet->setCellValue('A'.$i, $row['category']);
+            $sheet->setCellValue('B'.$i, $row['type']);
+            $sheet->setCellValue('C'.$i, round($row['type_total']/13, 2));
+            $sheet->setCellValue('D'.$i, $row['type_total']);
+            $sheet->setCellValue('E'.$i, $row['month_1']);
+            $sheet->setCellValue('F'.$i, $row['month_2']);
+            $sheet->setCellValue('G'.$i, $row['month_3']);
+            $sheet->setCellValue('H'.$i, $row['month_4']);
+            $sheet->setCellValue('I'.$i, $row['month_5']);
+            $sheet->setCellValue('J'.$i, $row['month_6']);
+            $sheet->setCellValue('K'.$i, $row['month_7']);
+            $sheet->setCellValue('L'.$i, $row['month_8']);
+            $sheet->setCellValue('M'.$i, $row['month_9']);
+            $sheet->setCellValue('N'.$i, $row['month_10']);
+            $sheet->setCellValue('O'.$i, $row['month_11']);
+            $sheet->setCellValue('P'.$i, $row['month_12']);
+            $sheet->setCellValue('Q'.$i, $row['month_12']);
+            if(isset($row['bold'])){
+                $months_total['average'] += round($row['type_total']/13, 2);
+                $months_total['total'] += $row['type_total'];
+                $months_total['month_1'] += $row['month_1'];
+                $months_total['month_2'] += $row['month_2'];
+                $months_total['month_3'] += $row['month_3'];
+                $months_total['month_4'] += $row['month_4'];
+                $months_total['month_5'] += $row['month_5'];
+                $months_total['month_6'] += $row['month_6'];
+                $months_total['month_7'] += $row['month_7'];
+                $months_total['month_8'] += $row['month_8'];
+                $months_total['month_9'] += $row['month_9'];
+                $months_total['month_10'] += $row['month_10'];
+                $months_total['month_11'] += $row['month_11'];
+                $months_total['month_12'] += $row['month_12'];
+                $months_total['month_13'] += $row['month_13'];
+                $styleArray = [
+                    'font' => [
+                        'bold' => true,
+                    ],
+                    'borders' => [
+                        'bottom' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+                $spreadsheet->getActiveSheet()->getStyle('A'.$i.':Q'.$i)->applyFromArray($styleArray);
+            }
+            $i++;
+            if($key == array_key_last($output_array)) {
+                $sheet->setCellValue('A'.$i, 'ИТОГО');
+                $sheet->setCellValue('C'.$i, $months_total['average']);
+                $sheet->setCellValue('D'.$i, $months_total['total']);
+                $sheet->setCellValue('E'.$i, $months_total['month_1']);
+                $sheet->setCellValue('F'.$i, $months_total['month_2']);
+                $sheet->setCellValue('G'.$i, $months_total['month_3']);
+                $sheet->setCellValue('H'.$i, $months_total['month_4']);
+                $sheet->setCellValue('I'.$i, $months_total['month_5']);
+                $sheet->setCellValue('J'.$i, $months_total['month_6']);
+                $sheet->setCellValue('K'.$i, $months_total['month_7']);
+                $sheet->setCellValue('L'.$i, $months_total['month_8']);
+                $sheet->setCellValue('M'.$i, $months_total['month_9']);
+                $sheet->setCellValue('N'.$i, $months_total['month_10']);
+                $sheet->setCellValue('O'.$i, $months_total['month_11']);
+                $sheet->setCellValue('P'.$i, $months_total['month_12']);
+                $sheet->setCellValue('Q'.$i, $months_total['month_12']);
+                $styleArray = [
+                    'font' => [
+                        'bold' => true,
+                        'size' => 12
+                    ],
+                    'borders' => [
+                        'bottom' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                    'fill' => [
+                        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
+                        'rotation' => 90,
+                        'startColor' => [
+                            'argb' => 'b6b6b6',
+                        ],
+                        'endColor' => [
+                            'argb' => 'b6b6b6',
+                        ],
+                    ],
+                ];
+                $spreadsheet->getActiveSheet()->getStyle('A'.$i.':Q'.$i)->applyFromArray($styleArray);
+            }
+        }
+
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
+        $path = 'storage/Отчеты/сводка_по_расходам_'.date('dmY').'.xlsx';
+        $writer->save($path);
+
+        $download_path = 'public/Отчеты/сводка_по_расходам_'.date('dmY').'.xlsx';
+        return Storage::download($download_path);
+
     }
 }

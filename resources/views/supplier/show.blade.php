@@ -61,11 +61,11 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="card collapsed">
+                        <div class="card collapsed collapsed-card">
                             <div class="card-header cursor-pointer {{ is_null($supplier->deleted_at) ?: 'bg-danger' }}" data-card-widget="collapse">
                                 <h3 class="card-title">{{ __('general.requisites') }}</h3>
                                 <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                             @csrf
@@ -75,11 +75,11 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card collapsed">
+                        <div class="card collapsed collapsed-card">
                             <div class="card-header cursor-pointer {{ is_null($supplier->deleted_at) ?: 'bg-danger' }}" data-card-widget="collapse">
                                 <h3 class="card-title">{{ __('general.contracts') }}</h3>
                                 <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                             @csrf
@@ -164,25 +164,27 @@
                     <div class="card-body">
                         @include('project.layouts.projects_table_full_render')
                     </div>
-                    <div class="card-footer">
-                        <form action="{{ route('projects_counterparty_export') }}" method="GET">
-                            @csrf
-                            @php
-                                $parameters = [
-                                    'filename' => $supplier->name.'_все_проекты',
-                                    'sorting_type' => 'Все проекты с участием поставщика '.$supplier->name,
-                                ];
-                            @endphp
-                            <input type="hidden" name="type" value="supplier">
-                            <input type="hidden" name="supplier_id" value="{{ $supplier->id }}">
-                            <input type="hidden" name="parameters" value="{{ serialize($parameters) }}">
-                            <button type="submit" class="btn btn-success download_file_directly"
-                                    data-action='{"download_file":{"need_download": "true"}}'>
-                                <i class="fas fa-file-excel"></i>
-                                {{ __('general.export_projects_to_excel') }}
-                            </button>
-                        </form>
-                    </div>
+                    @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                        <div class="card-footer">
+                            <form action="{{ route('projects_counterparty_export') }}" method="GET">
+                                @csrf
+                                @php
+                                    $parameters = [
+                                        'filename' => $supplier->name.'_все_проекты',
+                                        'sorting_type' => 'Все проекты с участием поставщика '.$supplier->name,
+                                    ];
+                                @endphp
+                                <input type="hidden" name="type" value="supplier">
+                                <input type="hidden" name="supplier_id" value="{{ $supplier->id }}">
+                                <input type="hidden" name="parameters" value="{{ serialize($parameters) }}">
+                                <button type="submit" class="btn btn-success download_file_directly"
+                                        data-action='{"download_file":{"need_download": "true"}}'>
+                                    <i class="fas fa-file-excel"></i>
+                                    {{ __('general.export_projects_to_excel') }}
+                                </button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
                 <div class="card card-default">
                     <div class="card-header">
@@ -207,27 +209,29 @@
                             @include('invoice.table.invoices_table_ajax_filter', ['filter' => 'supplier'])
                         </div>
                     </div>
-                    <div class="card-footer">
-                        <form action="{{ route('invoices_export_with_filter_to_excel') }}" method="GET">
-                            @csrf
-                            @php
-                                $parameters = [
-                                    'filename' => $supplier->name.'_все_счета',
-                                    'sorting_type' => 'Все счета поставщика '.$supplier->name
-                                ];
-                            @endphp
-                            <input type="hidden" name="supplier" value="{{ $supplier->id }}">
-                            @if(!in_array($role,['super-admin','director','accountant']) && $supplier->id == '311')
-                                <input type="hidden" name="second_filter" value="my">
-                            @endif
-                            <input type="hidden" name="parameters" value="{{ serialize($parameters) }}">
-                            <button type="submit" class="btn btn-success download_file_directly"
-                                    data-action='{"download_file":{"need_download": "true"}}'>
-                                <i class="fas fa-file-excel"></i>
-                                {{ __('general.export_invoice_to_excel') }}
-                            </button>
-                        </form>
-                    </div>
+                    @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                        <div class="card-footer">
+                            <form action="{{ route('invoices_export_with_filter_to_excel') }}" method="GET">
+                                @csrf
+                                @php
+                                    $parameters = [
+                                        'filename' => $supplier->name.'_все_счета',
+                                        'sorting_type' => 'Все счета поставщика '.$supplier->name
+                                    ];
+                                @endphp
+                                <input type="hidden" name="supplier" value="{{ $supplier->id }}">
+                                @if(!in_array($role,['super-admin','director','accountant']) && $supplier->id == '311')
+                                    <input type="hidden" name="second_filter" value="my">
+                                @endif
+                                <input type="hidden" name="parameters" value="{{ serialize($parameters) }}">
+                                <button type="submit" class="btn btn-success download_file_directly"
+                                        data-action='{"download_file":{"need_download": "true"}}'>
+                                    <i class="fas fa-file-excel"></i>
+                                    {{ __('general.export_invoice_to_excel') }}
+                                </button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
             </div>
             @include('project.modals.confirm_invoice')
