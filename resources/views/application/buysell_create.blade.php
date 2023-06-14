@@ -127,7 +127,8 @@
                                         <div class="form-group">
                                             <label>Вставьте список контейнеров</label>
                                             <textarea class="form-control" rows="10" id="application_containers"
-                                                      placeholder="Список контейнеров"></textarea>
+                                                      placeholder="Список контейнеров"
+                                                      oninput="this.value = this.value.toUpperCase()"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-8" id="dynamic_containers_div"></div>
@@ -135,7 +136,7 @@
                                 <div class="form-group">
                                     <label>Тип контейнеров</label>
                                     <select class="form-control select2" name="containers_type"
-                                            data-placeholder="Выберите тип контейнеров" style="width: 100%;" >
+                                            data-placeholder="Выберите тип контейнеров" style="width: 100%;" required>
                                         <option></option>
                                         <option value="40HC">40HC</option>
                                         <option value="20DC">20DC</option>

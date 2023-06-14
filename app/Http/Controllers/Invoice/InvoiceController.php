@@ -166,32 +166,27 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
-        if(in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin']) || ($invoice->user_id == auth()->user()->id || $invoice->user_add == auth()->user()->name)){
-            $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
+        $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
-            $client_decision = '';
-            $client_payment_deadline = '';
-            $income_invoice_id = '';
+        $client_decision = '';
+        $client_payment_deadline = '';
+        $income_invoice_id = '';
 
-            if (!is_null($invoice->losses_potential)) {
-                $client_decision = $invoice->losses_potential['client_decision'];
-                $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
-                $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
-            }
-
-            return view('invoice.show', [
-                'invoice' => $invoice,
-                'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
-                'rates' => $currency_rates,
-                'client_decision' => $client_decision,
-                'client_payment_deadline' => $client_payment_deadline,
-                'income_invoice_id' => $income_invoice_id,
-                'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
-            ]);
+        if (!is_null($invoice->losses_potential)) {
+            $client_decision = $invoice->losses_potential['client_decision'];
+            $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
+            $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
         }
-        else {
-            abort(403);
-        }
+
+        return view('invoice.show', [
+            'invoice' => $invoice,
+            'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
+            'rates' => $currency_rates,
+            'client_decision' => $client_decision,
+            'client_payment_deadline' => $client_payment_deadline,
+            'income_invoice_id' => $income_invoice_id,
+            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
+        ]);
     }
 
     public function edit($id)
@@ -527,30 +522,27 @@ class InvoiceController extends Controller
     public function get_invoice_by_id($id)
     {
         $invoice = Invoice::withTrashed()->find($id);
-        if(in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin']) || ($invoice->user_id == auth()->user()->id || $invoice->user_add == auth()->user()->name)) {
-            $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
+        $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
-            $client_decision = '';
-            $client_payment_deadline = '';
-            $income_invoice_id = '';
+        $client_decision = '';
+        $client_payment_deadline = '';
+        $income_invoice_id = '';
 
-            if (!is_null($invoice->losses_potential)) {
-                $client_decision = $invoice->losses_potential['client_decision'];
-                $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
-                $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
-            }
-
-            return view('project.layouts.show_invoice_view', [
-                'invoice' => $invoice,
-                'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
-                'rates' => $currency_rates,
-                'client_decision' => $client_decision,
-                'client_payment_deadline' => $client_payment_deadline,
-                'income_invoice_id' => $income_invoice_id,
-                'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
-            ]);
+        if (!is_null($invoice->losses_potential)) {
+            $client_decision = $invoice->losses_potential['client_decision'];
+            $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
+            $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
         }
-        else abort(403);
+
+        return view('project.layouts.show_invoice_view', [
+            'invoice' => $invoice,
+            'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
+            'rates' => $currency_rates,
+            'client_decision' => $client_decision,
+            'client_payment_deadline' => $client_payment_deadline,
+            'income_invoice_id' => $income_invoice_id,
+            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
+        ]);
 
     }
 

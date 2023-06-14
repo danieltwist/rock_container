@@ -92,8 +92,23 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('buy_sell_create') }}" class="nav-link">
+                                <p>Покупка / продажа</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('application.index') }}" class="nav-link">
                                 <p>Все заявки</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('application.index').'?active' }}" class="nav-link">
+                                <p>В работе</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('application.index').'?done' }}" class="nav-link">
+                                <p>Завершенные</p>
                             </a>
                         </li>
                     </ul>

@@ -153,7 +153,8 @@
                                         <div class="form-group">
                                             <label>Вставьте список контейнеров</label>
                                             <textarea class="form-control" rows="10" id="application_containers"
-                                                      placeholder="Список контейнеров"></textarea>
+                                                      placeholder="Список контейнеров"
+                                                      oninput="this.value = this.value.toUpperCase()"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-8">
@@ -161,44 +162,57 @@
                                             @if(!is_null($application->containers))
                                                 <div class="form-group">
                                                     <label for="containers_used">Список контейнеров (всего: {{ count($application->containers) }})</label>
-                                                    <select class="form-control select2" name="containers[]" id="containers_used" multiple
-                                                            data-placeholder="Выберите контейнеры" style="width: 100%;">
+                                                    <input type="text" class="form-control"
+                                                           id="containers_used"
+                                                           value="{{ implode(', ', $application->containers) }}"
+                                                           placeholder="Список контейнеров"
+                                                           readonly>
+                                                </div>
+                                                <select class="form-control" name="containers[]" multiple id="containers"
+                                                        data-placeholder="Выберите контейнеры" style="display:none; width: 100%;">
+                                                    <option></option>
+                                                    @foreach($application->containers as $container)
+                                                        <option value="{{ $container }}" selected>{{ $container }}</option>
+                                                    @endforeach
+                                                </select>
+                                            @endif
+                                        </div>
+                                        @if(!is_null($application->containers))
+                                            <div id="removed_containers_div">
+                                                <div class="form-group">
+                                                    <label for="containers_used">Контейнеры на удаление</label>
+                                                    <select class="form-control select2" name="containers_removed[]" id="containers_removed" multiple
+                                                            data-placeholder="Выберите контейнеры на удаление" style="width: 100%;">
                                                         <option></option>
                                                         @foreach($application->containers as $container)
-                                                            <option value="{{ $container }}" selected>{{ $container }}</option>
+                                                            <option value="{{ $container }}"
+                                                            @if(!is_null($application->containers_removed))
+                                                                {{ in_array($container, $application->containers_removed) ? ' selected' : '' }}
+                                                                @endif
+                                                            >{{ $container }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                            @endif
-                                        </div>
-                                        <div id="removed_containers_div">
-                                            @if(!is_null($application->containers_removed))
-                                                <div class="form-group">
-                                                    <label for="containers_removed">Контейнеры на удаление, удалены пользователем {{ $application->removed_by }}</label>
-                                                    <input class="form-control" type="text"
-                                                           id="containers_removed"
-                                                           placeholder="Контейнеры на удаление"
-                                                           value="{{ implode(', ', $application->containers_removed) }}" disabled>
-                                                    </select>
-                                                </div>
-                                                @if(in_array($role, ['director', 'super-admin']))
-                                                    <a class="btn btn-danger" id="confirm_containers_remove"
+                                                @if(!is_null($application->containers_removed))
+                                                    @if(in_array($role, ['director', 'super-admin']))
+                                                        <a class="btn btn-danger" id="confirm_containers_remove"
+                                                           data-application_id="{{ $application->id }}">
+                                                            Подтвердить удаление
+                                                        </a>
+                                                    @endif
+                                                    <a class="btn btn-success" id="cancel_containers_remove"
                                                        data-application_id="{{ $application->id }}">
-                                                        Подтвердить удаление
+                                                        Восстановить
                                                     </a>
                                                 @endif
-                                                <a class="btn btn-success" id="cancel_containers_remove"
-                                                   data-application_id="{{ $application->id }}">
-                                                    Восстановить
-                                                </a>
-                                            @endif
-                                        </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Тип контейнеров</label>
                                     <select class="form-control select2" name="containers_type"
-                                            data-placeholder="Выберите тип контейнеров" style="width: 100%;" >
+                                            data-placeholder="Выберите тип контейнеров" style="width: 100%;" required>
                                         <option></option>
                                         @foreach(['40HC', '20DC', '40OT', '20OT', '40DC', '40RF'] as $container_type)
                                             <option value="{{ $container_type }}"

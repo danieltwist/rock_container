@@ -1876,39 +1876,28 @@
 
     $('#confirm_containers_remove').click(function () {
         let application_id = $(this).data('application_id');
-        $.ajax({
-            type: "POST",
-            url: "{{ route('confirm_containers_remove') }}",
-            data: {
-                application_id: application_id,
-            },
-            success: function (response) {
-                $('#containers_removed').val('');
-                $(document).Toasts('create', {
-                    autohide: true,
-                    delay: 3000,
-                    class: response['bg-class'],
-                    title: 'Уведомление от ' + response['from'],
-                    body: response['message']
-                });
-                $('#removed_containers_div').addClass('d-none');
-            },
-            error: function (XMLHttprequest, textStatus, errorThrown) {
-                console.log(textStatus);
+        let containers_removed = $('#containers_removed').val();
+        let containers = $('#containers').val();
+        containers.forEach((item) => {
+            if(containers_removed.includes(item)){
+                let index = containers_removed.indexOf(item);
+                if (index !== -1) {
+                    containers.splice(index, 1);
+                    $("#containers option[value="+item+"]").remove();
+                }
             }
         });
-    });
-
-    $('#confirm_containers_remove').click(function () {
-        let application_id = $(this).data('application_id');
+        console.log($("#containers").val());
+        $('#containers_used').val(containers.join(', '));
         $.ajax({
             type: "POST",
             url: "{{ route('confirm_containers_remove') }}",
             data: {
                 application_id: application_id,
+                containers: containers
             },
             success: function (response) {
-                $('#containers_removed').val('');
+                $('#containers_removed').val([]);
                 $(document).Toasts('create', {
                     autohide: true,
                     delay: 3000,
@@ -1985,11 +1974,8 @@
 
     $(document).on('click', '#cancel_containers_remove', function () {
         let application_id = $(this).data('application_id');
-        let containers_removed = $('#containers_removed').val();
-        containers_removed.split(', ').forEach((item) => {
-            let newOption = new Option(item, item, true, true);
-            $('#containers_used').append(newOption).trigger('change');
-        });
+
+        $('#containers_removed').val('').change();
         $.ajax({
             type: "POST",
             url: "{{ route('cancel_containers_remove') }}",
@@ -2120,7 +2106,6 @@
         });
     });
 
-
     $(document).on('click', '#unmark_processing', function () {
         $.ajax({
             type: "POST",
@@ -2153,8 +2138,6 @@
             }
         });
     });
-
-
 
     $(document).on('click', '.download_application', function () {
         let application_id = $(this).data('application_id');

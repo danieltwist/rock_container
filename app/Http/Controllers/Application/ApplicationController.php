@@ -377,39 +377,6 @@ class ApplicationController extends Controller
 
     public function update(Request $request, Application $application)
     {
-        $containers_removed = null;
-        $removed_by = null;
-        $containers_removed_now = null;
-        $containers_added = [];
-        $all_containers = [];
-
-        if(!is_null($application->containers)){
-            if(!is_null($request->containers)){
-                $containers_removed_now = array_values(array_diff($application->containers, $request->containers));
-                if(!empty($containers_removed_now)) {
-                    if(!is_null($application->containers_removed)){
-                        $containers_removed = array_merge($containers_removed_now, $application->containers_removed);
-                    }
-                    else {
-                        $containers_removed = $containers_removed_now;
-                    }
-                    $removed_by = auth()->user()->name;
-                }
-                else {
-                    $containers_removed_now = null;
-                }
-                $containers_added = array_values(array_diff($request->containers, $application->containers));
-                $all_containers = array_merge($containers_added, $application->containers);
-                if(!empty($containers_removed)){
-                    $all_containers = array_unique(array_merge($all_containers, $containers_removed));
-                }
-            }
-        }
-        else {
-            $containers_added = $request->containers;
-            $all_containers = $request->containers;
-        }
-
         $application->name = $request->name;
         $application->type = $request->type;
         $application->counterparty_type = $request->counterparty_type;
@@ -480,22 +447,21 @@ class ApplicationController extends Controller
 
         if(is_null($application->containers_archived)){
             $application->containers = $request->containers;
-            if(!is_null($containers_removed)){
-                $application->containers_removed = $containers_removed;
-            }
-            $application->removed_by = $removed_by;
-
-            if(!is_null($containers_removed_now)){
-                foreach ($containers_removed_now as $container_name){
+            if(!is_null($request->containers_removed)){
+                $application->containers_removed = $request->containers_removed;
+                $application->removed_by = auth()->user()->name;
+                foreach ($request->containers_removed as $container_name){
                     $container = Container::where('name', $container_name)->first();
                     if(!is_null($container)){
-                        if(in_array($container_name, $containers_removed_now)){
-                            $container->update([
-                                'removed' => $removed_by
-                            ]);
-                        }
+                        $container->update([
+                            'removed' => auth()->user()->name
+                        ]);
                     }
                 }
+            }
+            else {
+                $application->containers_removed = null;
+                $application->removed_by = null;
             }
         }
 
@@ -504,7 +470,6 @@ class ApplicationController extends Controller
         isset($request->surcharge) ? $application->surcharge = 1 : $application->surcharge = null;
 
         $application->save();
-
         if(is_null($application->containers_archived)){
             if(!is_null($request->containers)){
                 if($request->type == 'Поставщик') {
@@ -909,6 +874,8 @@ class ApplicationController extends Controller
                         'client_location_request' => null,
                         'client_date_manual_request' => null,
                         'client_return_act' => null,
+                        'client_price_amount' => null,
+                        'client_price_currency' => null,
                         'removed' => null,
                     ]);
                 }
@@ -918,9 +885,22 @@ class ApplicationController extends Controller
                         'archive' => 'yes'
                     ]);
                 }
+                if($application->type == 'Покупка'){
+                    $this->saveContainerUsageHistory($container, $application->id);
+                    $container->update([
+                        'archive' => 'yes'
+                    ]);
+                }
+                if($application->type == 'Продажа'){
+                    $this->saveContainerUsageHistory($container, $application->id);
+                    $container->update([
+                        'archive' => 'yes'
+                    ]);
+                }
             }
         }
 
+        $application->containers = $request->containers;
         $application->containers_removed = null;
         $application->removed_by = null;
 
@@ -938,13 +918,19 @@ class ApplicationController extends Controller
         $containers_removed = $application->containers_removed;
         $containers = $application->containers;
 
+        if(!is_null($containers)){
+            $containers_after_confirm = array_merge($containers, $containers_removed);
+        }
+        else {
+            $containers_after_confirm = $application->containers_removed;
+        }
         $application->update([
-            'containers' => array_merge($containers, $containers_removed),
+            'containers' => $containers_after_confirm,
             'containers_removed' => null,
             'removed_by' => null
         ]);
 
-        foreach ($containers_removed as $container_name){
+        foreach ($containers_after_confirm as $container_name){
             $container = Container::where('name', $container_name)->first();
             if(!is_null($container)){
                 if(in_array($container_name, $containers_removed)){
@@ -1461,6 +1447,8 @@ class ApplicationController extends Controller
                         }
                     }
 
+                    $new_invoice->user_id = auth()->user()->id;
+                    $new_invoice->user_add = auth()->user()->name;
                     $new_invoice->status = $status;
                     $new_invoice->additional_info = $invoice['info'];
 
@@ -1764,6 +1752,16 @@ class ApplicationController extends Controller
 
         $application = Application::findOrFail($id);
         $application_name = $application->name;
+        foreach ($application->invoices as $invoice){
+            $invoice->delete();
+        }
+        foreach ($application->containers as $container_name){
+            $container = Container::where('name', $container_name)->first();
+            $this->saveContainerUsageHistory($container, $application->id);
+            $container->update([
+                'archive' => 'yes'
+            ]);
+        }
         $application->delete();
 
         return response()->json([
