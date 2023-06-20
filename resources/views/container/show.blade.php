@@ -33,7 +33,7 @@
                     <table class="table table-striped containers_archive_table"
                            data-filter_type="history"
                            data-container_id="{{ $container->id }}"
-                           id="containers_extended_ajax_table">
+                           id="containers_history_extended_ajax_table">
                         <thead>
                         <tr>
                             @foreach($columns as $column)

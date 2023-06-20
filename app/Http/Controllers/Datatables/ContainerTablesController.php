@@ -187,6 +187,11 @@ class ContainerTablesController extends Controller
 
             if(isset($request->application))
                 $records->application($request->application);
+            if(isset($request->containers_names)){
+                if(!empty(unserialize($request->containers_names))){
+                    $records->getByNames(unserialize($request->containers_names));
+                }
+            }
 
             $records = $records->where(function ($query) use ($searchValue, $used_delimiter) {
                 foreach ($this->columns as $column){
@@ -238,6 +243,11 @@ class ContainerTablesController extends Controller
 //                $records->svv();
             if(isset($request->application))
                 $records->application($request->application);
+            if(isset($request->containers_names)){
+                if(!empty(unserialize($request->containers_names))){
+                    $records->getByNames(unserialize($request->containers_names));
+                }
+            }
 
             foreach ($this->columns as $key => $value){
                 $searchValue = $request->columns[$key]['search']['value'];
@@ -556,6 +566,10 @@ class ContainerTablesController extends Controller
             $totalRecords->application($request->application);
         if(isset($request->history))
             $totalRecords->history($request->history);
+        if(isset($request->containers_names))
+            if(!empty(unserialize($request->containers_names))){
+                $totalRecords->getByNames(unserialize($request->containers_names));
+            }
 
         $totalRecords = $totalRecords->count();
 
@@ -565,6 +579,10 @@ class ContainerTablesController extends Controller
                 $records->application($request->application);
             if(isset($request->history))
                 $records->history($request->history);
+            if(isset($request->containers_names))
+                if(!empty(unserialize($request->containers_names))){
+                    $records->getByNames(unserialize($request->containers_names));
+                }
             $records = $records->where(function ($query) use ($searchValue) {
                 foreach ($this->columns as $column){
                     $query->orWhere($column['id'], 'like', '%' . $searchValue . '%');
@@ -586,6 +604,10 @@ class ContainerTablesController extends Controller
                 $records->application($request->application);
             if(isset($request->history))
                 $records->history($request->history);
+            if(isset($request->containers_names))
+                if(!empty(unserialize($request->containers_names))){
+                    $records->getByNames(unserialize($request->containers_names));
+                }
 
             $totalRecordswithFilter = $records->count();
             $id_list = $records->pluck('id');
@@ -918,6 +940,5 @@ class ContainerTablesController extends Controller
             )->render()
         ];
     }
-
 
 }

@@ -20,11 +20,12 @@ trait ContainerTrait {
             'width' => [
                 'all' => '5px',
                 'free' => '5px',
-                'main_info' => '5px',
+                'main_info' => '5%',
                 'manual' => '1%',
                 'repair' => '5px',
                 'smgs' => '1%',
                 'svv' => '1%',
+                'kp' => '1%',
             ],
         ],
         '1' => [
@@ -39,6 +40,7 @@ trait ContainerTrait {
                 'repair' => '150px',
                 'smgs' => '5%',
                 'svv' => '10%',
+                'kp' => '10%',
             ],
         ],
         '2' => [
@@ -53,6 +55,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => '5%',
             ],
         ],
         '3' => [
@@ -67,6 +70,7 @@ trait ContainerTrait {
                 'repair' => '150px',
                 'smgs' => '5%',
                 'svv' => '10%',
+                'kp' => '5%',
             ],
         ],
         '4' => [
@@ -81,6 +85,7 @@ trait ContainerTrait {
                 'repair' => '300px',
                 'smgs' => '15%',
                 'svv' => '30%',
+                'kp' => '25%',
             ],
         ],
         '5' => [
@@ -95,6 +100,7 @@ trait ContainerTrait {
                 'repair' => '100px',
                 'smgs' => '5%',
                 'svv' => '20%',
+                'kp' => '5%',
             ],
         ],
         '6' => [
@@ -109,6 +115,7 @@ trait ContainerTrait {
                 'repair' => '150px',
                 'smgs' => '5%',
                 'svv' => '10%',
+                'kp' => '10%',
             ],
         ],
         '7' => [
@@ -123,6 +130,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => '10%',
             ],
         ],
         '8' => [
@@ -137,6 +145,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '9' => [
@@ -151,6 +160,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '10' => [
@@ -165,6 +175,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '11' => [
@@ -179,6 +190,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '12' => [
@@ -193,6 +205,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '13' => [
@@ -207,6 +220,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '14' => [
@@ -221,6 +235,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '15' => [
@@ -235,6 +250,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '16' => [
@@ -249,6 +265,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '17' => [
@@ -263,6 +280,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '18' => [
@@ -277,6 +295,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '19' => [
@@ -291,6 +310,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => '19%',
+                'kp' => null,
             ],
         ],
         '20' => [
@@ -305,6 +325,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '21' => [
@@ -319,6 +340,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '22' => [
@@ -333,6 +355,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '23' => [
@@ -347,6 +370,7 @@ trait ContainerTrait {
                 'repair' => '200px',
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '24' => [
@@ -361,6 +385,7 @@ trait ContainerTrait {
                 'repair' => '150px',
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '25' => [
@@ -375,6 +400,7 @@ trait ContainerTrait {
                 'repair' => '300px',
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '26' => [
@@ -389,6 +415,7 @@ trait ContainerTrait {
                 'repair' => '300px',
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '27' => [
@@ -403,6 +430,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '28' => [
@@ -417,6 +445,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '29' => [
@@ -431,6 +460,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '30' => [
@@ -445,6 +475,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '31' => [
@@ -459,6 +490,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '32' => [
@@ -473,6 +505,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '33' => [
@@ -487,6 +520,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '34' => [
@@ -501,6 +535,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '35' => [
@@ -515,6 +550,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '36' => [
@@ -529,6 +565,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '37' => [
@@ -543,6 +580,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '38' => [
@@ -557,6 +595,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '39' => [
@@ -566,11 +605,12 @@ trait ContainerTrait {
             'width' => [
                 'all' => '300px',
                 'free' => null,
-                'main_info' => '20%',
+                'main_info' => '30%',
                 'manual' => '15%',
                 'repair' => '300px',
                 'smgs' => '15%',
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '40' => [
@@ -585,6 +625,7 @@ trait ContainerTrait {
                 'repair' => '150px',
                 'smgs' => '5%',
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '41' => [
@@ -599,6 +640,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '42' => [
@@ -613,6 +655,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '43' => [
@@ -627,6 +670,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '44' => [
@@ -641,6 +685,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => '12%',
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '45' => [
@@ -655,6 +700,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => '7%',
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '46' => [
@@ -669,6 +715,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '47' => [
@@ -683,6 +730,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '48' => [
@@ -697,6 +745,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '49' => [
@@ -711,6 +760,7 @@ trait ContainerTrait {
                 'repair' => '200px',
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '50' => [
@@ -725,6 +775,7 @@ trait ContainerTrait {
                 'repair' => '150px',
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '51' => [
@@ -739,6 +790,7 @@ trait ContainerTrait {
                 'repair' => '300px',
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '52' => [
@@ -753,6 +805,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => '5%',
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '53' => [
@@ -767,6 +820,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '54' => [
@@ -781,6 +835,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '55' => [
@@ -795,6 +850,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '56' => [
@@ -809,6 +865,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => '5%',
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '57' => [
@@ -823,6 +880,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => '5%',
             ],
         ],
         '58' => [
@@ -837,6 +895,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => '5%',
             ],
         ],
         '59' => [
@@ -851,6 +910,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => '5%',
             ],
         ],
         '60' => [
@@ -865,6 +925,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => '25%',
             ],
         ],
         '61' => [
@@ -874,11 +935,12 @@ trait ContainerTrait {
             'width' => [
                 'all' => '200px',
                 'free' => null,
-                'main_info' => null,
+                'main_info' => '10%',
                 'manual' => null,
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '62' => [
@@ -893,6 +955,7 @@ trait ContainerTrait {
                 'repair' => null,
                 'smgs' => null,
                 'svv' => null,
+                'kp' => null,
             ],
         ],
         '63' => [
@@ -907,6 +970,7 @@ trait ContainerTrait {
                 'repair' => '300px',
                 'smgs' => '15%',
                 'svv' => null,
+                'kp' => null,
             ],
         ],
     ];
@@ -1509,108 +1573,190 @@ trait ContainerTrait {
 
     public function clearContainerUsageInfo(Container $container, $application_type){
 
-        if($application_type == 'Поставщик'){
-            $container->update([
-                'supplier_application_id' => null,
-                'supplier_application_name' => null,
-                'supplier_price_amount' => null,
-                'supplier_price_currency' => null,
-                'supplier_price_in_rubles' => null,
-                'supplier_grace_period' => null,
-                'supplier_snp_range' => null,
-                'supplier_snp_after_range' => null,
-                'supplier_snp_currency' => null,
-                'supplier_country' => null,
-                'supplier_city' => null,
-                'supplier_terminal' => null,
-                'supplier_date_get' => null,
-                'supplier_date_start_using' => null,
-                'supplier_days_using' => null,
-                'supplier_snp_total' => null,
-                'supplier_place_of_delivery_country' => null,
-                'supplier_place_of_delivery_city' => null,
-                'supplier_terminal_storage_amount' => null,
-                'supplier_terminal_storage_currency' => null,
-                'supplier_terminal_storage_in_rubles' => null,
-                'supplier_payer_tx' => null,
-                'supplier_renewal_reexport_costs_amount' => null,
-                'supplier_renewal_reexport_costs_currency' => null,
-                'supplier_repair_amount' => null,
-                'supplier_repair_currency' => null,
-                'supplier_repair_in_rubles' => null,
-                'supplier_repair_status' => null,
-                'supplier_repair_confirmation' => null,
-                'removed' => null
-            ]);
-        }
-
-        if($application_type == 'Подсыл'){
-            $container->update([
-                'relocation_counterparty_id' => null,
-                'relocation_counterparty_name' => null,
-                'relocation_counterparty_type' => null,
-                'relocation_application_id' => null,
-                'relocation_application_name' => null,
-                'relocation_price_amount' => null,
-                'relocation_price_currency' => null,
-                'relocation_price_in_rubles' => null,
-                'relocation_date_send' => null,
-                'relocation_date_arrival_to_terminal' => null,
-                'relocation_place_of_delivery_city' => null,
-                'relocation_place_of_delivery_terminal' => null,
-                'relocation_delivery_time_days' => null,
-                'relocation_snp_range' => null,
-                'relocation_snp_after_range' => null,
-                'relocation_snp_currency' => null,
-                'relocation_snp_total' => null,
-                'relocation_repair_amount' => null,
-                'relocation_repair_currency' => null,
-                'relocation_repair_in_rubles' => null,
-                'relocation_repair_status' => null,
-                'relocation_repair_confirmation' => null,
-                'removed' => null
-            ]);
-        }
-
-        if($application_type == 'Клиент'){
-            $container->update([
-                'client_counterparty_id' => null,
-                'client_counterparty_name' => null,
-                'client_application_id' => null,
-                'client_application_name' => null,
-                'client_price_amount' => null,
-                'client_price_currency' => null,
-                'client_price_in_rubles' => null,
-                'client_grace_period' => null,
-                'client_snp_range' => null,
-                'client_snp_after_range' => null,
-                'client_snp_currency' => null,
-                'client_snp_in_rubles' => null,
-                'client_date_get' => null,
-                'client_date_return' => null,
-                'client_place_of_delivery_country' => null,
-                'client_place_of_delivery_city' => null,
-                'client_days_using' => null,
-                'client_snp_total' => null,
-                'client_repair_amount' => null,
-                'client_repair_currency' => null,
-                'client_repair_in_rubles' => null,
-                'client_repair_status' => null,
-                'client_repair_confirmation' => null,
-                'client_smgs' => null,
-                'client_manual' => null,
-                'client_location_request' => null,
-                'client_date_manual_request' => null,
-                'client_return_act' => null,
-                'removed' => null
-            ]);
-        }
-
-        if(is_null($container->supplier_application_id) && is_null($container->relocation_application_id) && is_null($container->client_application_id)){
-            $container->update([
-                'archive' => 'yes'
-            ]);
-        }
+//        if($application_type == 'Поставщик'){
+//            $container->update([
+//                'supplier_application_id' => null,
+//                'supplier_application_name' => null,
+//                'supplier_price_amount' => null,
+//                'supplier_price_currency' => null,
+//                'supplier_price_in_rubles' => null,
+//                'supplier_grace_period' => null,
+//                'supplier_snp_range' => null,
+//                'supplier_snp_after_range' => null,
+//                'supplier_snp_currency' => null,
+//                'supplier_country' => null,
+//                'supplier_city' => null,
+//                'supplier_terminal' => null,
+//                'supplier_date_get' => null,
+//                'supplier_date_start_using' => null,
+//                'supplier_days_using' => null,
+//                'supplier_snp_total' => null,
+//                'supplier_place_of_delivery_country' => null,
+//                'supplier_place_of_delivery_city' => null,
+//                'supplier_terminal_storage_amount' => null,
+//                'supplier_terminal_storage_currency' => null,
+//                'supplier_terminal_storage_in_rubles' => null,
+//                'supplier_payer_tx' => null,
+//                'supplier_renewal_reexport_costs_amount' => null,
+//                'supplier_renewal_reexport_costs_currency' => null,
+//                'supplier_repair_amount' => null,
+//                'supplier_repair_currency' => null,
+//                'supplier_repair_in_rubles' => null,
+//                'supplier_repair_status' => null,
+//                'supplier_repair_confirmation' => null,
+//                'removed' => null
+//            ]);
+//        }
+//
+//        if($application_type == 'Подсыл'){
+//            $container->update([
+//                'relocation_counterparty_id' => null,
+//                'relocation_counterparty_name' => null,
+//                'relocation_counterparty_type' => null,
+//                'relocation_application_id' => null,
+//                'relocation_application_name' => null,
+//                'relocation_price_amount' => null,
+//                'relocation_price_currency' => null,
+//                'relocation_price_in_rubles' => null,
+//                'relocation_date_send' => null,
+//                'relocation_date_arrival_to_terminal' => null,
+//                'relocation_place_of_delivery_city' => null,
+//                'relocation_place_of_delivery_terminal' => null,
+//                'relocation_delivery_time_days' => null,
+//                'relocation_snp_range' => null,
+//                'relocation_snp_after_range' => null,
+//                'relocation_snp_currency' => null,
+//                'relocation_snp_total' => null,
+//                'relocation_repair_amount' => null,
+//                'relocation_repair_currency' => null,
+//                'relocation_repair_in_rubles' => null,
+//                'relocation_repair_status' => null,
+//                'relocation_repair_confirmation' => null,
+//                'removed' => null
+//            ]);
+//        }
+//
+//        if($application_type == 'Клиент'){
+//            $container->update([
+//                'client_counterparty_id' => null,
+//                'client_counterparty_name' => null,
+//                'client_application_id' => null,
+//                'client_application_name' => null,
+//                'client_price_amount' => null,
+//                'client_price_currency' => null,
+//                'client_price_in_rubles' => null,
+//                'client_grace_period' => null,
+//                'client_snp_range' => null,
+//                'client_snp_after_range' => null,
+//                'client_snp_currency' => null,
+//                'client_snp_in_rubles' => null,
+//                'client_date_get' => null,
+//                'client_date_return' => null,
+//                'client_place_of_delivery_country' => null,
+//                'client_place_of_delivery_city' => null,
+//                'client_days_using' => null,
+//                'client_snp_total' => null,
+//                'client_repair_amount' => null,
+//                'client_repair_currency' => null,
+//                'client_repair_in_rubles' => null,
+//                'client_repair_status' => null,
+//                'client_repair_confirmation' => null,
+//                'client_smgs' => null,
+//                'client_manual' => null,
+//                'client_location_request' => null,
+//                'client_date_manual_request' => null,
+//                'client_return_act' => null,
+//                'removed' => null
+//            ]);
+//        }
+//        if(is_null($container->supplier_application_id) && is_null($container->relocation_application_id) && is_null($container->client_application_id)){
+//            $container->update([
+//                'archive' => 'yes'
+//            ]);
+//        }
+        $container->update([
+            'supplier_application_id' => null,
+            'supplier_application_name' => null,
+            'supplier_price_amount' => null,
+            'supplier_price_currency' => null,
+            'supplier_price_in_rubles' => null,
+            'supplier_grace_period' => null,
+            'supplier_snp_range' => null,
+            'supplier_snp_after_range' => null,
+            'supplier_snp_currency' => null,
+            'supplier_country' => null,
+            'supplier_city' => null,
+            'supplier_terminal' => null,
+            'supplier_date_get' => null,
+            'supplier_date_start_using' => null,
+            'supplier_days_using' => null,
+            'supplier_snp_total' => null,
+            'supplier_place_of_delivery_country' => null,
+            'supplier_place_of_delivery_city' => null,
+            'supplier_terminal_storage_amount' => null,
+            'supplier_terminal_storage_currency' => null,
+            'supplier_terminal_storage_in_rubles' => null,
+            'supplier_payer_tx' => null,
+            'supplier_renewal_reexport_costs_amount' => null,
+            'supplier_renewal_reexport_costs_currency' => null,
+            'supplier_repair_amount' => null,
+            'supplier_repair_currency' => null,
+            'supplier_repair_in_rubles' => null,
+            'supplier_repair_status' => null,
+            'supplier_repair_confirmation' => null,
+            'client_counterparty_id' => null,
+            'client_counterparty_name' => null,
+            'client_application_id' => null,
+            'client_application_name' => null,
+            'client_price_amount' => null,
+            'client_price_currency' => null,
+            'client_price_in_rubles' => null,
+            'client_grace_period' => null,
+            'client_snp_range' => null,
+            'client_snp_after_range' => null,
+            'client_snp_currency' => null,
+            'client_snp_in_rubles' => null,
+            'client_date_get' => null,
+            'client_date_return' => null,
+            'client_place_of_delivery_country' => null,
+            'client_place_of_delivery_city' => null,
+            'client_days_using' => null,
+            'client_snp_total' => null,
+            'client_repair_amount' => null,
+            'client_repair_currency' => null,
+            'client_repair_in_rubles' => null,
+            'client_repair_status' => null,
+            'client_repair_confirmation' => null,
+            'client_smgs' => null,
+            'client_manual' => null,
+            'client_location_request' => null,
+            'client_date_manual_request' => null,
+            'client_return_act' => null,
+            'relocation_counterparty_id' => null,
+            'relocation_counterparty_name' => null,
+            'relocation_counterparty_type' => null,
+            'relocation_application_id' => null,
+            'relocation_application_name' => null,
+            'relocation_price_amount' => null,
+            'relocation_price_currency' => null,
+            'relocation_price_in_rubles' => null,
+            'relocation_date_send' => null,
+            'relocation_date_arrival_to_terminal' => null,
+            'relocation_place_of_delivery_city' => null,
+            'relocation_place_of_delivery_terminal' => null,
+            'relocation_delivery_time_days' => null,
+            'relocation_snp_range' => null,
+            'relocation_snp_after_range' => null,
+            'relocation_snp_currency' => null,
+            'relocation_snp_total' => null,
+            'relocation_repair_amount' => null,
+            'relocation_repair_currency' => null,
+            'relocation_repair_in_rubles' => null,
+            'relocation_repair_status' => null,
+            'relocation_repair_confirmation' => null,
+            'removed' => null,
+            'archive' => 'yes'
+        ]);
 
     }
 

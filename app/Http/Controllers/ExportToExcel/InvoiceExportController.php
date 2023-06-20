@@ -156,7 +156,7 @@ class InvoiceExportController extends Controller
                 'amount_paid' => $amount_paid,
                 'amount_balance' => (float)$amount - $amount_paid,
                 'status' => $invoice->status,
-                'info' => $invoice->additional_info,
+                'info' => str_replace('=', 'символ равно', $invoice->additional_info),
             ];
 
             $url [] = [
@@ -333,7 +333,7 @@ class InvoiceExportController extends Controller
                 'amount_paid' => $amount_paid,
                 'losses_amount' => abs($invoice->losses_amount),
                 'status' => $invoice->status,
-                'info' => $invoice->additional_info
+                'info' => str_replace('=', 'символ равно', $invoice->additional_info),
             ];
 
             $url [] = [

@@ -87,6 +87,11 @@
                     data-filter="smgs">
                 СМГС / Акты
             </button>
+            <button type="button"
+                    class="btn btn-default btn-sm containers_filters"
+                    data-filter="kp">
+                К/П
+            </button>
         </div>
         <div class="float-right">
             <div class="dropdown dropleft" id="container_card_buttons">
@@ -139,6 +144,7 @@
                 <table class="table table-striped containers_extended_table"
                        data-filter_type="{{ $table_filter_type }}"
                        data-application_id="{{ $application_id }}"
+                       @if(isset($load_from_containers)) data-containers_names="{{ $load_from_containers }}" @endif
                        id="containers_extended_ajax_table">
                     <thead>
                     <tr>

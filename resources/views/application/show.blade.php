@@ -104,8 +104,19 @@
                                 <div class="col-md-2">
                                     <div class="text-muted mt-3">
                                         <p class="text-sm">Количество контейнеров
-                                            <b class="d-block">{{ $application->containers_amount }}</b>
+                                            <b class="d-block">{{ $application->containers_amount }}
+                                                <a class="cursor-pointer text-dark" data-toggle="collapse" data-target="#containers_collapse" aria-expanded="false">
+                                                    Показать
+                                                </a>
+                                            </b>
                                         </p>
+                                            <div class="collapse mt-2" id="containers_collapse">
+                                                <p class="text-sm">
+                                                    @if(!is_null($application->containers))
+                                                        {{ implode(', ', $application->containers) }}
+                                                    @endif
+                                                </p>
+                                            </div>
                                     </div>
                                     <div class="text-muted mt-3">
                                         <p class="text-sm">Стоимость
@@ -226,37 +237,14 @@
                                             </a>
                                         </div>
                                     </div>
-                                    @if($application->status != 'Завершена')
-                                        <form class="button-delete-inline float-right" action="{{ route('archive_containers_usage_info') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="application_id" value="{{ $application->id }}">
-                                            @if($application->type == 'Покупка')
-                                                <button type="submit" class="btn bg-success mt-2 confirm-btn">
-                                                    <i class="fas fa-check"></i> Завершить работу с заявкой
-                                                </button>
-                                            @else
-                                                <button type="submit" class="btn bg-success mt-2" onClick="return confirmSubmit()">
-                                                    <i class="fas fa-check"></i> Завершить и переместить контейнеры в архив
-                                                </button>
-                                            @endif
-                                        </form>
-                                    @endif
-                                    @if($application->status == 'Завершена')
-                                        <div class="mt-3 float-right">
-                                            Дата завершения: {{ $application->finished_at->format('d.m.Y H:i:s') }}
-                                        </div>
-                                    @endif
+                                    @include('application.ajax.finish_application')
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            @if(!is_null($application->containers_archived))
-                                @include('container.table_extended.containers_history_table', ['table_filter_type' => 'application', 'application_id' => $application->id])
-                            @elseif($containers_count != 0)
-                                @include('container.table_extended.table_card_layout', ['table_filter_type' => 'application', 'application_id' => $application->id])
-                            @else
+                            @if(is_null($application->containers))
                                 <div class="card">
                                     <div class="card-header">
                                         <h3 class="card-title">Список контейнеров</h3>
@@ -265,6 +253,12 @@
                                         Контейнеры по данной заявке еще не были добавлены
                                     </div>
                                 </div>
+                            @endif
+                            @if(!empty($load_from_containers))
+                                @include('container.table_extended.table_card_layout', ['table_filter_type' => 'application', 'application_id' => $application->id, 'load_from_containers' => serialize($load_from_containers)])
+                            @endif
+                            @if(!empty($load_from_archive))
+                                @include('container.table_extended.containers_history_table', ['table_filter_type' => 'application', 'application_id' => $application->id, 'load_from_archive' => serialize($load_from_archive)])
                             @endif
                             <div class="card">
                                 <div class="card-header">
@@ -330,5 +324,6 @@
         @include('project.modals.make_invoice_model')
         @include('application.modals.add_invoices')
         @include('audit.component_history_modal')
+        @include('application.modals.not_allowed_finish_reason')
     </section>
 @endsection

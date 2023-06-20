@@ -4,7 +4,7 @@ $(document).ready(function () {
 
         var link = this.href;
 
-        if(link == location2){
+        if(link === location2){
             $(this).addClass('active');
             $(this).parent().parent().parent().addClass('menu-is-opening menu-open');
 

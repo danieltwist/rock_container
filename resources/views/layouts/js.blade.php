@@ -2184,9 +2184,12 @@
     $(document).on('change', '#invoice_type', function () {
         if($(this).val() === 'Доход'){
             $('#expense_types_categories').addClass('d-none');
+            $("#finance_direction").val("Клиенту").change();
         }
+
         else {
             $('#expense_types_categories').removeClass('d-none');
+            $("#finance_direction").val("Поставщику").change();
         }
     });
 
@@ -2231,6 +2234,8 @@
             $('#place_of_delivery_div').removeClass('d-none');
             $('#place_of_delivery_country').prop('required', true);
             $('#place_of_delivery_city').prop('required', true);
+            $('#application_direction').val('Клиент');
+            $('#application_direction').trigger('change');
         }
         if($(this).val() === 'Поставщик'){
             $('#send_to_div').removeClass('d-none');
@@ -2239,6 +2244,8 @@
             $('#send_to_city').prop('required', true);
             $('#place_of_delivery_country').prop('required', true);
             $('#place_of_delivery_city').prop('required', true);
+            $('#application_direction').val('Поставщик');
+            $('#application_direction').trigger('change');
         }
         if($(this).val() === 'Покупка'){
             $('#application_direction').val('Поставщик');
@@ -2265,5 +2272,21 @@
         });
     });
 
+    $('#preview_not_allowed_finish_reason').on('show.bs.modal', function (event) {
+        $('#not_allowed_finish_reason_div').html(loading_spinner);
+        $.ajax({
+            type: "GET",
+            url: "{{route('get_not_allowed_finish_reason')}}",
+            data: {
+                application_id: urlpath[2]
+            },
+            success: function (response) {
+                $('#not_allowed_finish_reason_div').html(response);
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    });
 
 </script>

@@ -70,7 +70,17 @@ class ApplicationTablesController extends Controller
 
         $sno = $start + 1;
 
+
         foreach ($records as $application) {
+            $row_class = '';
+            if(!is_null($application->containers)){
+                if($application->containers_amount != count($application->containers)){
+                    $row_class = 'table-danger';
+                }
+            }
+            else {
+                $row_class = 'table-danger';
+            }
 
             $id = $application->id;
 
@@ -91,7 +101,8 @@ class ApplicationTablesController extends Controller
             ])->render();
 
             $containers = view('application.table.containers', [
-                'application' => $application
+                'application' => $application,
+                'class' => $row_class
             ])->render();
 
             switch($application->status){
@@ -124,7 +135,8 @@ class ApplicationTablesController extends Controller
                 "price_amount" => $conditions,
                 "containers_amount" => $containers,
                 "status" => $status,
-                "created_at" => $actions
+                "created_at" => $actions,
+                "class" => $row_class
             );
 
         }

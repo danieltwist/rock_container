@@ -21,7 +21,7 @@
                                     <form class="inline-block" action="{{ route('expense_type.destroy', $expense_type->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm delete-btn"
+                                        <button type="submit" class="btn btn-danger btn-sm ajax_remove"
                                                 data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"}}'>
                                             {{ __('general.remove') }}
                                         </button>
@@ -57,7 +57,7 @@
                                     <form class="inline-block" action="{{ route('expense_type.destroy', $expense_type->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm delete-btn"
+                                        <button type="submit" class="btn btn-danger btn-sm ajax_remove"
                                                 data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"}}'>
                                             {{ __('general.remove') }}
                                         </button>

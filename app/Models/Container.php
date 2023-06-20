@@ -63,6 +63,11 @@ class Container extends Model
             ->orWhere('client_application_id', $application_id);
     }
 
+    public function scopeGetByNames($query, $containers_names)
+    {
+        return $query->whereIn('name', $containers_names);
+    }
+
     public function scopeFilter(Builder $builder, QueryFilter $filter){
         return $filter->apply($builder);
     }

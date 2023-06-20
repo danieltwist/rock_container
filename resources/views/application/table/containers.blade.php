@@ -1,4 +1,4 @@
-Количество по заявке: {{ $application->containers_amount }}
+{!! $class != '' ? '<strong>Количество по заявке: '.$application->containers_amount.'</strong>' : 'Количество по заявке: '.$application->containers_amount !!}
 @if(!is_null($application->containers))
     <br>
     <button class="btn btn-primary btn-sm mt-2" type="button"

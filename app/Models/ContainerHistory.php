@@ -50,6 +50,12 @@ class ContainerHistory extends Model
             ->orWhere('relocation_application_id', $application_id)
             ->orWhere('client_application_id', $application_id);
     }
+
+    public function scopeGetByNames($query, $containers_names)
+    {
+        return $query->whereIn('name', $containers_names);
+    }
+
     public function scopeHistory($query, $container_id)
     {
         return $query->where('container_id', $container_id);

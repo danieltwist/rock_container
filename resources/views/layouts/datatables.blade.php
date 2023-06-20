@@ -33,8 +33,9 @@
 
     let audits_filter = {};
 
+    let urlpath = window.location.pathname.replace('public/', '').split('/');
+
     $(function () {
-        let urlpath = window.location.pathname.replace('public/', '').split('/');
         if (urlpath[1] === 'invoice') {
             if (getInvoicesPageType() === 'agree') getAgreedInvoicesAmount();
         }
@@ -47,6 +48,7 @@
                     let filter_type = $(this).data('filter_type');
                     if(filter_type === 'application'){
                         containers_filters.application = $(this).data('application_id');
+                        containers_filters.containers_names = $(this).data('containers_names');
                     }
                     let $table_id = $('#containers_extended_ajax_table');
                     $table_id.DataTable({
@@ -733,7 +735,13 @@
                 {data: "containers_amount"},
                 {data: "status"},
                 {data: "created_at"}
-            ]
+            ],
+            createdRow: function (row, data, dataIndex) {
+                console.log(data.class);
+                if (data.class !== '') {
+                    $(row).addClass(data.class);
+                }
+            }
         });
     }
 
@@ -1085,11 +1093,12 @@
             let filter_type = $(this).data('filter_type');
             if(filter_type === 'application'){
                 containers_filters.application = $(this).data('application_id');
+                containers_filters.containers_names = $(this).data('containers_names');
             }
             if(filter_type === 'history'){
                 containers_filters.history = $(this).data('container_id');
             }
-            let $table_id = $('#containers_extended_ajax_table');
+            let $table_id = $('#containers_history_extended_ajax_table');
             $table_id.DataTable({
                 processing: true,
                 serverSide: true,
@@ -1271,6 +1280,9 @@
                     break;
                 case 'all':
                     columns_show = all_columns;
+                    break;
+                case 'kp':
+                    columns_show = ["0", "1", "2", "3", "4", "5", "6", "7", "57", "58", "59", "60"];
                     break;
             }
 

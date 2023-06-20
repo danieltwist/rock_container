@@ -262,14 +262,15 @@ class ApplicationController extends Controller
 
                     $container->name = $item;
                     $container->type = 'Соб';
-                    $container->owner_id = 413;
-                    $container->owner_name = 'ООО Рок контейнер';
+                    $container->owner_id = $counterparty_id;
+                    $container->owner_name = $name;
                     $container->supplier_application_id = $application->id;
                     $container->supplier_application_name = $request->name;
                     $container->supplier_price_amount = $request->price_amount;
                     $container->supplier_price_currency = $request->price_currency;
                     $container->size = $request->containers_type;
                     $container->own_date_buy = Carbon::now();
+                    $container->own_buyer = 'ООО Рок контейнер';
 
                     $container->save();
 
@@ -332,6 +333,25 @@ class ApplicationController extends Controller
             }
         }
 
+        $load_from_containers = [];
+        $load_from_archive = [];
+
+//        if (in_array($application->type, ['Подсыл', 'Клиент'])) {
+        if(!is_null($application->containers)) {
+            foreach ($application->containers as $container_name){
+                $container = Container::where('name', $container_name)->first();
+                if(!is_null($container)){
+                    if(is_null($container->archive)){
+                        $load_from_containers [] = $container->name;
+                    }
+                    else {
+                        $load_from_archive [] = $container->name;
+                    }
+                }
+            }
+        }
+//        }
+
         return view('application.show', [
             'application' => $application,
             'clients' => Client::all(),
@@ -345,7 +365,10 @@ class ApplicationController extends Controller
             'planned_out' => $planned_out,
             'fact_in' => $fact_in,
             'fact_out' => $fact_out,
-            'expense_types' => ExpenseType::all()
+            'expense_types' => ExpenseType::all(),
+            'can_finish_application' => $this->checkCanFinishApplication($application),
+            'load_from_containers' => $load_from_containers,
+            'load_from_archive' => $load_from_archive
         ]);
     }
 
@@ -1380,17 +1403,56 @@ class ApplicationController extends Controller
             }
         }
 
+        if($application->type == 'Покупка'){
+
+            $invoices [] = [
+                'type' => 'Расход',
+                'counterparty_type' => $counterparty_type,
+                'counterparty_id' => $counterparty_id,
+                'counterparty_name' => $counterparty_name,
+                'amount_in_currency' => $price_amount,
+                'currency' => $application->price_currency,
+                'amount_in_rubles' => $amount_in_rubles,
+                'info' => 'Покупка контейнеров'
+            ];
+        }
+
+        if($application->type == 'Продажа'){
+
+            $invoices [] = [
+                'type' => 'Доход',
+                'counterparty_type' => $counterparty_type,
+                'counterparty_id' => $counterparty_id,
+                'counterparty_name' => $counterparty_name,
+                'amount_in_currency' => $price_amount,
+                'currency' => $application->price_currency,
+                'amount_in_rubles' => $amount_in_rubles,
+                'info' => 'Продажа контейнеров'
+            ];
+        }
+
         return $invoices;
     }
 
     public function getInvoicesPreviewBeforeGenerate(Request $request){
         $application = Application::find($request->application_id);
 
+        $allowed = true;
+        if(!is_null($application->containers)){
+            if($application->containers_amount != count($application->containers)){
+                $allowed = false;
+            }
+        }
+        else {
+            $allowed = false;
+        }
+
         is_null($application->invoices_generate) ? $invoices = $this->getApplicationInvoices($application) : $invoices = $application->invoices_generate;
 
         return [
             'view' => view('application.ajax.preview_invoices', [
-                'invoices' => $invoices
+                'invoices' => $invoices,
+                'allowed' => $allowed
             ])->render(),
         ];
     }
@@ -1482,7 +1544,7 @@ class ApplicationController extends Controller
 
         $invoices_generate = $this->getApplicationInvoices($application);
 
-        if($application->type != 'Покупка'){
+        if(in_array($application->type, ['Поставщик', 'Продажа', 'Покупка'])){
             $application->update([
                 'invoices_generate' => $invoices_generate,
                 'containers_archived' => 'yes',
@@ -1500,10 +1562,10 @@ class ApplicationController extends Controller
         else {
             $application->update([
                 'invoices_generate' => $invoices_generate,
+                'containers_archived' => 'yes',
                 'status' => 'Завершена',
                 'finished_at' => Carbon::now()
             ]);
-
             $message = 'Заявка была успешно завершена';
         }
 
@@ -1827,6 +1889,146 @@ class ApplicationController extends Controller
         }
 
         return$latest_application_id;
+    }
+
+    public function checkCanFinishApplication(Application $application){
+        $can_finish = true;
+
+        if($application->status != 'Завершена'){
+            if(!is_null($application->containers)){
+                if($application->containers_amount == count($application->containers)) {
+                    if($application->type == 'Поставщик') {
+                        foreach ($application->containers as $container_name) {
+                            $container = Container::where('name', $container_name)->first();
+                            if (!is_null($container)) {
+                                if (!is_null($container->relocation_application_id)) {
+                                    $relocation_application = Application::withTrashed()->find($container->relocation_application_id);
+                                    if (!is_null($relocation_application)) {
+                                        if ($relocation_application->status != 'Завершена') {
+                                            $can_finish = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!is_null($container->client_application_id)) {
+                                    $client_application = Application::withTrashed()->find($container->client_application_id);
+                                    if (!is_null($client_application)) {
+                                        if ($client_application->status != 'Завершена') {
+                                            $can_finish = false;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    $can_finish = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                else $can_finish = false;
+            }
+            else $can_finish = false;
+        }
+        else $can_finish = false;
+
+        return $can_finish;
+    }
+
+    public function getNotAllowedFinishReason(Request $request){
+        $application = Application::find($request->application_id);
+
+        $not_finished_applications = [];
+
+        $reason = '';
+
+        if($application->status != 'Завершена'){
+            if(!is_null($application->containers)){
+                if($application->containers_amount == count($application->containers)) {
+                    if($application->type == 'Поставщик'){
+                        foreach ($application->containers as $container_name) {
+                            $container = Container::where('name', $container_name)->first();
+                            if (!is_null($container)) {
+                                if (!is_null($container->relocation_application_id)) {
+                                    $relocation_application = Application::withTrashed()->find($container->relocation_application_id);
+                                    if (!is_null($relocation_application)) {
+                                        if ($relocation_application->status != 'Завершена') {
+                                            $not_finished_applications [] = [
+                                                'container_name' => $container_name,
+                                                'application_id' => $container->relocation_application_id,
+                                                'application_name' => $container->relocation_application_name,
+                                                'application_type' => 'Подсыл'
+                                            ];
+                                        }
+                                    }
+                                }
+                                if (!is_null($container->client_application_id)) {
+                                    $client_application = Application::withTrashed()->find($container->client_application_id);
+                                    if (!is_null($client_application)) {
+                                        if ($client_application->status != 'Завершена') {
+                                            $not_finished_applications [] = [
+                                                'container_name' => $container_name,
+                                                'application_id' => $container->client_application_id,
+                                                'application_name' => $container->client_application_name,
+                                                'application_type' => 'Выдача в аренду'
+                                            ];
+                                        }
+                                    }
+                                }
+                                else {
+                                    $reason = 'Один из контейнеров не был выдан в аренду ни в одной заявке';
+                                    $not_finished_applications [] = [
+                                        'container_name' => $container_name,
+                                        'application_id' => null,
+                                        'application_name' => '',
+                                        'application_type' => ''
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    $reason = 'Количество добавленных контейнеров не соответствует данным заявки';
+                }
+            }
+            else {
+                $reason = 'Количество добавленных контейнеров не соответствует данным заявки';
+            }
+        }
+        else {
+            $reason = 'Заявка уже была завершена';
+        }
+
+        if($reason != 'Один из контейнеров не был выдан в аренду ни в одной заявке' && !empty($not_finished_applications)){
+            $reason = 'Одна из заявок, в которых используется контейнер данной заявки, еще не была завершена';
+
+            $sorted_by_applications = [];
+            $containers = [];
+
+            foreach (array_unique(array_column($not_finished_applications, 'application_id')) as $application_id){
+                foreach ($not_finished_applications as $key => $not_finished_application){
+                    if($not_finished_application['application_id'] == $application_id){
+                        $containers [] = $not_finished_application['container_name'];
+                        $application_name = $not_finished_application['application_name'];
+                        $application_type = $not_finished_application['application_type'];
+                    }
+                }
+                $sorted_by_applications [] = [
+                    'container_name' => implode(', ', $containers),
+                    'application_id' => $application_id,
+                    'application_name' => $application_name,
+                    'application_type' => $application_type
+                ];
+            }
+            $not_finished_applications = $sorted_by_applications;
+        }
+
+
+        return view('application.ajax.not_allowed_finish', [
+            'not_finished_applications' => $not_finished_applications,
+            'reason' => $reason
+        ])->render();
     }
 
 }

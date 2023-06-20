@@ -6,7 +6,8 @@
         <table class="table table-striped containers_archive_table"
                data-filter_type="{{ $table_filter_type }}"
                data-application_id="{{ $application_id }}"
-               id="containers_extended_ajax_table">
+               data-containers_names="{{ $load_from_archive }}"
+               id="containers_history_extended_ajax_table">
             <thead>
             <tr>
                 @foreach($columns as $column)

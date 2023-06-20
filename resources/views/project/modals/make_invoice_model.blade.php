@@ -19,7 +19,8 @@
                     <input type="hidden" name="action" value="create_new_finance">
                     <div class="form-group">
                         <label for="type">{{ __('general.type') }}</label>
-                        <select class="form-control" name="type" required id="invoice_type">
+                        <select class="form-control select2" name="type" required id="invoice_type" data-placeholder="Выберите тип" style="width: 100%;">
+                            <option></option>
                             <option value="Расход">{{ __('general.outcome') }}</option>
                             <option value="Доход">{{ __('general.income') }}</option>
                         </select>

@@ -18,7 +18,7 @@
                     <h3 class="card-title">Список контнейнеров из архива</h3>
                 </div>
                 <div class="card-body">
-                    <table class="table table-striped containers_archive_table" id="containers_extended_ajax_table">
+                    <table class="table table-striped containers_archive_table" id="containers_history_extended_ajax_table">
                         <thead>
                         <tr>
                             @foreach($columns as $column)

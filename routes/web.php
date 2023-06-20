@@ -73,6 +73,9 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
         Route::get('/download_application_template', 'App\Http\Controllers\Application\ApplicationController@downloadApplicationTemplate')
             ->name('download_application_template');
 
+        Route::get('/get_not_allowed_finish_reason', 'App\Http\Controllers\Application\ApplicationController@getNotAllowedFinishReason')
+            ->name('get_not_allowed_finish_reason');
+
     });
 
 
