@@ -17,8 +17,8 @@ class InvoiceTablesController extends Controller
 
         if($request->data_range != '' && $request->data_range !='Все'){
             $range = explode(' - ', $request->data_range);
-            $range_from = $range[0];
-            $range_to = $range[1];
+            $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
         }
         else {
             $range_from = '2000-01-01';
@@ -176,12 +176,16 @@ class InvoiceTablesController extends Controller
 
         if (in_array($request->data_range, ['','all','Все'])) {
             $range = '2000-01-01 - 3000-01-01';
+            $range = explode(' - ', $range);
+            $range_from = $range[0];
+            $range_to = $range[1];
         }
         else {
             $range = $request->data_range;
+            $range = explode(' - ', $range);
+            $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
         }
-
-        $range = explode(' - ', $range);
 
         if(!is_null($request->project_filter_array)){
 
@@ -213,13 +217,13 @@ class InvoiceTablesController extends Controller
             }
 
             if(in_array($project_filter['filter'], ['finished', 'paid'])){
-                $projects->whereDate('finished_at', '>=', $range[0])->whereDate('finished_at', '<=', $range[1]);
+                $projects->whereDate('finished_at', '>=', $range_from)->whereDate('finished_at', '<=', $range_to);
             }
             elseif($project_filter['filter'] == 'finished_paid_date'){
-                $projects->whereDate('paid_at', '>=', $range[0])->whereDate('paid_at', '<=', $range[1]);
+                $projects->whereDate('paid_at', '>=', $range_from)->whereDate('paid_at', '<=', $range_to);
             }
             else {
-                $projects->whereDate('created_at', '>=', $range[0])->whereDate('created_at', '<=', $range[1]);
+                $projects->whereDate('created_at', '>=', $range_from)->whereDate('created_at', '<=', $range_to);
             }
 
             $projects = $projects->pluck('id')->toArray();
@@ -361,8 +365,8 @@ class InvoiceTablesController extends Controller
 
         if($request->data_range != '' && $request->data_range !='Все'){
             $range = explode(' - ', $request->data_range);
-            $range_from = $range[0];
-            $range_to = $range[1];
+            $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
         }
         else {
             $range_from = '2000-01-01';

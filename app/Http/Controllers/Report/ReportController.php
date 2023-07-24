@@ -38,6 +38,8 @@ class ReportController extends Controller
         $supplier = Supplier::find($request->supplier_id);
         if(!is_null($request->datarange) || !in_array($request->datarange, ['Все','',null] )){
             $range = explode(' - ', $request->datarange);
+            $range[0] = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range[1]= \Carbon\Carbon::parse($range[1])->format('Y-m-d');
             $datarange = $request->datarange;
         }
         else {
@@ -326,7 +328,7 @@ class ReportController extends Controller
         }
         $client = Client::find($request->client_id);
 
-        $filename = $client->name.'_выгрузка_'.$request->datarange.'.xlsx';
+        $filename = config('app.prefix_view').$client->name.'_выгрузка_'.$request->datarange.'.xlsx';
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         $writer->save('storage/Отчеты/'.$filename);
@@ -480,6 +482,11 @@ class ReportController extends Controller
             }
             else {
                 $range = $request->datarange;
+                $range = explode(' - ', $range);
+                $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+                $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
+
+                $range = $range_from.' - '.$range_to;
             }
         }
 
@@ -623,6 +630,11 @@ class ReportController extends Controller
             }
             else {
                 $range = $request->datarange;
+                $range = explode(' - ', $range);
+                $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+                $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
+
+                $range = $range_from.' - '.$range_to;
                 $range_text = $request->datarange;
             }
         }
@@ -910,10 +922,10 @@ class ReportController extends Controller
         }
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
-        $path = 'storage/Отчеты/сводка_по_расходам_'.date('dmY').'.xlsx';
+        $path = 'storage/Отчеты/'.config('app.prefix_view').'сводка_по_расходам_'.date('dmY').'.xlsx';
         $writer->save($path);
 
-        $download_path = 'public/Отчеты/сводка_по_расходам_'.date('dmY').'.xlsx';
+        $download_path = 'public/Отчеты/'.config('app.prefix_view').'сводка_по_расходам_'.date('dmY').'.xlsx';
         return Storage::download($download_path);
 
     }

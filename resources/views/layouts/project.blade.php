@@ -99,7 +99,7 @@
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
             <!-- Messages Dropdown Menu -->
-            @if(in_array($role,['super-admin','director']))
+            @if(in_array($role,['super-admin','director','accountant']))
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#" id="get_bank_account_balances">
                         <i class="fa fa-credit-card" aria-hidden="true"></i>

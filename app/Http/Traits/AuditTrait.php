@@ -195,6 +195,10 @@ trait AuditTrait {
                 'name' => 'Согласование',
                 'type' => 'special'
             ],
+            'project_id' => [
+                'name' => 'ID проекта',
+                'type' => 'string'
+            ],
         ],
         'App\Models\Project' => [
             'name' => [
@@ -458,6 +462,8 @@ trait AuditTrait {
 
                 $audit->before_edit = $before_edit;
                 $audit->after_edit = $after_edit;
+
+                if($audit->event == 'Обновление' && (empty($before_edit) && empty($after_edit))) $audit->skip = true;
             }
         }
 

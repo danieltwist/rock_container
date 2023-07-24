@@ -3,7 +3,7 @@
         case 'Удален': case 'Не оплачен':
             $class = 'danger';
             break;
-        case 'Частично оплачен': case 'Оплачен':
+        case 'Частично оплачен': case 'Оплачен': case 'Взаимозачет':
             $class = 'success';
             break;
         case 'Ожидается счет от поставщика': case 'Ожидается создание инвойса': case 'Создан черновик инвойса': case 'Ожидается загрузка счета':
@@ -56,7 +56,7 @@
         </div>
     @endif
 @endif
-@if (in_array($invoice->status, ['Оплачен', 'Частично оплачен', 'Не оплачен']))
+@if (in_array($invoice->status, ['Оплачен', 'Частично оплачен', 'Не оплачен', 'Взаимозачет']))
     @if($invoice['accountant_comment']!='')
         <a class="cursor-pointer text-sm text-dark"
            data-toggle="collapse"

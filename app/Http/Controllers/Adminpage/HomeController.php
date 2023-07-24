@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Traits\ContainerTrait;
 use App\Http\Traits\ProjectTrait;
 use App\Models\Application;
+use App\Models\BankAccountBalance;
 use App\Models\Container;
 use App\Models\ContainerUsageStatistic;
 use App\Models\Country;
@@ -17,6 +18,7 @@ use App\Models\WorkRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Http\Traits\FinanceTrait;
+use Illuminate\Support\Facades\Storage;
 use OwenIt\Auditing\Models\Audit;
 
 
@@ -29,24 +31,29 @@ class HomeController extends Controller
     public function test_function()
     {
 
-        $records = Audit::query();
+        $updates = Storage::files('public/templates/1C/balances/');
+        if(!is_null($updates)) {
+            foreach ($updates as $file) {
+                $result = simplexml_load_string(Storage::get($file));
 
-        $application_invoices = Application::withTrashed()->find(69)->invoices;
-        $records->where('auditable_type', 'App\Models\Application')->where('auditable_id', 69);
+                $info = [];
 
-        $records = $records->orWhere(function ($query) use ($application_invoices) {
-            foreach ($application_invoices as $invoice){
-                $query->where('auditable_type', 'App\Models\Invoice')->where('auditable_id', $invoice->id);
+                foreach ($result as $value){
+                    $info [] = [
+                        'account_type' => (string)$value->attributes()['Счет'],
+                        'amount' => (string)$value->attributes()['Сумма'],
+                        'account_number' => (string)$value->attributes()['БанковскийСчет'],
+                        'company' => (string)$value->attributes()['Организация'],
+                    ];
+                }
+                if(!empty($info)){
+                    $bank_account_balance = new BankAccountBalance();
+                    $bank_account_balance->info = $info;
+                    $bank_account_balance->save();
+                }
+                Storage::move($file, 'public/templates/1C/balances/processed/'.$this->generateRandomString().'_'.basename($file));
             }
-        });
-
-
-        if(isset($request->user)){
-            $records->where('user_id', $request->user);
         }
-
-        $records = $records->select('audits.*')->get();
-        dd($records);
     }
 
     public function getUserCounts()

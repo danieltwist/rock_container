@@ -528,6 +528,7 @@ trait FinanceTrait {
                 break;
             case 'Частично оплачен':
             case 'Оплачен':
+            case 'Взаимозачет':
                 $invoice->class = 'success';
                 break;
             case 'Ожидается счет от поставщика':
@@ -677,7 +678,7 @@ trait FinanceTrait {
 
         $class = '';
 
-        if(in_array($invoice->status, ['Оплачен','Частично оплачен'])){
+        if(in_array($invoice->status, ['Оплачен','Частично оплачен','Взаимозачет'])){
             $class = 'table-success';
         }
 

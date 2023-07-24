@@ -3,7 +3,8 @@
     <div class="dropdown-divider"></div>
     @foreach($bank_account_balances->companies as $key => $info)
         <div class="ml-2 mt-2 mb-2">
-            {{ $info['name'] }}: {{ $info['amount'] }}
+            {{--            {{ $info['name'] }}: --}}
+            {{ number_format($info['amount'], 2, '.', ' ') }}р.
         </div>
         @if ($key != array_key_last($bank_account_balances->companies))
             <div class="dropdown-divider"></div>

@@ -6,6 +6,7 @@ use App\Http\Traits\ContainerTrait;
 use App\Http\Traits\FinanceTrait;
 use App\Models\Container;
 use App\Models\ContainerUsageStatistic;
+use App\Models\ExpenseType;
 use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\ProjectComment;
@@ -38,6 +39,7 @@ class XEditable extends Controller
                 }
 
             }
+
             if ($request->input('model') == 'ContainerUsageStatistic'){
                 if($request->input('name') == 'return_date'){
                     try {
@@ -67,6 +69,7 @@ class XEditable extends Controller
                 }
 
             }
+
             if ($request->input('model') == 'Project'){
                 try{
                     Project::find($request->input('pk'))->update([$request->input('name') => $request->input('value')]);
@@ -152,6 +155,16 @@ class XEditable extends Controller
 
                 $invoice = Setting::find($request->input('pk'));
                 $invoice->update([
+                    $request->input('name') => $request->input('value')
+                ]);
+
+                return response()->json(['success' => true]);
+
+            }
+
+            if ($request->input('model') == 'ExpenseType'){
+
+                ExpenseType::find($request->input('pk'))->update([
                     $request->input('name') => $request->input('value')
                 ]);
 

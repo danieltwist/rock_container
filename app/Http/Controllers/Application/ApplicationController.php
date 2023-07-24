@@ -710,6 +710,8 @@ class ApplicationController extends Controller
         $not_found = null;
         $not_correct_format = null;
         $already_used = null;
+        $application_id = $request->application_id;
+
 
         foreach ($probable_delimiters as $delimiter){
             if(strpos($request->containers_list, $delimiter) !== false ){
@@ -733,9 +735,10 @@ class ApplicationController extends Controller
             if(!is_null($used_delimiter)){
                 $containers = array_unique(explode($used_delimiter, $request->containers_list));
             }
-
             if($request->containers != ''){
-                $containers = array_unique(array_merge($containers, $request->containers));
+                !is_array($request->containers) ? $containers_from_request = explode(', ', $request->containers) : $containers_from_request = $request->containers;
+
+                $containers = array_unique(array_merge($containers, $containers_from_request));
             }
         }
         foreach ($containers as $key => $name){
@@ -758,38 +761,44 @@ class ApplicationController extends Controller
                     else {
                         if($request->application_type == 'Поставщик'){
                             if(!is_null($container->supplier_application_id)){
-                                if (($key = array_search($container_name, $containers)) !== false) {
-                                    unset($containers[$key]);
+                                if($container->supplier_application_id != $application_id){
+                                    if (($key = array_search($container_name, $containers)) !== false) {
+                                        unset($containers[$key]);
+                                    }
+                                    $already_used [] = [
+                                        'container_name' => $container_name,
+                                        'application_name' => $container->supplier_application_name,
+                                        'application_id' => $container->supplier_application_id
+                                    ];
                                 }
-                                $already_used [] = [
-                                    'container_name' => $container_name,
-                                    'application_name' => $container->supplier_application_name,
-                                    'application_id' => $container->supplier_application_id
-                                ];
                             }
                         }
                         if($request->application_type == 'Клиент'){
                             if(!is_null($container->client_application_id)){
-                                if (($key = array_search($container_name, $containers)) !== false) {
-                                    unset($containers[$key]);
+                                if($container->client_application_id != $application_id) {
+                                    if (($key = array_search($container_name, $containers)) !== false) {
+                                        unset($containers[$key]);
+                                    }
+                                    $already_used [] = [
+                                        'container_name' => $container_name,
+                                        'application_name' => $container->client_application_name,
+                                        'application_id' => $container->client_application_id
+                                    ];
                                 }
-                                $already_used [] = [
-                                    'container_name' => $container_name,
-                                    'application_name' => $container->client_application_name,
-                                    'application_id' => $container->client_application_id
-                                ];
                             }
                         }
                         if($request->application_type == 'Подсыл'){
                             if(!is_null($container->relocation_application_id)){
-                                if (($key = array_search($container_name, $containers)) !== false) {
-                                    unset($containers[$key]);
+                                if($container->relocation_application_id != $application_id) {
+                                    if (($key = array_search($container_name, $containers)) !== false) {
+                                        unset($containers[$key]);
+                                    }
+                                    $already_used [] = [
+                                        'container_name' => $container_name,
+                                        'application_name' => $container->relocation_application_name,
+                                        'application_id' => $container->relocation_application_id
+                                    ];
                                 }
-                                $already_used [] = [
-                                    'container_name' => $container_name,
-                                    'application_name' => $container->relocation_application_name,
-                                    'application_id' => $container->relocation_application_id
-                                ];
                             }
                         }
                     }
@@ -827,7 +836,7 @@ class ApplicationController extends Controller
         $country = Country::where('name', $request->country)->first();
         $cities = $country->cities;
         $cities [] = $request->city;
-
+        $cities = array_unique($cities);
         Country::where('name', $request->country)->update([
             'cities' => $cities
         ]);
@@ -903,10 +912,7 @@ class ApplicationController extends Controller
                     ]);
                 }
                 if($application->type == 'Поставщик'){
-                    $this->saveContainerUsageHistory($container, $application->id);
-                    $container->update([
-                        'archive' => 'yes'
-                    ]);
+                    $container->delete();
                 }
                 if($application->type == 'Покупка'){
                     $this->saveContainerUsageHistory($container, $application->id);
@@ -1814,15 +1820,19 @@ class ApplicationController extends Controller
 
         $application = Application::findOrFail($id);
         $application_name = $application->name;
-        foreach ($application->invoices as $invoice){
-            $invoice->delete();
+        if(!is_null($application->invoices)){
+            foreach ($application->invoices as $invoice){
+                $invoice->delete();
+            }
         }
-        foreach ($application->containers as $container_name){
-            $container = Container::where('name', $container_name)->first();
-            $this->saveContainerUsageHistory($container, $application->id);
-            $container->update([
-                'archive' => 'yes'
-            ]);
+        if($application->type == 'Поставщик' && !is_null($application->containers)){
+            foreach ($application->containers as $container_name){
+                $container = Container::where('name', $container_name)->first();
+                $this->saveContainerUsageHistory($container, $application->id);
+                $container->update([
+                    'archive' => 'yes'
+                ]);
+            }
         }
         $application->delete();
 

@@ -39,6 +39,9 @@
             <button type="button" class="btn btn-default btn-sm invoices_filters"
                     data-filter="Оплачен">{{ __('invoice.filter_status_paid') }}
             </button>
+            <button type="button" class="btn btn-default btn-sm invoices_filters"
+                    data-filter="Взаимозачет">{{ __('invoice.sub_status_compensation') }}
+            </button>
         </div>
     </div>
 </div>

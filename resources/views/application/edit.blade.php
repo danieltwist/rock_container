@@ -211,7 +211,9 @@
                                                         @if(!empty($cities_from[0]))
                                                             @foreach($cities_from[0] as $city)
                                                                 <option value="{{ $city }}"
+                                                                @if(!is_null($application->send_from_city))
                                                                     {{ !in_array($city, $application->send_from_city) ?: 'selected' }}>
+                                                                @endif
                                                                     {{ $city }}
                                                                 </option>
                                                             @endforeach
@@ -271,7 +273,9 @@
                                                                 @if(!is_null($cities_to[0]))
                                                                     @foreach($cities_to[0] as $city)
                                                                         <option value="{{ $city }}"
+                                                                        @if(!is_null($application->send_to_city))
                                                                             {{ !in_array($city, $application->send_to_city) ?: 'selected' }}>
+                                                                        @endif
                                                                             {{ $city }}
                                                                         </option>
                                                                     @endforeach
@@ -331,7 +335,9 @@
                                                                 @if(!is_null($cities_place_of_delivery[0]))
                                                                     @foreach($cities_place_of_delivery[0] as $city)
                                                                         <option value="{{ $city }}"
-                                                                            {{ !in_array($city, $application->place_of_delivery_city) ?: 'selected' }}>
+                                                                            @if(!is_null($application->place_of_delivery_city))
+                                                                                {{ !in_array($city, $application->place_of_delivery_city) ?: 'selected' }}>
+                                                                            @endif
                                                                             {{ $city }}
                                                                         </option>
                                                                     @endforeach
@@ -436,7 +442,7 @@
                                             <label>Вставьте список контейнеров</label>
                                             <textarea class="form-control" rows="10" id="application_containers"
                                                       placeholder="Список контейнеров"
-                                                      oninput="this.value = this.value.toUpperCase()"></textarea>
+                                                      oninput="this.value = this.value.toUpperCase()">@if(!is_null($application->containers)){{ implode(', ', $application->containers) }}@endif</textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-8">

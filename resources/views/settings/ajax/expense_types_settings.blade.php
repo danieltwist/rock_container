@@ -16,13 +16,20 @@
                     @foreach($expense_types as $expense_type)
                         @if($expense_type->type == 'category')
                             <tr>
-                                <td>{{ $expense_type->name }}</td>
+                                <td>
+                                    <a href="#" class="xedit"
+                                       data-pk="{{ $expense_type->id }}"
+                                       data-name="name"
+                                       data-model="ExpenseType">
+                                        {{ $expense_type->name }}
+                                    </a>
+                                </td>
                                 <td>
                                     <form class="inline-block" action="{{ route('expense_type.destroy', $expense_type->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm ajax_remove"
-                                                data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"}}'>
+                                                data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"},"xedit_init":{"need_init":"true"}}'>
                                             {{ __('general.remove') }}
                                         </button>
                                     </form>
@@ -51,14 +58,21 @@
                     @foreach($expense_types as $expense_type)
                         @if($expense_type->type == 'type')
                             <tr>
-                                <td>{{ $expense_type->name }}</td>
+                                <td>
+                                    <a href="#" class="xedit"
+                                       data-pk="{{ $expense_type->id }}"
+                                       data-name="name"
+                                       data-model="ExpenseType">
+                                        {{ $expense_type->name }}
+                                    </a>
+                                </td>
                                 <td>{{ $expense_type->category }}</td>
                                 <td>
                                     <form class="inline-block" action="{{ route('expense_type.destroy', $expense_type->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm ajax_remove"
-                                                data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"}}'>
+                                                data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"},"xedit_init":{"need_init":"true"}}'>
                                             {{ __('general.remove') }}
                                         </button>
                                     </form>

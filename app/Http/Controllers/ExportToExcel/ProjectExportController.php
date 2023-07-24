@@ -19,7 +19,6 @@ class ProjectExportController extends Controller
 {
     use FinanceTrait;
 
-
     public function exportProject($id)
     {
         $project = Project::find($id);
@@ -102,17 +101,17 @@ class ProjectExportController extends Controller
 
         if ($project->active == '1') {
             $folder = 'public/Проекты/Активные проекты/'.$project["name"].'/';
-            $path = 'public/Проекты/Активные проекты/'.$project["name"].'/'.$project["name"].'_выгрузка.xlsx';
+            $path = 'public/Проекты/Активные проекты/'.$project["name"].'/'.config('app.prefix_view').$project["name"].'_выгрузка.xlsx';
             $savepath = 'storage/Проекты/Активные проекты/'.$project["name"].'/';
         }
         else {
             $folder = 'public/Проекты/Завершенные проекты/'.$project["name"].'/';
-            $path = 'public/Проекты/Завершенные проекты/'.$project["name"].'/'.$project["name"].'_выгрузка.xlsx';
+            $path = 'public/Проекты/Завершенные проекты/'.$project["name"].'/'.config('app.prefix_view').$project["name"].'_выгрузка.xlsx';
             $savepath = 'storage/Проекты/Завершенные проекты/'.$project["name"].'/';
         }
         Storage::makeDirectory($folder);
 
-        $filename = $project["name"].'_выгрузка.xlsx';
+        $filename = config('app.prefix_view').$project["name"].'_выгрузка.xlsx';
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         $writer->save($savepath.$filename);
@@ -258,7 +257,7 @@ class ProjectExportController extends Controller
                 ->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED);
         }
 
-        $filename = date('Y-m-d').'_'.$parameters['filename'].'.xlsx';
+        $filename = config('app.prefix_view').date('Y-m-d').'_'.$parameters['filename'].'.xlsx';
 
         if(!File::isDirectory('public/Проекты выгрузка')) Storage::makeDirectory('public/Проекты выгрузка');
 
@@ -273,6 +272,8 @@ class ProjectExportController extends Controller
     {
         if ($request->data_range != '') {
             $range = explode(' - ', $request->data_range);
+            $range[0] = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range[1]= \Carbon\Carbon::parse($range[1])->format('Y-m-d');
         }
         else {
             $range = explode(' - ', '2000-01-01 - 3000-01-01');

@@ -42,25 +42,30 @@ class GetBankAccountPayments extends Command
         $updates = Storage::files('public/templates/1C/payments/');
         if(!is_null($updates)) {
             foreach ($updates as $file) {
-                $xmlObject = simplexml_load_string(Storage::get($file));
+                $result = simplexml_load_string(Storage::get($file));
 
-                $jsonFormatData = json_encode($xmlObject);
-                $result = json_decode($jsonFormatData, true);
+                foreach ($result as $value){
+                    $bank_account_payment = new BankAccountPayment();
 
-                foreach ($result as $key => $value){
-                    foreach ($value as $k => $v){
-                        $bank_account_payment = new BankAccountPayment();
+                    $bank_account_payment->company = (string)$value->attributes()['Организация'];
+                    $bank_account_payment->counterparty = (string)$value->attributes()['Контрагент'];
+                    $bank_account_payment->amount = (string)$value->attributes()['СуммаДокумента'];
+                    $bank_account_payment->payment_type = (string)$value->attributes()['ВидОперации'];
 
-                        $bank_account_payment->company = $v['@attributes']['Организация'];
-                        $bank_account_payment->counterparty = $v['@attributes']['Контрагент'];
-                        $bank_account_payment->amount = $v['@attributes']['СуммаДокумента'];
-                        $bank_account_payment->payment_type = $v['@attributes']['ВидОперации'];
-
-                        $bank_account_payment->save();
-                    }
+                    $bank_account_payment->save();
                 }
-                Storage::move($file, 'public/templates/1C/payments/processed/'.basename($file));
+                Storage::move($file, 'public/templates/1C/payments/processed/'.$this->generateRandomString().'_'.basename($file));
             }
         }
+    }
+
+    function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }

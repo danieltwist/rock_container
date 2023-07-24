@@ -1852,14 +1852,15 @@
         let containers_list = $(this).val();
         let containers = $('#containers_used').val();
         let application_type = $('#application_type option:selected').val();
-        console.log(containers);
+        let application_id = urlpath[urlpath.length - 2];
         $.ajax({
             type: "GET",
             url: "{{ route('process_containers_list') }}",
             data: {
                 containers_list: containers_list,
                 containers: containers,
-                application_type: application_type
+                application_type: application_type,
+                application_id: application_id
             },
             success: function (response) {
                 console.log(response);

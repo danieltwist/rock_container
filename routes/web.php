@@ -375,6 +375,19 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
         Route::post('/update_currency_rates','App\Http\Controllers\Setting\CurrencyRatioController@updateRates')->name('update_currency_rates');
     });
 
+    ///////////////////ajax restore
+    Route::post('project/restore_row/{id}', '\App\Http\Controllers\Project\ProjectController@restoreRow')->middleware(['auth']);
+    Route::post('invoice/restore_row/{id}', '\App\Http\Controllers\Invoice\InvoiceController@restoreRow')->middleware(['auth']);
+    Route::post('task/restore_row/{id}', '\App\Http\Controllers\Task\TaskController@restoreRow')->middleware(['auth']);
+    Route::post('work_request/restore_row/{id}', '\App\Http\Controllers\WorkRequest\WorkRequestController@restoreRow')->middleware(['auth']);
+    Route::post('application/restore_row/{id}', '\App\Http\Controllers\Application\ApplicationController@restoreRow')->middleware(['auth']);
+    Route::post('client/restore_row/{id}', '\App\Http\Controllers\Client\ClientController@restoreRow')->middleware(['auth']);
+    Route::post('supplier/restore_row/{id}', '\App\Http\Controllers\Supplier\SupplierController@restoreRow')->middleware(['auth']);
+
+});
+
+Route::middleware(['role:director|super-admin|accountant'])->prefix('/')->group(function (){
+
     /////////1с
     Route::get('1c/get_bank_accounts_balance', 'App\Http\Controllers\Invoice\BankAccountsController@getBankAccountsBalance')->name('get_bank_accounts_balance')->middleware(['auth']);
 
@@ -384,13 +397,5 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
     Route::get('1c/get_bank_accounts_payments_table', 'App\Http\Controllers\Datatables\BankAccountsTablesController@getBankAccountsPaymentsTable')->name('get_bank_accounts_payments_table')->middleware(['auth']);
     Route::get('1c/get_bank_accounts_balances_table', 'App\Http\Controllers\Datatables\BankAccountsTablesController@getBankAccountsBalanceTable')->name('get_bank_accounts_balances_table')->middleware(['auth']);
 
-    ///////////////////ajax restore
-    Route::post('project/restore_row/{id}', '\App\Http\Controllers\Project\ProjectController@restoreRow')->middleware(['auth']);
-    Route::post('invoice/restore_row/{id}', '\App\Http\Controllers\Invoice\InvoiceController@restoreRow')->middleware(['auth']);
-    Route::post('task/restore_row/{id}', '\App\Http\Controllers\Task\TaskController@restoreRow')->middleware(['auth']);
-    Route::post('work_request/restore_row/{id}', '\App\Http\Controllers\WorkRequest\WorkRequestController@restoreRow')->middleware(['auth']);
-    Route::post('application/restore_row/{id}', '\App\Http\Controllers\Application\ApplicationController@restoreRow')->middleware(['auth']);
-    Route::post('client/restore_row/{id}', '\App\Http\Controllers\Client\ClientController@restoreRow')->middleware(['auth']);
-    Route::post('supplier/restore_row/{id}', '\App\Http\Controllers\Supplier\SupplierController@restoreRow')->middleware(['auth']);
 
 });

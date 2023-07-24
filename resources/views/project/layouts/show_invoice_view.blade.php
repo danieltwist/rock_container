@@ -3,7 +3,7 @@
         case 'Удален': case 'Не оплачен':
             $class = 'danger';
             break;
-        case 'Частично оплачен': case 'Оплачен':
+        case 'Частично оплачен': case 'Оплачен': case 'Взаимозачет':
             $class = 'success';
             break;
         case 'Ожидается счет от поставщика': case 'Ожидается создание инвойса': case 'Создан черновик инвойса': case 'Ожидается загрузка счета':
@@ -166,6 +166,13 @@
         @endif
         <a class="btn btn-default btn-sm copy-to-clipboard cursor-pointer" data-link="{{ route('invoice.show', $invoice->id) }}">
             <i class="fas fa-copy"></i> {{ __('invoice.copy_link') }}
+        </a>
+        <a class="btn btn-default btn-sm cursor-pointer"
+           data-toggle="modal"
+           data-type="ajax"
+           data-target="#edit_invoice_modal"
+           data-invoice-id="{{ $invoice->id }}">
+            <i class="fas fa-pencil-alt"></i> {{ __('general.change') }}
         </a>
         <br><br>
         @if ($invoice->additional_info!='')
@@ -332,7 +339,7 @@
     @endif
     @can ('pay invoices')
         @if($invoice->direction == 'Расход')
-            @if (in_array($invoice->status, ['Счет согласован на оплату', 'Согласована частичная оплата', 'Частично оплачен', 'Ожидается оплата']))
+            @if (in_array($invoice->status, ['Счет согласован на оплату', 'Согласована частичная оплата', 'Частично оплачен', 'Ожидается оплата', 'Взаимозачет']))
                 <div class="col-md-12 mt-4">
                     <h5>{{ __('invoice.pay_invoice_outcome') }}</h5>
                     <form action="{{ route('invoice.update', $invoice->id) }}" method="POST">
@@ -428,6 +435,7 @@
                             <select class="form-control" name="status" required>
                                 <option value="Оплачен">{{ __('invoice.status_paid') }}</option>
                                 <option value="Частично оплачен">{{ __('invoice.status_part_paid') }}</option>
+                                <option value="Взаимозачет">{{ __('invoice.sub_status_compensation') }}</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -444,7 +452,7 @@
             @endif
         @endif
         @if($invoice->direction == 'Доход')
-            @if (in_array($invoice->status, ['Счет согласован на оплату', 'Согласована частичная оплата', 'Частично оплачен', 'Ожидается оплата']))
+            @if (in_array($invoice->status, ['Счет согласован на оплату', 'Согласована частичная оплата', 'Частично оплачен', 'Ожидается оплата', 'Взаимозачет']))
                 <div class="col-md-12 mt-4">
                     <h5>{{ __('invoice.pay_invoice_outcome') }}</h5>
                     <form action="{{ route('invoice.update', $invoice->id) }}" method="POST">
@@ -522,6 +530,7 @@
                             <select class="form-control" name="status" required>
                                 <option value="Оплачен">{{ __('invoice.status_paid') }}</option>
                                 <option value="Частично оплачен">{{ __('invoice.status_part_paid') }}</option>
+                                <option value="Взаимозачет">{{ __('invoice.sub_status_compensation') }}</option>
                             </select>
                         </div>
                         <div class="form-group">

@@ -3,6 +3,20 @@
     @method('PUT')
     <input type="hidden" name="action" value="update_invoice">
     <div class="form-group">
+        <label for="project">Проект</label>
+        <select class="form-control select2" name="project_id"
+                data-placeholder="Выберите проект" style="width: 100%;">
+            <option></option>
+            @foreach($projects as $project)
+                <option value="{{ $project->id }}"
+                        @if($invoice->project_id == $project->id)
+                            selected
+                    @endif
+                >{{ $project->name }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="form-group">
         <label>{{ $company_type_name }}</label>
         <select class="form-control select2" name="{{ $company_type_id }}"
                 data-placeholder="{{ __('general.choose_from_list') }}"
@@ -155,7 +169,7 @@
         </div>
     @endif
 
-    @if(in_array($invoice->status, ['Оплачен', 'Частично оплачен','Ожидается создание инвойса']))
+    @if(in_array($invoice->status, ['Оплачен', 'Частично оплачен','Ожидается создание инвойса','Взаимозачет']))
     <div class="form-group">
         <label>Статус</label>
         <select class="form-control select2" name="status"
@@ -166,8 +180,9 @@
             <option value="Ожидается создание инвойса" {{ $invoice->status == 'Ожидается создание инвойса' ? 'selected' : '' }}>{{ __('invoice.status_waiting_for_create_invoice') }}</option>
             <option value="Частично оплачен" {{ $invoice->status == 'Частично оплачен' ? 'selected' : '' }}>{{ __('invoice.status_part_paid') }}</option>
             <option value="Оплачен" {{ $invoice->status == 'Оплачен' ? 'selected' : '' }}>{{ __('invoice.status_paid') }}</option>
-            <option value="Ожидается оплата" {{ $invoice->status == 'Ожидается оплата' ? 'selected' : '' }}>{{ __('invoice.status_waiting_for_payment') }}</option>
-            <option value="Счет на согласовании" {{ $invoice->status == 'Счет на согласовании' ? 'selected' : '' }}>{{ __('invoice.status_agree') }}</option>
+            <option value="Ожидается оплата">{{ __('invoice.status_waiting_for_payment') }}</option>
+            <option value="Счет на согласовании">{{ __('invoice.status_agree') }}</option>
+            <option value="Взаимозачет" {{ $invoice->status == 'Взаимозачет' ? 'selected' : '' }}>{{ __('invoice.sub_status_compensation') }}</option>
         </select>
     </div>
     @else

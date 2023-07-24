@@ -60,7 +60,7 @@ class InvoiceExportController extends Controller
 
         $i = 2;
         $k = 0;
-        //dd($array);
+
         foreach ($array as $string){
             $sheet->fromArray([$string], NULL, 'A'.$i);
             $sheet->getCell('A'.$i)->getHyperlink()->setUrl(config('app.url').$url[$k]['invoice']);
@@ -219,13 +219,11 @@ class InvoiceExportController extends Controller
         $sheet->getStyle('K'.$i.':N'.$i)
             ->getNumberFormat()
             ->setFormatCode('#,##0.00_-"₽"');
-
         $folder = 'public/Счета выгрузка/';
         $path = 'public/Счета выгрузка/'.$filename;
         $savepath = 'storage/Счета выгрузка/';
-
+        //dd($array);
         Storage::makeDirectory($folder);
-
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         $writer->save($savepath.$filename);
 
@@ -260,7 +258,7 @@ class InvoiceExportController extends Controller
         }
 
         $parameters = unserialize($request->parameters);
-        $filename = preg_replace ("/[^a-zA-ZА-Яа-я0-9.,_:;?!\s]/u","",date('Y-m-d').'_'.$parameters['filename'].'_выгрузка.xlsx');
+        $filename = config('app.prefix_view').preg_replace ("/[^a-zA-ZА-Яа-я0-9.,_:;?!\s]/u","",date('Y-m-d').'_'.$parameters['filename'].'_выгрузка.xlsx');
 
         $array = [];
 
@@ -418,13 +416,18 @@ class InvoiceExportController extends Controller
         }
         else {
             $range = $request->data_range;
+            $range = explode(' - ', $range);
+            $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
+
+            $range = $range_from.' - '.$range_to;
             $range_text = $request->data_range;
         }
 
         $range = explode(' - ', $range);
 
         $parameters = unserialize($request->parameters);
-        $filename = preg_replace ("/[^a-zA-ZА-Яа-я0-9.,_:;?!\s]/u","",date('Y-m-d').'_'.$parameters['filename'].'_выгрузка.xlsx');
+        $filename = config('app.prefix_view').preg_replace ("/[^a-zA-ZА-Яа-я0-9._:;?!\s]/u","",date('Y-m-d').'_'.$parameters['filename'].'_выгрузка.xlsx');
 
         $sorting_type = $parameters['sorting_type'];
 
@@ -449,6 +452,11 @@ class InvoiceExportController extends Controller
         }
         else {
             $range = $request->data_range;
+            $range = explode(' - ', $range);
+            $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
+
+            $range = $range_from.' - '.$range_to;
             $range_text = $request->data_range;
         }
 
@@ -508,7 +516,7 @@ class InvoiceExportController extends Controller
         $invoices = Invoice::filter($filter)->whereIn('project_id', $projects)->get();
 
         $parameters = unserialize($request->parameters);
-        $filename = preg_replace ("/[^a-zA-ZА-Яа-я0-9.,_:;?!\s]/u","",date('Y-m-d').'_'.$parameters['filename'].'.xlsx');
+        $filename = config('app.prefix_view').preg_replace ("/[^a-zA-ZА-Яа-я0-9.,_:;?!\s]/u","",date('Y-m-d').'_'.$parameters['filename'].'.xlsx');
 
         return Storage::download($this->exportToExcelNewTemplate($filename, $parameters['sorting_type'], $range_text, $invoices));
 

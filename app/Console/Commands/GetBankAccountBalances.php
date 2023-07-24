@@ -42,30 +42,35 @@ class GetBankAccountBalances extends Command
         $updates = Storage::files('public/templates/1C/balances/');
         if(!is_null($updates)) {
             foreach ($updates as $file) {
-                $xmlObject = simplexml_load_string(Storage::get($file));
-
-                $jsonFormatData = json_encode($xmlObject);
-                $result = json_decode($jsonFormatData, true);
+                $result = simplexml_load_string(Storage::get($file));
 
                 $info = [];
 
-                foreach ($result as $key => $value){
-                    foreach ($value as $k => $v){
-                        $info [] = [
-                            'account_type' => $v['@attributes']['Счет'],
-                            'amount' => $v['@attributes']['Сумма'],
-                            'account_number' => $v['@attributes']['БанковскийСчет'],
-                            'company' => $v['@attributes']['Организация'],
-                        ];
-                    }
+                foreach ($result as $value){
+                    $info [] = [
+                        'account_type' => (string)$value->attributes()['Счет'],
+                        'amount' => (string)$value->attributes()['Сумма'],
+                        'account_number' => (string)$value->attributes()['БанковскийСчет'],
+                        'company' => (string)$value->attributes()['Организация'],
+                    ];
                 }
                 if(!empty($info)){
                     $bank_account_balance = new BankAccountBalance();
                     $bank_account_balance->info = $info;
                     $bank_account_balance->save();
                 }
-                Storage::move($file, 'public/templates/1C/balances/processed/'.basename($file));
+                Storage::move($file, 'public/templates/1C/balances/processed/'.$this->generateRandomString().'_'.basename($file));
             }
         }
+    }
+
+    function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }

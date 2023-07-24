@@ -22,6 +22,11 @@ class ProjectTablesController extends Controller
         }
         else {
             $range = $request->data_range;
+            $range = explode(' - ', $range);
+            $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
+
+            $range = $range_from.' - '.$range_to;
         }
 
         $range = explode(' - ', $range);
@@ -42,7 +47,7 @@ class ProjectTablesController extends Controller
                 ->whereDate('created_at', '<=', $range[1]);
         }
 
-        if(!auth()->user()->can('view and access all projects') || !in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+        if(!auth()->user()->can('view and access all projects') && !in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
             $projects->where(function ($query) {
                 $query->where('user_id', auth()->user()->id)
                     ->orWhere('manager_id',  auth()->user()->id)
@@ -89,37 +94,37 @@ class ProjectTablesController extends Controller
                     ->orWhereHas('user', function ($q) use ($searchValue) {
                         $q->where('name', 'like', '%' . $searchValue . '%');
                     });
+            });
+
+            if(in_array($request->filter, ['finished', 'paid', 'done_unpaid'])){
+                $withFilter
+                    ->whereDate('finished_at', '>=', $range[0])
+                    ->whereDate('finished_at', '<=', $range[1]);
+            }
+            elseif($request->filter == 'finished_paid_date'){
+                $withFilter
+                    ->whereDate('paid_at', '>=', $range[0])
+                    ->whereDate('paid_at', '<=', $range[1]);
+            }
+            else {
+                $withFilter
+                    ->whereDate('created_at', '>=', $range[0])
+                    ->whereDate('created_at', '<=', $range[1]);
+            }
+
+            $withFilter->filter($filter);
+
+            if(!auth()->user()->can('view and access all projects') && !in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+                $withFilter->where(function ($query) {
+                    $query->where('user_id', auth()->user()->id)
+                        ->orWhere('manager_id',  auth()->user()->id)
+                        ->orWhere('logist_id',  auth()->user()->id)
+                        ->orWhereNotNull('management_expenses')
+                        ->orWhereJsonContains('access_to_project', auth()->user()->id);
                 });
+            }
 
-                if(in_array($request->filter, ['finished', 'paid', 'done_unpaid'])){
-                    $withFilter
-                        ->whereDate('finished_at', '>=', $range[0])
-                        ->whereDate('finished_at', '<=', $range[1]);
-                }
-                elseif($request->filter == 'finished_paid_date'){
-                    $withFilter
-                        ->whereDate('paid_at', '>=', $range[0])
-                        ->whereDate('paid_at', '<=', $range[1]);
-                }
-                else {
-                    $withFilter
-                        ->whereDate('created_at', '>=', $range[0])
-                        ->whereDate('created_at', '<=', $range[1]);
-                }
-
-                $withFilter->filter($filter);
-
-                if(!auth()->user()->can('view and access all projects') || !in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
-                    $withFilter->where(function ($query) {
-                        $query->where('user_id', auth()->user()->id)
-                            ->orWhere('manager_id',  auth()->user()->id)
-                            ->orWhere('logist_id',  auth()->user()->id)
-                            ->orWhereNotNull('management_expenses')
-                            ->orWhereJsonContains('access_to_project', auth()->user()->id);
-                    });
-                }
-
-                $totalRecordswithFilter = $withFilter->count();
+            $totalRecordswithFilter = $withFilter->count();
 
 
             $records = $withFilter
@@ -171,7 +176,7 @@ class ProjectTablesController extends Controller
                     ->whereDate('created_at', '<=', $range[1]);
             }
 
-            if(!auth()->user()->can('view and access all projects') || !in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
+            if(!auth()->user()->can('view and access all projects') && !in_array(auth()->user()->getRoleNames()[0], ['director', 'accountant', 'super-admin'])){
                 $records->where(function ($query) {
                     $query->where('user_id', auth()->user()->id)
                         ->orWhere('manager_id',  auth()->user()->id)
@@ -245,8 +250,8 @@ class ProjectTablesController extends Controller
 
         if($request->data_range != '' && $request->data_range !='Все'){
             $range = explode(' - ', $request->data_range);
-            $range_from = $range[0];
-            $range_to = $range[1];
+            $range_from = \Carbon\Carbon::parse($range[0])->format('Y-m-d');
+            $range_to = \Carbon\Carbon::parse($range[1])->format('Y-m-d');
         }
         else {
             $range_from = '2000-01-01';

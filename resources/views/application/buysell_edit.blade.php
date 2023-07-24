@@ -154,7 +154,7 @@
                                             <label>Вставьте список контейнеров</label>
                                             <textarea class="form-control" rows="10" id="application_containers"
                                                       placeholder="Список контейнеров"
-                                                      oninput="this.value = this.value.toUpperCase()"></textarea>
+                                                      oninput="this.value = this.value.toUpperCase()">@if(!is_null($application->containers)){{ implode(', ', $application->containers) }}@endif</textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-8">

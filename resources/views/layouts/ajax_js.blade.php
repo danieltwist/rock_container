@@ -257,6 +257,32 @@
                                         "language": "ru",
                                     });
                                 }
+                                if(key === 'xedit_init'){
+                                    setTimeout(function(){
+                                        $('.xedit').editable({
+                                            mode: 'inline',
+                                            url: '{{url("xeditable/update")}}',
+                                            title: '{{ __('general.update_') }}',
+                                            emptytext: '{{ __('general.empty') }}',
+                                            params: function(params) {
+                                                params.model = $(this).data('model');
+                                                return params;
+                                            },
+                                            success: function(response) {
+                                                if(!response.success){
+                                                    $(document).Toasts('create', {
+                                                        autohide: true,
+                                                        delay: 3000,
+                                                        class: 'bg-danger',
+                                                        title: 'Ошибка',
+                                                        body: response.error
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    }, 1000);
+                                }
+
                                 if(key === 'datetimepicker_init'){
                                     $('.invoice_deadline').datetimepicker({
                                         timepicker: false,

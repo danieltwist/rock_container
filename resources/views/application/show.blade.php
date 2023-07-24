@@ -167,21 +167,30 @@
                                         @if(!is_null($application->send_from_country))
                                             <p class="text-sm">Откуда
                                                 <b class="d-block">
-                                                    {{ $application->send_from_country }}, {{ implode('/', $application->send_from_city) }}
+                                                    {{ $application->send_from_country }}
+                                                    @if(!is_null($application->send_from_city))
+                                                        , {{ implode('/', $application->send_from_city) }}
+                                                    @endif
                                                 </b>
                                             </p>
                                         @endif
                                         @if(!is_null($application->send_to_country))
                                             <p class="text-sm">Куда
                                                 <b class="d-block">
-                                                    {{ $application->send_to_country }}, {{ implode('/', $application->send_to_city) }}
+                                                    {{ $application->send_to_country }}
+                                                    @if(!is_null($application->send_to_city))
+                                                        , {{ implode('/', $application->send_to_city) }}
+                                                    @endif
                                                 </b>
                                             </p>
                                         @endif
                                         @if(!is_null($application->place_of_delivery_country))
                                             <p class="text-sm">Депо сдачи
                                                 <b class="d-block">
-                                                    {{ $application->place_of_delivery_country }}, {{ implode('/', $application->place_of_delivery_city) }}
+                                                    {{ $application->place_of_delivery_country }}
+                                                    @if(!is_null($application->place_of_delivery_city))
+                                                        , {{ implode('/', $application->place_of_delivery_city) }}
+                                                    @endif
                                                 </b>
                                             </p>
                                         @endif

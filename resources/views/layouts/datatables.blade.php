@@ -299,6 +299,7 @@
     }
 
     function sortInvoicesByDate(filter) {
+        console.log($('#reportrange span').html());
         let ordering = 0;
         if(filter === 'Счет согласован на оплату'  || filter === 'Согласована частичная оплата' ){
             ordering = 5;

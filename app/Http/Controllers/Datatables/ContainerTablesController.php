@@ -860,17 +860,17 @@ class ContainerTablesController extends Controller
                                     $filters[$key][] = $city;
                                 }
                             }
-                            else $filters[$key] = [];
+                            else $filters[$key][] = '';
                         }
                         else {
                             if(!is_null($row[$value['id']])) {
                                 $filters[$key][] = $row[$value['id']];
                             }
-                            else $filters[$key] = [];
+                            else $filters[$key][] = '';
                         }
-
                     }
                     $filters[$key] = array_values(array_unique($filters[$key]));
+                    //dump($filters[$key]);
                 }
                 else {
                     switch ($key){

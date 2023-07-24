@@ -462,10 +462,14 @@ class InvoiceController extends Controller
 
             $company = companyType($invoice->id) . '_id';
 
+            $old_project = $invoice->project_id;
+            $new_project = $request->project_id;
+
             $invoice->update([
                 'amount' => $request->amount,
                 $company => $request->$company,
                 'currency' => $request->currency,
+                'project_id' => $new_project,
                 'deadline' => $request->deadline,
                 'rate_out_date' => $request->rate_out_date,
                 'rate_income_date' => $request->rate_income_date,
@@ -495,6 +499,11 @@ class InvoiceController extends Controller
             $new_record->user_id = $user->id;
 
             $new_record->save();
+
+            if($old_project != $new_project){
+                $this->updateProjectFinance($old_project);
+                $this->moveInvoiceToAnotherProject($invoice);
+            }
 
             return response()->json([
                 'bg-class' => 'bg-success',
@@ -572,7 +581,8 @@ class InvoiceController extends Controller
             'company_type_id' => $company_type_id,
             'company_type_name' => $company_type_name,
             'class' => $class,
-            'expense_types' => ExpenseType::all()
+            'expense_types' => ExpenseType::all(),
+            'projects' => \App\Models\Project::all()
         ]);
 
     }
@@ -935,7 +945,7 @@ class InvoiceController extends Controller
         $invoice = Invoice::find($id);
 
         return response()->json([
-            'modal_table' => view('invoice.ajax.'.config('app.prefix_view').'invoice_table_modal', [
+            'modal_table' => view('invoice.ajax.invoice_table_modal', [
                 'invoice' => $invoice
             ])->render()
         ]);
@@ -1204,4 +1214,68 @@ class InvoiceController extends Controller
 
         return $counterparty_name;
     }
+
+    public function moveInvoiceToAnotherProject(Invoice $invoice){
+
+        if(!is_null($invoice->invoice_file)){
+            $invoice_file = $invoice->invoice_file;
+            foreach ($invoice->invoice_file as $key => $file){
+                $filename = last(explode('/', $file['filename']));
+                $new_path = getFolderUploadInvoice($invoice, 'invoice').$filename;
+                try {
+                    Storage::move($file['filename'], $new_path);
+                }
+                catch (\Exception $e) {
+                    continue;
+                }
+
+                $invoice_file[$key]['filename'] = $new_path;
+
+                $invoice->update([
+                    'invoice_file' => $invoice_file
+                ]);
+            }
+        }
+
+        if(!is_null($invoice->upd_file)){
+            $upd_file = $invoice->upd_file;
+            foreach ($invoice->upd_file as $key => $file){
+                $filename = last(explode('/', $file['filename']));
+                $new_path = getFolderUploadInvoice($invoice, 'upd').$filename;
+                try {
+                    Storage::move($file['filename'], $new_path);
+                }
+                catch (\Exception $e) {
+                    continue;
+                }
+
+                $upd_file[$key]['filename'] = $new_path;
+
+                $invoice->update([
+                    'upd_file' => $upd_file
+                ]);
+            }
+        }
+
+        if(!is_null($invoice->payment_order_file)){
+            $payment_order_file = $invoice->payment_order_file;
+            foreach ($payment_order_file as $key => $file){
+                $filename = last(explode('/', $file['filename']));
+                $new_path = getFolderUploadInvoice($invoice, 'payment_order').$filename;
+                try {
+                    Storage::move($file['filename'], $new_path);
+                }
+                catch (\Exception $e) {
+                    continue;
+                }
+
+                $payment_order_file[$key]['filename'] = $new_path;
+
+                $invoice->update([
+                    'payment_order_file' => $payment_order_file
+                ]);
+            }
+        }
+    }
+
 }
