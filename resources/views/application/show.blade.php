@@ -81,6 +81,16 @@
                                             </b>
                                         </p>
                                     </div>
+                                    @if(!is_null($application->user_name))
+                                        <div class="text-muted mt-3">
+                                            <p class="text-sm">Добавил
+                                                <b class="d-block">
+                                                    {{ $application->user_name }}
+                                                </b>
+                                            </p>
+                                        </div>
+                                    @endif
+
                                     <div class="text-muted mt-3">
                                         <p class="text-sm">Контрагент
                                             <b class="d-block">

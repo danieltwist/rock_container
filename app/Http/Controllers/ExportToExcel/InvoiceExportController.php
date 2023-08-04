@@ -142,12 +142,12 @@ class InvoiceExportController extends Controller
                 : $amount_paid = 0;
 
             $array [] = [
-                'date' => explode(' ', $invoice->created_at)[0],
+                'date' => $invoice->created_at->format('d.m.Y'),
                 'direction' => $invoice->direction,
                 'id' => $invoice->id,
                 'project' =>$project,
                 'company' => $company,
-                'deadline' => $invoice->deadline,
+                'deadline' => !is_null($invoice->deadline) ? $invoice->deadline->format('d.m.Y') : '',
                 'amount_in_currency' => $amount_in_currency,
                 'amount_paid_in_currency' => $amount_paid_in_currency,
                 'amount_balance_in_currency' => (float)$amount_in_currency - $amount_paid_in_currency,
@@ -317,12 +317,12 @@ class InvoiceExportController extends Controller
                 : $amount_paid = 0;
 
             $array [] = [
-                'date' => explode(' ', $invoice->created_at)[0],
+                'date' => $invoice->created_at->format('d.m.Y'),
                 'direction' => $invoice->direction,
                 'id' => $invoice->id,
                 'project' =>$project,
                 'company' => $company,
-                'deadline' => $invoice->deadline,
+                'deadline' => !is_null($invoice->deadline) ? $invoice->deadline->format('d.m.Y') : '',
                 'amount_in_currency' => $amount_in_currency,
                 'amount_paid_in_currency' => $amount_paid_in_currency,
                 'amount_balance_in_currency' => (float)$amount_in_currency - $amount_paid_in_currency,

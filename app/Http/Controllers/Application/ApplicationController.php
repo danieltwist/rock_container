@@ -124,6 +124,7 @@ class ApplicationController extends Controller
         $application->created_at = $request->created_at;
         $application->status = 'В работе';
         isset($request->surcharge) ? $application->surcharge = 1 : $application->surcharge = null;
+        $application->user_name = auth()->user()->name;
 
         $application->save();
         if(!is_null($request->containers)){

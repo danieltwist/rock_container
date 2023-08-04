@@ -132,7 +132,7 @@ class InvoiceFilter extends QueryFilter
         }
 
         elseif($value == 'on_approval'){
-            return $this->builder->whereNotIn('status', ['Оплачен','Частично оплачен','Счет согласован на оплату','Ожидается оплата'])
+            return $this->builder->whereNotIn('status', ['Оплачен','Частично оплачен','Счет согласован на оплату','Ожидается оплата','Взаимозачет'])
             ->where(function ($query) {
                   $query->where('agree_1', 'like', '%Счет согласован на оплату%')
                         ->orWhere('agree_2', 'like', '%Счет согласован на оплату%')
@@ -161,21 +161,21 @@ class InvoiceFilter extends QueryFilter
         }
 
         elseif($value == 'credit'){
-            $projects = \App\Models\Project::whereIn('status',['В работе', 'Завершен'])
-                        ->where('paid', 'Не оплачен')
-                        ->pluck('id')
-                        ->toArray();
-            return $this->builder->where('direction','Расход')->whereIn('project_id', $projects)->where('status','<>','Оплачен');
+//            $projects = \App\Models\Project::whereIn('status',['В работе', 'Завершен'])
+//                        ->where('paid', 'Не оплачен')
+//                        ->pluck('id')
+//                        ->toArray();
+            return $this->builder->where('direction','Расход')->whereNotIn('status', ['Оплачен', 'Взаимозачет']);
         }
 
         elseif($value == 'debit') {
-            $projects = \App\Models\Project::whereIn('status', ['В работе', 'Завершен'])
-                //->whereDate('planned_payment_date', '<=', date('Y-m-d'))
-                ->where('paid', 'Не оплачен')
-                ->pluck('id')
-                ->toArray();
+//            $projects = \App\Models\Project::whereIn('status', ['В работе', 'Завершен'])
+//                //->whereDate('planned_payment_date', '<=', date('Y-m-d'))
+//                ->where('paid', 'Не оплачен')
+//                ->pluck('id')
+//                ->toArray();
 
-            return $this->builder->where('direction', 'Доход')->where('status', '<>', 'Оплачен')->whereIn('project_id', $projects);
+            return $this->builder->where('direction', 'Доход')->whereNotIn('status', ['Оплачен', 'Взаимозачет']);
         }
 
         elseif($value == 'potential_losses'){

@@ -84,10 +84,17 @@ class UserController extends Controller
             $user->password = Hash::make($request->password);
         }
 
-        $user->save();
-
         $user->removeRole($user->roles->pluck('name')[0]);
         $user->assignRole($request->role);
+
+
+        if($request->role == 'user'){
+            $user->notification_channel = 'Система';
+            $user->telegram_login = null;
+            $user->telegram_chat_id = null;
+        }
+
+        $user->save();
 
         return redirect()->back()->withSuccess(__('user.updated_successfully'));
 

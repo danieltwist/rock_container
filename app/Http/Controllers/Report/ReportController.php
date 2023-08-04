@@ -350,8 +350,9 @@ class ReportController extends Controller
             ->toArray();
 
         $invoices = Invoice::where('direction','Расход')
-            ->whereIn('project_id', $projects)
-            ->where('status','<>','Оплачен')
+            //->whereIn('project_id', $projects)
+            //->where('status','<>','Оплачен')
+            ->whereNotIn('status', ['Оплачен', 'Взаимозачет'])
             ->get();
 
         $projects_count = $invoices->unique('project_id')->count();
@@ -378,8 +379,8 @@ class ReportController extends Controller
             ->toArray();
 
         $invoices = Invoice::where('direction','Доход')
-            ->where('status','<>','Оплачен')
-            ->whereIn('project_id', $projects)
+            //->where('status','<>','Оплачен')
+            ->whereNotIn('status', ['Оплачен', 'Взаимозачет'])
             ->get();
 
         $projects_count = $invoices->unique('project_id')->count();

@@ -13,4 +13,7 @@
     {{ !is_null($application->surcharge) ? ' / Доплатная' : '' }}
     <br>
     {{ $application->created_at->format('d.m.Y') }}
+    @if(!is_null($application->user_name))
+        / {{ $application->user_name }}
+    @endif
 </small>
