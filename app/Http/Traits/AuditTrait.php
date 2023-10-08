@@ -199,6 +199,18 @@ trait AuditTrait {
                 'name' => 'ID проекта',
                 'type' => 'string'
             ],
+            'application_id' => [
+                'name' => 'ID заявки',
+                'type' => 'string'
+            ],
+            'supplier_id' => [
+                'name' => 'ID поставщика',
+                'type' => 'string'
+            ],
+            'client_id' => [
+                'name' => 'ID клиента',
+                'type' => 'string'
+            ],
         ],
         'App\Models\Project' => [
             'name' => [

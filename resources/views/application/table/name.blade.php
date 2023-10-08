@@ -14,6 +14,6 @@
     <br>
     {{ $application->created_at->format('d.m.Y') }}
     @if(!is_null($application->user_name))
-        / {{ $application->user_name }}
+        / <strong>{{ $application->user_name }}</strong>
     @endif
 </small>

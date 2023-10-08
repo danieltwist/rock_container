@@ -30,6 +30,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ThereAreUnusedContainers::class,
         \App\Console\Commands\TelegramDaemon::class,
         \App\Console\Commands\UpdateContainersUsageInfo::class,
+        \App\Console\Commands\NotifyAboutBirthday::class,
+        \App\Console\Commands\RemoveUnusedAudits::class
     ];
 
     /**
@@ -55,7 +57,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('update:usage_info')->dailyAt('00:10');
         $schedule->command('bank_accounts:get_balances')->everyFiveMinutes();
         $schedule->command('bank_accounts:get_payments')->everyFiveMinutes();
+        $schedule->command('audit:remove_unused')->dailyAt('00:00');
         $schedule->command('notify:bank_accounts_balances')->dailyAt('18:00');
+        $schedule->command('notify:birthday')->dailyAt('15:00');
     }
 
     protected function shortSchedule(ShortSchedule $shortSchedule)

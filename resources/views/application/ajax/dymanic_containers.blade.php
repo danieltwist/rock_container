@@ -23,8 +23,22 @@
         <div class="mt-2">
             <strong>Используются в других заявках: <br></strong>
             @foreach($already_used as $key => $value)
-                {{ $value['container_name'] }} - <a href="/application/{{ $value['application_id'] }}" target="_blank">в заявке {{ $value['application_name'] }}</a>
+                {{ $value['container_name'] }} - <a class="text-dark" href="/application/{{ $value['application_id'] }}" target="_blank">в заявке {{ $value['application_name'] }}</a>
                 {!! $key != array_key_last($already_used) ? '<br>' : '' !!}
+            @endforeach
+        </div>
+    @endif
+    @if(!is_null($can_reuse))
+        <div class="mt-2">
+            <strong>Используются, но имеют дату сдачи: <br></strong>
+            @foreach($can_reuse as $key => $value)
+                {{ $value['container_name'] }} - <a class="text-dark" href="/application/{{ $value['application_id'] }}" target="_blank">в заявке {{ $value['application_name'] }}</a>
+                / <a class="text-dark cursor-pointer reuse_container"
+                     data-application_id="{{ $value['application_id'] }}"
+                     data-container_id="{{ $value['container_id'] }}">
+                    Перенести в архив и использовать в данной заявке
+                </a>
+                {!! $key != array_key_last($can_reuse) ? '<br>' : '' !!}
             @endforeach
         </div>
     @endif

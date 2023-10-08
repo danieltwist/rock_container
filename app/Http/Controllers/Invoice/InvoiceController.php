@@ -8,6 +8,7 @@ use App\Filters\InvoiceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\FinanceTrait;
 use App\Models\ActionRecording;
+use App\Models\Application;
 use App\Models\Client;
 use App\Models\CurrencyRate;
 use App\Models\ExpenseType;
@@ -460,16 +461,24 @@ class InvoiceController extends Controller
             $invoice_array = $invoice->toArray();
             $user = auth()->user();
 
-            $company = companyType($invoice->id) . '_id';
+            if($request->direction == 'Поставщику'){
+                $client_id = null;
+                $supplier_id = $request->supplier_id;
+            } else {
+                $client_id = $request->client_id;
+                $supplier_id = null;
+            }
 
             $old_project = $invoice->project_id;
             $new_project = $request->project_id;
 
             $invoice->update([
                 'amount' => $request->amount,
-                $company => $request->$company,
+                'client_id' => $client_id,
+                'supplier_id' => $supplier_id,
                 'currency' => $request->currency,
                 'project_id' => $new_project,
+                'application_id' => $request->application_id,
                 'deadline' => $request->deadline,
                 'rate_out_date' => $request->rate_out_date,
                 'rate_income_date' => $request->rate_income_date,
@@ -557,32 +566,25 @@ class InvoiceController extends Controller
 
     public function edit_invoice_by_id($id)
     {
-
         $invoice = Invoice::withTrashed()->find($id);
         $currency_rates = CurrencyRate::orderBy('created_at', 'desc')->first();
 
-        if ($invoice->client_id != '') {
-            $company_list = Client::orderBy('id', 'DESC')->get();
-            $company_type_id = 'client_id';
-            $company_type_name = 'Клиент';
-
-        } else {
-            $company_list = Supplier::orderBy('id', 'DESC')->get();
-            $company_type_id = 'supplier_id';
-            $company_type_name = 'Поставщик';
-        }
+        $invoice->client_id != '' ? $company_type = 'client' : $company_type = 'supplier';
 
         $invoice->currency != 'RUB' ? $class = '' : $class = 'd-none';
 
         return view('invoice.modal.edit_invoice_modal_view', [
             'invoice' => $invoice,
+            'client_id' => $invoice->client_id,
+            'supplier_id' => $invoice->supplier_id,
             'rates' => $currency_rates,
-            'company_list' => $company_list,
-            'company_type_id' => $company_type_id,
-            'company_type_name' => $company_type_name,
+            'company_type' => $company_type,
             'class' => $class,
             'expense_types' => ExpenseType::all(),
-            'projects' => \App\Models\Project::all()
+            'projects' => \App\Models\Project::all(),
+            'applications' => Application::all(),
+            'clients' => Client::all(),
+            'suppliers' => Supplier::all()
         ]);
 
     }

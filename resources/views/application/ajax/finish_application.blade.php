@@ -18,6 +18,16 @@
         <div class="mt-3 float-right">
             Дата завершения: {{ $application->finished_at->format('d.m.Y H:i:s') }}
         </div>
+    @elseif($application->status == 'Черновик')
+        @if(in_array($role, ['director', 'super-admin']))
+            <form class="button-delete-inline float-right" action="{{ route('change_status_in_work') }}" method="POST">
+                @csrf
+                <input type="hidden" name="application_id" value="{{ $application->id }}">
+                <button type="submit" class="btn bg-success mt-2">
+                    <i class="fas fa-check"></i> Перевести в работу
+                </button>
+            </form>
+        @endif
     @else
         <div class="float-right">
             <a class="btn bg-danger mt-2 cursor-pointer"

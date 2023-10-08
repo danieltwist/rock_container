@@ -31,29 +31,6 @@ class HomeController extends Controller
     public function test_function()
     {
 
-        $updates = Storage::files('public/templates/1C/balances/');
-        if(!is_null($updates)) {
-            foreach ($updates as $file) {
-                $result = simplexml_load_string(Storage::get($file));
-
-                $info = [];
-
-                foreach ($result as $value){
-                    $info [] = [
-                        'account_type' => (string)$value->attributes()['Счет'],
-                        'amount' => (string)$value->attributes()['Сумма'],
-                        'account_number' => (string)$value->attributes()['БанковскийСчет'],
-                        'company' => (string)$value->attributes()['Организация'],
-                    ];
-                }
-                if(!empty($info)){
-                    $bank_account_balance = new BankAccountBalance();
-                    $bank_account_balance->info = $info;
-                    $bank_account_balance->save();
-                }
-                Storage::move($file, 'public/templates/1C/balances/processed/'.$this->generateRandomString().'_'.basename($file));
-            }
-        }
     }
 
     public function getUserCounts()

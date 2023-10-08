@@ -35,6 +35,23 @@
 
     let urlpath = window.location.pathname.replace('public/', '').split('/');
 
+    let colResize_options = {
+        isEnabled: true,
+        hoverClass: 'dt-colresizable-hover',
+        hasBoundCheck: true,
+        saveState: true,
+        stateSaveCallback: function (settings, data) {
+            let stateStorageName = window.location.pathname + "/colResizeStateData";
+            localStorage.setItem(stateStorageName, JSON.stringify(data));
+        },
+        stateLoadCallback: function (settings) {
+            let stateStorageName = window.location.pathname + "/colResizeStateData",
+                data = localStorage.getItem(stateStorageName);
+            return data != null ? JSON.parse(data) : null;
+        }
+    }
+
+
     $(function () {
         if (urlpath[1] === 'invoice') {
             if (getInvoicesPageType() === 'agree') getAgreedInvoicesAmount();
@@ -62,6 +79,7 @@
                         order: [0, 'desc'],
                         info: true,
                         scrollX: true,
+                        // colResize: colResize_options,
                         ajax: {
                             url: "{{route('containers_extended_table')}}",
                             type: "POST",
@@ -117,6 +135,7 @@
                             {data: "client_snp_after_range"},
                             {data: "client_date_get"},
                             {data: "client_date_return"},
+                            {data: "supplier_date_return"},
                             {data: "client_place_of_delivery_city"},
                             {data: "client_days_using"},
                             {data: "client_snp_total"},
@@ -200,7 +219,6 @@
                                 $(row).addClass(data.class);
                             }
                             if($table_id.DataTable().ajax.json().collapsed_exist){
-                                console.log('collapsed-exits');
                                 $(row).addClass('height-72');
                             }
                         }
@@ -625,6 +643,7 @@
                             {data: "client_snp_after_range"},
                             {data: "client_date_get"},
                             {data: "client_date_return"},
+                            {data: "supplier_date_return"},
                             {data: "client_place_of_delivery_city"},
                             {data: "client_days_using"},
                             {data: "client_snp_total"},
@@ -717,6 +736,8 @@
             searching: true,
             ordering: true,
             pageLength: 10,
+            responsive: true,
+            autoWidth: false,
             order: [0, 'desc'],
             info: true,
             ajax: {
@@ -738,11 +759,10 @@
                 {data: "created_at"}
             ],
             createdRow: function (row, data, dataIndex) {
-                console.log(data.class);
                 if (data.class !== '') {
                     $(row).addClass(data.class);
                 }
-            }
+            },
         });
     }
 
@@ -753,6 +773,8 @@
             serverSide: true,
             searching: false,
             ordering: true,
+            responsive: true,
+            autoWidth: false,
             pageLength: 10,
             order: [0, 'desc'],
             info: true,
@@ -1164,6 +1186,7 @@
                     {data: "client_snp_after_range"},
                     {data: "client_date_get"},
                     {data: "client_date_return"},
+                    {data: "supplier_date_return"},
                     {data: "client_place_of_delivery_city"},
                     {data: "client_days_using"},
                     {data: "client_snp_total"},
@@ -1217,8 +1240,6 @@
             if(filter_type === 'client'){
                 applications_filters.client = $(this).data('client_id');
             }
-
-            console.log(applications_filters);
             initApplicationTables();
         });
 
@@ -1318,7 +1339,7 @@
             $.cookie('containers_hidden_columns', JSON.stringify(hidden_columns), {expires: 365});
         }
 
-        $(document).on("mouseenter", ".init_select2", function () {
+        $(document).on("click", ".init_select2", function () {
             let select_id = $(this).attr('id');
             console.log(select_id);
             $(this).select2({
@@ -1328,6 +1349,7 @@
             $("#" + select_id + " option[value='']").remove();
             $("#" + select_id).addClass('mb-2');
             $("#" + select_id).css('font-weight', '400');
+            $("#" + select_id).select2('open');
         });
 
         $(document).on("click", ".sorting_containers_table", function () {
@@ -2065,4 +2087,5 @@
 
         });
     });
+
 </script>

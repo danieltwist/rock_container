@@ -455,7 +455,7 @@ class ContainerController extends Controller
 
             foreach ($request->all() as $key => $value){
                 if(!is_null($value) && !in_array($key, ['_token', 'containers_list', 'null_array'])){
-                    if(in_array($key, ['supplier_date_get', 'supplier_date_start_using', 'relocation_date_send', 'relocation_date_arrival_to_terminal', 'client_date_get', 'client_date_return', 'client_date_manual_request', 'own_date_buy', 'own_date_sell'])){
+                    if(in_array($key, ['supplier_date_get', 'supplier_date_start_using', 'relocation_date_send', 'relocation_date_arrival_to_terminal', 'client_date_get', 'client_date_return', 'client_date_manual_request', 'own_date_buy', 'own_date_sell', 'supplier_date_return'])){
                         $fields_for_update [] = [
                             $key => Carbon::parse($value)->format('Y-m-d'),
                         ];
@@ -606,6 +606,11 @@ class ContainerController extends Controller
         Container::whereNotNull('processing')->update([
             'processing' => null
         ]);
+    }
+
+    public function reuseContainerWithReturnDate(Request $request){
+        $container = Container::find($request->container_id);
+        $this->saveContainerUsageHistory($container, $request->application_id);
     }
 
 }

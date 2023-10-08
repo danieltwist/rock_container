@@ -20,7 +20,7 @@ trait CurrencyTrait {
             $amount_in_rubles = $amount;
         }
 
-        return round($amount_in_rubles);
+        return round($amount_in_rubles, 2);
     }
 
     public function getCurrencyRate($currency){

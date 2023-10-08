@@ -218,23 +218,44 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="custom-control custom-switch custom-switch-off-default custom-switch-on-danger">
-                                        <input type="checkbox"
-                                               class="custom-control-input"
-                                               name="null_array[supplier_payer_tx]"
-                                               id="supplier_payer_tx_null"
-                                               value="yes">
-                                        <label class="custom-control-label" for="supplier_payer_tx_null">
-                                            Плательщик ТХ
-                                        </label>
-                                    </div>
-                                    <div class="form-group mt-2">
-                                        <select class="form-control select2" name="supplier_payer_tx"
-                                                data-placeholder="Плательщик ТХ" style="width: 100%;" >
-                                            <option></option>
-                                            <option value="Собственник">Собственник</option>
-                                            <option value="РК">РК</option>
-                                        </select>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="custom-control custom-switch custom-switch-off-default custom-switch-on-danger">
+                                                <input type="checkbox"
+                                                       class="custom-control-input"
+                                                       name="null_array[supplier_date_return]"
+                                                       id="supplier_date_return_null"
+                                                       value="yes">
+                                                <label class="custom-control-label" for="supplier_date_return_null">
+                                                    Дата сдачи поставщику
+                                                </label>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <input type="text" class="form-control date_input"
+                                                       name="supplier_date_return"
+                                                       placeholder="Дата сдачи поставщику">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="custom-control custom-switch custom-switch-off-default custom-switch-on-danger">
+                                                <input type="checkbox"
+                                                       class="custom-control-input"
+                                                       name="null_array[supplier_payer_tx]"
+                                                       id="supplier_payer_tx_null"
+                                                       value="yes">
+                                                <label class="custom-control-label" for="supplier_payer_tx_null">
+                                                    Плательщик ТХ
+                                                </label>
+                                            </div>
+                                            <div class="form-group mt-2">
+                                                <select class="form-control select2" name="supplier_payer_tx"
+                                                        data-placeholder="Плательщик ТХ" style="width: 100%;" >
+                                                    <option></option>
+                                                    <option value="Собственник">Собственник</option>
+                                                    <option value="РК">РК</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">
@@ -521,13 +542,13 @@
                                                        id="client_date_return_null"
                                                        value="yes">
                                                 <label class="custom-control-label" for="client_date_return_null">
-                                                    Дата возврата ктк
+                                                    Дата сдачи клиентом
                                                 </label>
                                             </div>
                                             <div class="form-group mt-2">
                                                 <input type="text" class="form-control date_input"
                                                        name="client_date_return"
-                                                       placeholder="Дата возврата ктк">
+                                                       placeholder="Дата сдачи клиентом">
                                             </div>
                                         </div>
                                     </div>

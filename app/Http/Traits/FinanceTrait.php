@@ -590,10 +590,12 @@ trait FinanceTrait {
 
         if ($invoice->amount_sale_date != '') {
             $fact_amount = $invoice->amount_sale_date;
+            $paid = $invoice->amount_sale_date;
         }
         else {
             if($invoice->status == 'Оплачен'){
                 $fact_amount = $invoice->amount_income_date;
+                $paid = $invoice->amount_income_date;
             }
             else {
                 if($invoice->amount_actual != ''){
@@ -602,10 +604,9 @@ trait FinanceTrait {
                 else {
                     $fact_amount = $invoice->amount;
                 }
+                $invoice->amount_income_date == '' ? $paid = 0 : $paid = $invoice->amount_income_date;
             }
         }
-
-        $invoice->amount_income_date == '' ? $paid = 0 : $paid = $invoice->amount_income_date;
 
         return [
             'planned_amount' => str_replace(',', '.', $planned_amount),
@@ -789,4 +790,24 @@ trait FinanceTrait {
 
     }
 
+    public function getInvoiceExchangeDifference(Invoice $invoice){
+        $difference = 0;
+        if($invoice->currency != 'RUB'){
+            if($invoice->amount_sale_date != '' || $invoice->amount_income_date != ''){
+                if($invoice->rate_out_date != $invoice->rate_income_date || $invoice->rate_out_date != $invoice->rate_sale_date){
+                    if($invoice->status == 'Оплачен'){
+                        if(!is_null($invoice->amount_sale_date)){
+                            $difference = $invoice->amount_sale_date - $invoice->amount;
+                        }
+                        else
+                            $difference = $invoice->amount_income_date - $invoice->amount;
+                    }
+                    if($invoice->status == 'Частично оплачен'){
+                        $difference = $invoice->amount_income_date - $invoice->amount;
+                    }
+                }
+            }
+        }
+        return $difference;
+    }
 }

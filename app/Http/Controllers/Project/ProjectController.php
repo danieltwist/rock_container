@@ -249,6 +249,7 @@ class ProjectController extends Controller
             }
             else $invoices = $project->invoices;
 
+            $exchange_difference = 0;
             foreach ($invoices as $invoice){
                 switch($invoice->status){
                     case 'Удален': case 'Не оплачен':
@@ -272,6 +273,7 @@ class ProjectController extends Controller
                     default:
                         $invoice->class = 'secondary';
                 }
+                $exchange_difference += $this->getInvoiceExchangeDifference($invoice);
             }
 
             $container_groups = ContainerGroup::where('project_id', $project->id)->get();
@@ -306,7 +308,6 @@ class ProjectController extends Controller
                 $access_to_project = 'Не выбраны';
             }
 
-
             return view('project.show',[
                 'project' => $project,
                 'blocks' => $blocks,
@@ -324,7 +325,8 @@ class ProjectController extends Controller
                 'rates' => $currency_rates,
                 'users' => User::all(),
                 'expense_types' => ExpenseType::all(),
-                'access_to_project' => $access_to_project
+                'access_to_project' => $access_to_project,
+                'exchange_difference' => $exchange_difference
             ]);
         }
         else abort(403);

@@ -115,7 +115,7 @@
                                     <div class="text-muted mt-3">
                                         <p class="text-sm">Количество контейнеров
                                             <b class="d-block">{{ $application->containers_amount }}
-                                                <a class="cursor-pointer text-dark" data-toggle="collapse" data-target="#containers_collapse" aria-expanded="false">
+                                                <a class="cursor-pointer text-gray" data-toggle="collapse" data-target="#containers_collapse" aria-expanded="false">
                                                     Показать
                                                 </a>
                                             </b>
@@ -142,6 +142,67 @@
                                             <b class="d-block">{{ $application->price_amount*$application->containers_amount }}{{ $application->price_currency }}
                                                 @if($application->price_currency != 'RUB')
                                                     / {{ round($application->price_amount*$application->containers_amount*$application->currency_rate) }}р. ({{ $application->currency_rate }})
+                                                @endif
+                                            </b>
+                                        </p>
+                                    </div>
+                                    <div class="text-muted mt-3">
+                                        <p class="text-sm">Взаимосвязи с заявками
+                                            <b class="d-block">
+                                                @if($application->type == 'Поставщик')
+                                                    @if(!is_null($relations['client_applications']) || !is_null($relations['relocation_applications']))
+                                                        @if(!is_null($relations['client_applications']))
+                                                            Клиент:
+                                                            @foreach($relations['client_applications'] as $app_id)
+                                                                <a class="text-gray" href="/application/{{ $app_id }}" target="_blank">{{ getApplicationName($app_id) }}</a>
+                                                            @endforeach
+                                                            <br>
+                                                        @endif
+                                                        @if(!is_null($relations['relocation_applications']))
+                                                            Подсыл:
+                                                            @foreach($relations['relocation_applications'] as $app_id)
+                                                                <a class="text-gray" href="/application/{{ $app_id }}" target="_blank">{{ getApplicationName($app_id) }}</a>
+                                                            @endforeach
+                                                        @endif
+                                                    @else
+                                                        Связи не найдены
+                                                    @endif
+                                                @elseif($application->type == 'Подсыл')
+                                                    @if(!is_null($relations['client_applications']) || !is_null($relations['supplier_applications']))
+                                                        @if(!is_null($relations['client_applications']))
+                                                            Клиент:
+                                                            @foreach($relations['client_applications'] as $app_id)
+                                                                <a class="text-gray" href="/application/{{ $app_id }}" target="_blank">{{ getApplicationName($app_id) }}</a>
+                                                            @endforeach
+                                                            <br>
+                                                        @endif
+                                                        @if(!is_null($relations['supplier_applications']))
+                                                            Поставщик:
+                                                            @foreach($relations['supplier_applications'] as $app_id)
+                                                                <a class="text-gray" href="/application/{{ $app_id }}" target="_blank">{{ getApplicationName($app_id) }}</a>
+                                                            @endforeach
+                                                        @endif
+                                                    @else
+                                                        Связи не найдены
+                                                    @endif
+                                                @elseif($application->type == 'Клиент')
+                                                    @if(!is_null($relations['relocation_applications']) || !is_null($relations['supplier_applications']))
+                                                        @if(!is_null($relations['relocation_applications']))
+                                                            Подсыл:
+                                                            @foreach($relations['relocation_applications'] as $app_id)
+                                                                <a class="text-gray" href="/application/{{ $app_id }}" target="_blank">{{ getApplicationName($app_id) }}</a>
+                                                            @endforeach
+                                                            <br>
+                                                        @endif
+                                                        @if(!is_null($relations['supplier_applications']))
+                                                            Поставщик:
+                                                            @foreach($relations['supplier_applications'] as $app_id)
+                                                                <a class="text-gray" href="/application/{{ $app_id }}" target="_blank">{{ getApplicationName($app_id) }}</a>
+                                                            @endforeach
+                                                        @endif
+                                                    @else
+                                                        Связи не найдены
+                                                    @endif
                                                 @endif
                                             </b>
                                         </p>

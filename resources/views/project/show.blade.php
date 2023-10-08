@@ -260,6 +260,13 @@
                                                 </p>
                                             @endif
                                         @endif
+                                        @if($exchange_difference != 0)
+                                            <p class="text-sm">Курсовая разница
+                                                <b class="d-block">
+                                                    {{ number_format($exchange_difference, 2, '.', ' ').'р.' }}
+                                                </b>
+                                            </p>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="col-md-3">

@@ -102,6 +102,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('application.index').'?draft' }}" class="nav-link">
+                                <p>Черновики</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('application.index').'?active' }}" class="nav-link">
                                 <p>В работе</p>
                             </a>

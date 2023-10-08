@@ -25,6 +25,9 @@ class ApplicationFilter extends QueryFilter
         elseif($value == 'active'){
             return $this->builder->where('status', 'В работе');
         }
+        elseif($value == 'draft'){
+            return $this->builder->where('status', 'Черновик');
+        }
         elseif($value == 'done'){
             return $this->builder->where('status', 'Завершена');
         }

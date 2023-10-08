@@ -76,6 +76,8 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
         Route::get('/get_not_allowed_finish_reason', 'App\Http\Controllers\Application\ApplicationController@getNotAllowedFinishReason')
             ->name('get_not_allowed_finish_reason');
 
+        Route::post('/change_status_in_work', 'App\Http\Controllers\Application\ApplicationController@changeStatusInWork')
+            ->name('change_status_in_work');
     });
 
 
@@ -190,6 +192,9 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
     Route::post('containers/save_actions', '\App\Http\Controllers\Container\ContainerProcessing@saveActions')
         ->name('containers_save_actions')->middleware(['auth']);
     Route::get('containers/processing', '\App\Http\Controllers\Container\ContainerProcessing@index')->name('containers_processing')->middleware(['auth']);
+
+    Route::post('containers/reuse_container_with_return_date', '\App\Http\Controllers\Container\ContainerController@reuseContainerWithReturnDate')
+        ->name('reuse_container_with_return_date')->middleware(['auth']);
 
     Route::resource('project.container_group', \App\Http\Controllers\Container\ContainerGroupController::class)->middleware(['auth']);
     Route::resource('container_group_location', \App\Http\Controllers\Container\ContainerGroupLocationController::class)->middleware(['auth']);
@@ -373,6 +378,8 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
             ->name('update_agree_invoices_settings');
         Route::get('/currency_ratio','App\Http\Controllers\Setting\CurrencyRatioController@index')->name('currency_ratio_settings');
         Route::post('/update_currency_rates','App\Http\Controllers\Setting\CurrencyRatioController@updateRates')->name('update_currency_rates');
+        Route::get('/safe','App\Http\Controllers\Setting\SafeSettingsController@index')->name('safe_settings');
+        Route::post('/update_safe_settings','App\Http\Controllers\Setting\SafeSettingsController@updateSafeSettings')->name('update_safe_settings');
     });
 
     ///////////////////ajax restore

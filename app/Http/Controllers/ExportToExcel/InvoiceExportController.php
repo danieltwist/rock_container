@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ExportToExcel;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\FinanceTrait;
 use App\Models\Invoice;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use App\Filters\InvoiceFilter;
 
 class InvoiceExportController extends Controller
 {
+    use FinanceTrait;
 
     public function exportToExcel($filename, $invoices){
 
@@ -155,6 +157,7 @@ class InvoiceExportController extends Controller
                 'amount' => $amount,
                 'amount_paid' => $amount_paid,
                 'amount_balance' => (float)$amount - $amount_paid,
+                'exchange_difference' => $this->getInvoiceExchangeDifference($invoice),
                 'status' => $invoice->status,
                 'info' => str_replace('=', 'символ равно', $invoice->additional_info),
             ];
@@ -173,7 +176,7 @@ class InvoiceExportController extends Controller
         $sheet->setCellValue('B2', $dates);
         $sheet->setCellValue('B3', $sorting_type);
 
-        $sheet->getStyle('A4:O4')
+        $sheet->getStyle('A4:P4')
             ->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()
@@ -185,6 +188,7 @@ class InvoiceExportController extends Controller
         $total_amount = 0;
         $total_amount_paid = 0;
         $total_amount_balance = 0;
+        $total_exchange_difference = 0;
 
         foreach ($array as $string){
             $sheet->fromArray([$string], NULL, 'A'.$i);
@@ -196,7 +200,7 @@ class InvoiceExportController extends Controller
             $total_amount += $string['amount'];
             $total_amount_paid += $string['amount_paid'];
             $total_amount_balance += $string['amount_balance'];
-
+            $total_exchange_difference += $string['exchange_difference'];
             $i++;
             $k++;
         }
@@ -205,18 +209,19 @@ class InvoiceExportController extends Controller
         $sheet->setCellValue('K'.$i, $total_amount);
         $sheet->setCellValue('L'.$i, $total_amount_paid);
         $sheet->setCellValue('M'.$i, $total_amount_balance);
+        $sheet->setCellValue('N'.$i, $total_exchange_difference);
 
-        $sheet->getStyle('A'.$i.':O'.$i)
+        $sheet->getStyle('A'.$i.':P'.$i)
             ->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()
             ->setARGB('c6efce');
 
-        $sheet->getStyle('A'.$i.':N'.$i)
+        $sheet->getStyle('A'.$i.':P'.$i)
             ->getFont()
             ->setBold(true);
 
-        $sheet->getStyle('K'.$i.':N'.$i)
+        $sheet->getStyle('K'.$i.':P'.$i)
             ->getNumberFormat()
             ->setFormatCode('#,##0.00_-"₽"');
         $folder = 'public/Счета выгрузка/';

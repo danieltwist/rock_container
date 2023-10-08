@@ -112,6 +112,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('application.index').'?draft' }}" class="nav-link">
+                                <p>Черновики</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('application.index').'?active' }}" class="nav-link">
                                 <p>В работе</p>
                             </a>
@@ -489,6 +494,9 @@
                             </a>
                             <a href="{{ route('agree_invoices_settings') }}" class="nav-link">
                                 <p>Согласование счетов</p>
+                            </a>
+                            <a href="{{ route('safe_settings') }}" class="nav-link">
+                                <p>Сейф</p>
                             </a>
                         </li>
                     </ul>

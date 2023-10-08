@@ -437,6 +437,7 @@ class ContainerTablesController extends Controller
                 "supplier_repair_amount" => $container->supplier_repair_amount.$container->supplier_repair_currency,
                 "supplier_repair_status" => $container->supplier_repair_status,
                 "supplier_repair_confirmation" => $container->supplier_repair_confirmation,
+                "supplier_date_return" => !is_null($container->supplier_date_return) ? $container->supplier_date_return->format('d.m.Y') : '',
                 "relocation_counterparty_name" => $relocation_counterparty_name,
                 "relocation_application_name" => $relocation_application_name,
                 "relocation_price_amount" => $surcharge_relocation ? '-'.$container->relocation_price_amount.$container->relocation_price_currency : $container->relocation_price_amount.$container->relocation_price_currency,
@@ -779,6 +780,7 @@ class ContainerTablesController extends Controller
                 "supplier_repair_amount" => $container->supplier_repair_amount.$container->supplier_repair_currency,
                 "supplier_repair_status" => $container->supplier_repair_status,
                 "supplier_repair_confirmation" => $container->supplier_repair_confirmation,
+                "supplier_date_return" => !is_null($container->supplier_date_return) ? $container->supplier_date_return->format('d.m.Y') : '',
                 "relocation_counterparty_name" => $container->relocation_counterparty_name,
                 "relocation_application_name" => $relocation_application_name,
                 "relocation_price_amount" => $surcharge_relocation ? '-'.$container->relocation_price_amount.$container->relocation_price_currency : $container->relocation_price_amount.$container->relocation_price_currency,
@@ -846,15 +848,13 @@ class ContainerTablesController extends Controller
         else{
             $sql_filters->whereNotNull('archive');
         }
-        if($request->filter == 'svv')
-            $sql_filters->whereNotNull('svv');
         $sql_filters = $sql_filters->groupBy(["name", "owner_name", "supplier_application_name", "supplier_city", "supplier_terminal", "supplier_place_of_delivery_city", "relocation_counterparty_name", "relocation_application_name", "relocation_place_of_delivery_city", "relocation_place_of_delivery_terminal", "client_counterparty_name", "client_application_name", "client_place_of_delivery_city"])->distinct()->get()->toArray();
 
         if(!empty($sql_filters)){
             foreach ($this->columns as $key => $value){
-                if(in_array($key, ["1", "4", "6", "11", "12", "18", "26", "27", "31", "32", "39", "40", "46"])){
+                if(in_array($key, ["1", "4", "6", "11", "12", "18", "26", "27", "31", "32", "39", "40", "47"])){
                     foreach ($sql_filters as $row){
-                        if(in_array($key, ["11", "12", "18", "31", "32", "46"])){
+                        if(in_array($key, ["11", "12", "18", "31", "32", "47"])){
                             if(!is_null($row[$value['id']])) {
                                 foreach (explode(', ', $row[$value['id']]) as $city){
                                     $filters[$key][] = $city;
@@ -892,19 +892,19 @@ class ContainerTablesController extends Controller
                             break;
                         case '24':
                         case '37':
-                        case '50':
+                        case '51':
                             $filters[$key] =  ['Отремонтирован', 'Целый'];
                             break;
                         case '25':
                         case '28':
-                        case '51':
+                        case '52':
                             $filters[$key] =  ['Нет', 'Да'];
                             break;
-                        case '52':
-                        case '56':
+                        case '53':
+                        case '57':
                             $filters[$key] =  ['Нет', 'Запрошено', 'Загружено'];
                             break;
-                        case '53':
+                        case '58':
                             $filters[$key] =  ['Нет', 'Запрошено', 'Предоставлено'];
                             break;
                         default:

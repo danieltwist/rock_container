@@ -84,6 +84,29 @@ class ApplicationTablesController extends Controller
 
             $id = $application->id;
 
+            $from = null;
+            $to = null;
+            $place_of_delivery = null;
+
+            if(!is_null($application->send_from_country)){
+                $from = 'Откуда: '.$application->send_from_country.', ';
+                if(!is_null($application->send_from_city)){
+                    $from .= implode('/', $application->send_from_city);
+                }
+            }
+            if(!is_null($application->send_to_country)){
+                $to = 'Куда: '.$application->send_to_country.', ';
+                if(!is_null($application->send_to_city)){
+                    $to .= implode('/', $application->send_to_city);
+                }
+            }
+            if(!is_null($application->place_of_delivery_country)){
+                $place_of_delivery = 'Депо сдачи: '.$application->place_of_delivery_country.', ';
+                if(!is_null($application->place_of_delivery_city)){
+                    $place_of_delivery .= implode('/', $application->place_of_delivery_city);
+                }
+            }
+
             $name = view('application.table.name', [
                 'application' => $application
             ])->render();
@@ -93,7 +116,10 @@ class ApplicationTablesController extends Controller
             ])->render();
 
             $places = view('application.table.places', [
-                'application' => $application
+                'application' => $application,
+                'to' => $to,
+                'from' => $from,
+                'place_of_delivery' => $place_of_delivery
             ])->render();
 
             $conditions = view('application.table.conditions', [

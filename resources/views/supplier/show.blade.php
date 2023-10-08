@@ -105,8 +105,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="card card-default">
-                    <div class="card-header">
+                <div class="card collapsed collapsed-card">
+                    <div class="card-header cursor-pointer" data-card-widget="collapse">
                         <h3 class="card-title">Заявки с поставщиком</h3>
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool form-inline" data-card-widget="collapse"
@@ -149,14 +149,14 @@
                         </table>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="card-header">
+                <div class="card collapsed collapsed-card">
+                    <div class="card-header cursor-pointer" data-card-widget="collapse">
                         <h3 class="card-title">{{ __('supplier.supplier_projects') }}</h3>
                         <div class="card-tools">
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool form-inline" data-card-widget="collapse"
                                         title="Collapse">
-                                    <i class="fas fa-minus"></i>
+                                    <i class="fas fa-plus"></i>
                                 </button>
                             </div>
                         </div>
@@ -186,13 +186,13 @@
                         </div>
                     @endif
                 </div>
-                <div class="card card-default">
-                    <div class="card-header">
+                <div class="card collapsed collapsed-card">
+                    <div class="card-header cursor-pointer" data-card-widget="collapse">
                         <h3 class="card-title">{{ __('supplier.invoices_list') }}</h3>
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool form-inline" data-card-widget="collapse"
                                     title="Collapse">
-                                <i class="fas fa-minus"></i>
+                                <i class="fas fa-plus"></i>
                             </button>
                         </div>
                     </div>

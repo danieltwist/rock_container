@@ -25,6 +25,8 @@
     <link rel="stylesheet" href="/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <link rel="stylesheet" href="/admin/plugins/datatables-scroller/css/scroller.bootstrap4.min.css">
     <link rel="stylesheet" href="/admin/plugins/datatables-fixedheader/css/fixedHeader.bootstrap4.css">
+    <link rel="stylesheet" href="/admin/plugins/datatables-colReorder/css/colReorder.bootstrap4.css">
+    <link rel="stylesheet" href="/admin/plugins/datatables-colresize/jquery.dataTables.colResize.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/admin/dist/css/adminlte.css">
     <!-- overlayScrollbars -->
@@ -209,6 +211,9 @@
 <script src="/admin/plugins/datatables-scroller/js/scroller.bootstrap4.min.js"></script>
 <script src="/admin/plugins/datatables-fixedheader/js/dataTables.fixedHeader.js"></script>
 <script src="/admin/plugins/datatables-fixedheader/js/fixedHeader.bootstrap4.js"></script>
+<script src="/admin/plugins/datatables-colreorder/js/dataTables.colReorder.js"></script>
+<script src="/admin/plugins/datatables-colreorder/js/colReorder.bootstrap4.js"></script>
+<script src="/admin/plugins/datatables-colresize/jquery.dataTables.colResize.js"></script>
 
 <!-- InputMask -->
 <script src="/admin/plugins/moment/moment.min.js"></script>
@@ -241,9 +246,7 @@
 <script src="/js/app.js"></script>
 <!-- typeahead -->
 <script src="/admin/plugins/twitter-typeahead/typeahead.bundle.js"></script>
-
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.js"></script>
-
+<script src="/admin/plugins/jquery-validation/jquery.validate.js"></script>
 
 @include('layouts.js')
 @include('layouts.ajax_js')

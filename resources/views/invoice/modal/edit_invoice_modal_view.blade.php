@@ -2,7 +2,41 @@
     @csrf
     @method('PUT')
     <input type="hidden" name="action" value="update_invoice">
-    <div class="form-group">
+        <div class="form-group">
+            <label for="direction">{{ __('general.direction') }}</label>
+            <select class="form-control finance_direction" name="direction" required>
+                <option value="Поставщику" {{ $company_type == 'supplier' ? "selected" : "" }}>
+                    {{ __('general.supplier') }}
+                </option>
+                <option value="Клиенту" {{ $company_type == 'client' ? "selected" : "" }}>
+                    {{ __('general.client') }}
+                </option>
+            </select>
+        </div>
+        <div class="form-group {{ $company_type == 'supplier' ? 'd-none' : '' }} client_group">
+            <label for="client_id">{{ __('general.client') }}</label>
+            <select class="form-control select2 client_select" name="client_id"
+                    data-placeholder="{{ __('project.select_client') }}" style="width: 100%;">
+                <option></option>
+                @foreach($clients as $client)
+                    <option value="{{ $client->id }}" {{ $client_id == $client->id ? "selected" : "" }}>
+                        {{$client->name}}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group {{ $company_type == 'client' ? 'd-none' : '' }} supplier_group">
+            <label for="supplier_id">{{ __('general.supplier') }}</label>
+            <select class="form-control select2 supplier_select" name="supplier_id"
+                    data-placeholder="{{ __('project.select_supplier') }}" style="width: 100%;">
+                <option></option>
+                @foreach($suppliers as $supplier)
+                    <option value="{{ $supplier->id }}"  {{ $supplier_id == $supplier->id ? "selected" : "" }}>
+                        {{$supplier->name}}
+                    </option>
+                @endforeach
+            </select>
+        </div>
         <label for="project">Проект</label>
         <select class="form-control select2" name="project_id"
                 data-placeholder="Выберите проект" style="width: 100%;">
@@ -10,22 +44,23 @@
             @foreach($projects as $project)
                 <option value="{{ $project->id }}"
                         @if($invoice->project_id == $project->id)
-                            selected
+                        selected
                     @endif
                 >{{ $project->name }}</option>
             @endforeach
         </select>
     </div>
     <div class="form-group">
-        <label>{{ $company_type_name }}</label>
-        <select class="form-control select2" name="{{ $company_type_id }}"
-                data-placeholder="{{ __('general.choose_from_list') }}"
-                style="width: 100%;"
-                required>
+        <label for="application">Заявка</label>
+        <select class="form-control select2" name="application_id"
+                data-placeholder="Выберите заявку" style="width: 100%;">
             <option></option>
-            @foreach($company_list as $company)
-                <option
-                    value="{{ $company->id }}" {{ $invoice->$company_type_id == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
+            @foreach($applications as $application)
+                <option value="{{ $application->id }}"
+                        @if($invoice->application_id == $application->id)
+                        selected
+                    @endif
+                >№{{ $application->id }} - {{ $application->name }} от {{ $application->created_at }}</option>
             @endforeach
         </select>
     </div>

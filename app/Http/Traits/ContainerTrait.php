@@ -690,7 +690,7 @@ trait ContainerTrait {
         ],
         '45' => [
             'id' => 'client_date_return',
-            'name' => 'Дата возврата ктк',
+            'name' => 'Дата сдачи клиентом',
             'search_type' => 'input',
             'width' => [
                 'all' => '150px',
@@ -704,6 +704,21 @@ trait ContainerTrait {
             ],
         ],
         '46' => [
+            'id' => 'supplier_date_return',
+            'name' => 'Дата сдачи поставщику',
+            'search_type' => 'input',
+            'width' => [
+                'all' => '180px',
+                'free' => null,
+                'main_info' => null,
+                'manual' => null,
+                'repair' => null,
+                'smgs' => null,
+                'svv' => null,
+                'kp' => null,
+            ],
+        ],
+        '47' => [
             'id' => 'client_place_of_delivery_city',
             'name' => 'Локация сдачи',
             'search_type' => 'select',
@@ -718,7 +733,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '47' => [
+        '48' => [
             'id' => 'client_days_using',
             'name' => 'Дней пользования',
             'search_type' => 'input',
@@ -733,7 +748,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '48' => [
+        '49' => [
             'id' => 'client_snp_total',
             'name' => 'СНП клиенту',
             'search_type' => 'input',
@@ -748,7 +763,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '49' => [
+        '50' => [
             'id' => 'client_repair_amount',
             'name' => 'Ремонт при возврате ктк',
             'search_type' => 'select',
@@ -763,7 +778,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '50' => [
+        '51' => [
             'id' => 'client_repair_status',
             'name' => 'Статус ремонта',
             'search_type' => 'select',
@@ -778,7 +793,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '51' => [
+        '52' => [
             'id' => 'client_repair_confirmation',
             'name' => 'Подтверждение ремонта клиентом',
             'search_type' => 'select',
@@ -793,7 +808,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '52' => [
+        '53' => [
             'id' => 'client_smgs',
             'name' => 'СМГС',
             'search_type' => 'select',
@@ -808,7 +823,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '53' => [
+        '54' => [
             'id' => 'client_manual',
             'name' => 'Инструкция',
             'search_type' => 'select',
@@ -823,7 +838,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '54' => [
+        '55' => [
             'id' => 'client_location_request',
             'name' => 'Локация запроса',
             'search_type' => 'input',
@@ -838,7 +853,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '55' => [
+        '56' => [
             'id' => 'client_date_manual_request',
             'name' => 'Дата запроса инструкции',
             'search_type' => 'input',
@@ -853,7 +868,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '56' => [
+        '57' => [
             'id' => 'client_return_act',
             'name' => 'Акт сдачи',
             'search_type' => 'select',
@@ -868,7 +883,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '57' => [
+        '58' => [
             'id' => 'own_date_buy',
             'name' => 'Дата покупки',
             'search_type' => 'input',
@@ -883,7 +898,7 @@ trait ContainerTrait {
                 'kp' => '5%',
             ],
         ],
-        '58' => [
+        '59' => [
             'id' => 'own_date_sell',
             'name' => 'Дата продажи',
             'search_type' => 'input',
@@ -898,7 +913,7 @@ trait ContainerTrait {
                 'kp' => '5%',
             ],
         ],
-        '59' => [
+        '60' => [
             'id' => 'own_sale_price',
             'name' => 'Сумма продажи',
             'search_type' => 'input',
@@ -913,7 +928,7 @@ trait ContainerTrait {
                 'kp' => '5%',
             ],
         ],
-        '60' => [
+        '61' => [
             'id' => 'own_buyer',
             'name' => 'Клиент',
             'search_type' => 'input',
@@ -928,7 +943,7 @@ trait ContainerTrait {
                 'kp' => '25%',
             ],
         ],
-        '61' => [
+        '62' => [
             'id' => 'processing',
             'name' => 'Редактируется',
             'search_type' => 'input',
@@ -943,7 +958,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '62' => [
+        '63' => [
             'id' => 'removed',
             'name' => 'Удален',
             'search_type' => 'input',
@@ -958,7 +973,7 @@ trait ContainerTrait {
                 'kp' => null,
             ],
         ],
-        '63' => [
+        '64' => [
             'id' => 'additional_info',
             'name' => 'Примечание',
             'search_type' => 'input',
@@ -1704,6 +1719,7 @@ trait ContainerTrait {
             'supplier_repair_in_rubles' => null,
             'supplier_repair_status' => null,
             'supplier_repair_confirmation' => null,
+            'supplier_date_return' => null,
             'client_counterparty_id' => null,
             'client_counterparty_name' => null,
             'client_application_id' => null,

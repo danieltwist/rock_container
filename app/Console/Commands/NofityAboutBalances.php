@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Events\NotificationReceived;
 use App\Events\TelegramNotify;
 use App\Models\BankAccountBalance;
+use App\Models\Invoice;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -63,7 +65,27 @@ class NofityAboutBalances extends Command
             $text = 'Состояние расчетных счетов: '. PHP_EOL;
 
             foreach ($companies as $company){
-                $text .= $company['name'].': '.$company['amount']. PHP_EOL;
+                $text .= $company['name'].': '.number_format($company['amount'], 2, '.', ' ').'р.'. PHP_EOL;
+            }
+
+            $safe_balance = null;
+
+            $settings = Setting::where('name', 'safe')->first()->value;
+            if(!is_null($settings)){
+                $settings = unserialize($settings);
+                $ingoing_invoices = Invoice::where('client_id', $settings['client_id'])
+                    ->whereIn('status', ['Оплачен', 'Частично оплачен'])
+                    ->where('created_at', '>=', $settings['balance_date'])
+                    ->sum('amount_income_date');
+                $outgoing_invoices = Invoice::where('supplier_id', $settings['supplier_id'])
+                    ->whereIn('status', ['Оплачен', 'Частично оплачен'])
+                    ->where('created_at', '>=', $settings['balance_date'])
+                    ->sum('amount_income_date');
+                $safe_balance = $settings['balance'] + $ingoing_invoices - $outgoing_invoices;
+            }
+
+            if(!is_null($safe_balance)){
+                $text .= 'Сейф: '. number_format($safe_balance, 2, '.', ' ').'р.';
             }
 
             $notify_group = User::whereHas('roles', function ($query) {

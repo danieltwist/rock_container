@@ -482,12 +482,12 @@
                                                     </select>
                                                 </div>
                                                 @if(!is_null($application->containers_removed))
-                                                    @if(in_array($role, ['director', 'super-admin']))
+                                                    @can('remove containers')
                                                         <a class="btn btn-danger" id="confirm_containers_remove"
                                                            data-application_id="{{ $application->id }}">
                                                             Подтвердить удаление
                                                         </a>
-                                                    @endif
+                                                    @endcan
                                                     <a class="btn btn-success" id="cancel_containers_remove"
                                                        data-application_id="{{ $application->id }}">
                                                         Восстановить

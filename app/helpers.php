@@ -384,4 +384,9 @@ if(!function_exists('can_edit_this_project')){
         return $status;
     }
 
+    function getApplicationName($id){
+        $application = \App\Models\Application::withTrashed()->find($id);
+        return optional($application)->name;
+    }
+
 }

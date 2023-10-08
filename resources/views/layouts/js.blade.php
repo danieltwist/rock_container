@@ -369,6 +369,30 @@
         }
     });
 
+    $(document).on('change', '.finance_direction', function() {
+        if ($(this).val() === 'Клиенту') {
+            $('.client_group').removeClass('d-none');
+            $('.client_select').prop('required', true);
+            $('.supplier_group').addClass('d-none');
+            $('.supplier_select').prop('required', false);
+            $('.supplier_group_agree_without_invoice').addClass('d-none');
+        }
+        else if ($(this).val() === 'Поставщику') {
+            $('.supplier_group').removeClass('d-none');
+            $('.supplier_select').prop('required', true);
+            $('.client_group').addClass('d-none');
+            $('.client_select').prop('required', false);
+            $('.supplier_group_agree_without_invoice').removeClass('d-none');
+        }
+        else {
+            $('.supplier_group').addClass('d-none');
+            $('.supplier_select').prop('required', false);
+            $('.client_group').addClass('d-none');
+            $('.client_select').prop('required', false);
+            $('.supplier_group_agree_without_invoice').addClass('d-none');
+        }
+    });
+
     $('#supplier_select').change(function () {
         if($(this).val() === '311'){
             $('#add_invoice_additional_info').prop('required', true);
@@ -1020,7 +1044,6 @@
     });
 
     document.addEventListener("livewire:load", () => {
-        console.log('load livewire');
         Livewire.hook('message.processed', (message, component) => {
             console.log('processed');
             $('.select2_livewire').select2();
@@ -1848,8 +1871,8 @@
         console.log(data);
     });
 
-    $('#application_containers').change(function () {
-        let containers_list = $(this).val();
+    function process_filled_containers(){
+        let containers_list = $('#application_containers').val();
         let containers = $('#containers_used').val();
         let application_type = $('#application_type option:selected').val();
         let application_id = urlpath[urlpath.length - 2];
@@ -1873,6 +1896,31 @@
                 console.log(textStatus);
             }
         });
+    }
+
+    $('#application_containers').change(function () {
+        process_filled_containers();
+    });
+
+    $(document).on('click', '.reuse_container', function () {
+        let container_id = $(this).data('container_id');
+        let application_id = $(this).data('application_id');
+        if (confirm("Вы уверены?")) {
+            $.ajax({
+                type: "POST",
+                url: "{{ route('reuse_container_with_return_date') }}",
+                data: {
+                    container_id: container_id,
+                    application_id: application_id
+                },
+                success: function (response) {
+                    process_filled_containers();
+                },
+                error: function (XMLHttprequest, textStatus, errorThrown) {
+                    console.log(textStatus);
+                }
+            });
+        }
     });
 
     $('#confirm_containers_remove').click(function () {

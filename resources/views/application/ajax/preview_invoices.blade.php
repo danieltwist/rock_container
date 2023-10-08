@@ -16,7 +16,20 @@
                 @if($invoice['currency'] != 'RUB')
                     {{ number_format($invoice['amount_in_currency'], 0, '.', ' ') }} {{ $invoice['currency'] }} /
                 @endif
-                {{ number_format($invoice['amount_in_rubles'], 0, '.', ' ') }}р.
+                {{ number_format($invoice['amount_in_rubles'], 2, '.', ' ') }}р.
+                <br>
+                <div class="icheck-primary icheck-inline">
+                    <input type="radio" id="currency_rub_{{ $key }}" name="currency_out[{{ $key }}]" {{ $invoice['currency'] == 'RUB' ? 'checked' : "" }} value="RUB"/>
+                    <label for="currency_rub_{{ $key }}">RUB</label>
+                </div>
+                <div class="icheck-primary icheck-inline">
+                    <input type="radio" id="currency_usd_{{ $key }}" name="currency_out[{{ $key }}]"  {{ $invoice['currency'] == 'USD' ? 'checked' : "" }} value="USD"/>
+                    <label for="currency_usd_{{ $key }}">USD</label>
+                </div>
+                <div class="icheck-primary icheck-inline">
+                    <input type="radio" id="currency_cny_{{ $key }}" name="currency_out[{{ $key }}]"  {{ $invoice['currency'] == 'CNY' ? 'checked' : "" }} value="CNY"/>
+                    <label for="currency_cny_{{ $key }}">CNY</label>
+                </div>
                 <br><br>
             </strong>
         @endforeach

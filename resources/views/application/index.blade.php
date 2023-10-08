@@ -78,13 +78,13 @@
                                         <th style="width: 15%">
                                             Условия
                                         </th>
-                                        <th style="width: 15%">
+                                        <th style="width: 13%">
                                             Контейнеры
                                         </th>
                                         <th style="width: 5%">
                                             Статус
                                         </th>
-                                        <th style="width: 20%">
+                                        <th style="width: 22%">
                                             {{ __('general.actions') }}
                                         </th>
                                     </tr>
