@@ -126,6 +126,7 @@ class ProjectExportController extends Controller
         $sheet = $spreadsheet->getActiveSheet();
         setlocale(LC_TIME, 'ru_RU');
 
+        $sheet->setCellValue('A1', config('app.company_name'));
         $sheet->setCellValue('B2', $range_text);
         $sheet->setCellValue('B3', $parameters['sorting_type']);
 
@@ -190,9 +191,9 @@ class ProjectExportController extends Controller
             if(!is_null(optional($project->manager)->name))
                 $sheet->getCell('I'.$i)->getHyperlink()->setUrl(config('app.url').'user/'.$project->manager_id.'/statistic');
 
-            $sheet->setCellValue('J'.$i, $start[0]);
-            $sheet->setCellValue('K'.$i, $finish[0]);
-            $sheet->setCellValue('L'.$i, $paid[0]);
+            $sheet->setCellValue('J'.$i, $start[0] != '' ? \Carbon\Carbon::parse($start[0])->format('d.m.Y') : '');
+            $sheet->setCellValue('K'.$i, $finish[0] != '' ? \Carbon\Carbon::parse($finish[0])->format('d.m.Y') : '');
+            $sheet->setCellValue('L'.$i, $paid[0] != '' ? \Carbon\Carbon::parse($paid[0])->format('d.m.Y') : '');
 
             $sheet->setCellValue('M'.$i, $company);
             if($company != '')

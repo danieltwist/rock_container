@@ -172,6 +172,7 @@ class InvoiceExportController extends Controller
 
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("storage/templates/invoice_export_with_parameters_template.xlsx");
         $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', config('app.company_name'));
 
         $sheet->setCellValue('B2', $dates);
         $sheet->setCellValue('B3', $sorting_type);
@@ -350,6 +351,7 @@ class InvoiceExportController extends Controller
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load("storage/templates/invoice_export_with_parameters_losses_template.xlsx");
         $sheet = $spreadsheet->getActiveSheet();
 
+        $sheet->setCellValue('A1', config('app.company_name'));
         $sheet->setCellValue('B2', 'Все');
         $sheet->setCellValue('B3', $parameters['sorting_type']);
 

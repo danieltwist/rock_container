@@ -106,7 +106,8 @@ class UserController extends Controller
 
         $user->update([
             'name' => $request->name,
-            'email' => $request->email
+            'email' => $request->email,
+            'birthday' => $request->birthday
         ]);
 
         if ($request->type == 'change_password'){
@@ -132,6 +133,7 @@ class UserController extends Controller
                 'notification_channel' => $request->notification_channel
             ]);
         }
+
 
         if($update_success)
             return redirect()->back()->withSuccess(__('user.updated_successfully'));

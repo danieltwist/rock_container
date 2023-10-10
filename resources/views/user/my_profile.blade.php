@@ -44,6 +44,11 @@
                                     <input type="password" class="form-control" name="password" placeholder="{{ __('user.password') }}">
                                 </div>
                                 <div class="form-group">
+                                    <label for="name">{{ __('user.birthday') }}</label>
+                                    <input type="text" class="form-control date_input" name="birthday" placeholder="{{ __('user.birthday') }}"
+                                           value="{{ !is_null($user->birthday) ? $user->birthday->format('d.m.Y') : '' }}">
+                                </div>
+                                <div class="form-group">
                                     <label>{{ __('user.role') }}</label>
                                     <input type="text" class="form-control" value="{{ $user->role }}" disabled>
                                 </div>

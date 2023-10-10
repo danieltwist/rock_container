@@ -1,9 +1,9 @@
-Стоимость: {{ $application->price_amount }}{{ $application->price_currency }}<br>
+Стоимость: <strong>{{ $application->price_amount }}{{ $application->price_currency }}</strong><br>
 @if(!is_null($application->grace_period))
-    Льготный период: {{ $application->grace_period }} дней<br>
+    Льготный период: <strong>{{ $application->grace_period }} дней</strong><br>
 @endif
 @if(!is_null($application->snp_after_range))
-    СНП: {{ $application->snp_after_range }}{{ $application->snp_currency }}
+    СНП: <strong>{{ $application->snp_after_range }}{{ $application->snp_currency }}</strong>
     @if(!is_null($application->snp_range))
         <br>
         <button class="btn btn-primary btn-sm mt-2" type="button"
@@ -16,9 +16,11 @@
         </button>
         <div class="collapse mt-2" id="collapseSNPconditions{{ $application->id }}">
             <div class="card card-body">
-                @foreach($application->snp_range as $range)
-                    {{ $range['range'] }} день - {{ $range['price'] }}{{ $application->snp_currency }}<br>
-                @endforeach
+                <strong>
+                    @foreach($application->snp_range as $range)
+                        {{ $range['range'] }} день - {{ $range['price'] }}{{ $application->snp_currency }}<br>
+                    @endforeach
+                </strong>
             </div>
         </div>
     @endif

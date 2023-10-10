@@ -29,7 +29,8 @@ class User extends Authenticatable implements Auditable
         'telegram_login',
         'telegram_chat_id',
         'notification_channel',
-        'avatar'
+        'avatar',
+        'birthday'
     ];
 
     /**
