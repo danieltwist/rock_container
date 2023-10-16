@@ -50,3 +50,14 @@
         @endif
     @endif
 @endif
+@if($invoice->status == 'Частично оплачен')
+    <br>
+    <small>
+        Остаток:
+        @if($invoice->currency == 'RUB')
+            {{ number_format($invoice->amount - $invoice->amount_income_date, 2, '.', ' ') }}р.
+        @else
+            {{ number_format($invoice->amount_in_currency - $invoice->amount_in_currency_income_date, 2, '.', ' ') }}{{ $invoice->currency }}
+        @endif
+    </small>
+@endif

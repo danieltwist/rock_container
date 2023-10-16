@@ -362,10 +362,12 @@
                                         </div>
                                     </div>
                                     <div class="mt-2">
-                                        <a class="btn bg-success mt-2" href="{{ route('export_project', $project['id']) }}">
-                                            <i class="fas fa-file-excel"></i>
-                                            {{ __('general.export_to_excel') }}
-                                        </a>
+                                        @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                                            <a class="btn bg-success mt-2" href="{{ route('export_project', $project['id']) }}">
+                                                <i class="fas fa-file-excel"></i>
+                                                {{ __('general.export_to_excel') }}
+                                            </a>
+                                        @endif
                                         <a class="btn bg-primary mt-2"
                                            href="{{ route('recalculate_project_finance', $project['id']) }}">
                                             <i class="fas fa-calculator"></i>

@@ -3,11 +3,13 @@
     </i>
     {{ __('general.go') }}
 </a>
-<a class="btn btn-app bg-success" href="{{ route('export_project', $project['id']) }}">
-    <i class="fas fa-file-excel"></i>
-    </i>
-    {{ __('general.export') }}
-</a>
+@if(in_array($role, ['director', 'accountant', 'super-admin']))
+    <a class="btn btn-app bg-success" href="{{ route('export_project', $project['id']) }}">
+        <i class="fas fa-file-excel"></i>
+        </i>
+        {{ __('general.export') }}
+    </a>
+@endif
 @can ('edit projects')
     @if(can_edit_this_project($project->id))
         <a class="btn btn-app bg-indigo" href="{{ route('project.edit', $project['id']) }}">
