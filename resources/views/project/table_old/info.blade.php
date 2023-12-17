@@ -1,17 +1,17 @@
 @if(!is_null($project->client))
-    <a class="text-dark" href="{{ route('client.show', $project->client->id) }}">{{ __('general.client') }}: {{ $project->client->name }}</a>
+    <a class="text-dark" href="{{ route('client.show', $project->client->id) }}">{{ __('general.client') }}: {{ $project->client->name }}</a><br>
 @else
-    {{ __('general.client_was_deleted') }}<br>
+    {{ __('general.client_was_deleted') }}<br><br>
 @endif
 @if($project->additional_clients != '')
-    <a class="cursor-pointer text-dark"
+    <button class="btn btn-primary btn-sm mt-2" type="button"
             data-toggle="collapse"
             data-target="#collapseAdditionalClients{{$project->id}}"
             aria-expanded="false"
             aria-controls="collapseExample">
         <i class="fa fa-angle-down"></i>
         {{ __('project.additional_clients') }}
-    </a>
+    </button>
     <div class="collapse mt-2" id="collapseAdditionalClients{{$project->id}}">
         <div class="card card-body">
             <div class="text-muted">

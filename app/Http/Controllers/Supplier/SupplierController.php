@@ -300,10 +300,16 @@ class SupplierController extends Controller
         return redirect()->back()->withSuccess(__('supplier.was_deleted'));
     }
 
-
     public function deleteRow($id){
 
-        Supplier::findOrFail($id)->delete();
+        $supplier = Supplier::find($id);
+
+        if(!is_null($supplier)){
+            $supplier->delete();
+        }
+        else {
+            Supplier::withTrashed()->find($id)->forceDelete();
+        }
 
         return response()->json([
             'bg-class' => 'bg-success',

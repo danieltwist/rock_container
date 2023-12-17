@@ -307,10 +307,17 @@ class ClientController extends Controller
         return redirect()->back()->withSuccess(__('client.was_deleted'));
     }
 
-
     public function deleteRow($id){
 
-        Client::findOrFail($id)->delete();
+
+        $client = Client::find($id);
+
+        if(!is_null($client)){
+            $client->delete();
+        }
+        else {
+            Client::withTrashed()->find($id)->forceDelete();
+        }
 
         return response()->json([
             'bg-class' => 'bg-success',

@@ -718,6 +718,7 @@ class ReportController extends Controller
         $output_array = [];
 
         $i = 0;
+
         foreach ($expense_types as $key => $type){
             $output_array[$i]['type'] = $type['name'];
             $output_array[$i]['category'] = $type['category'];
@@ -734,7 +735,7 @@ class ReportController extends Controller
             $output_array[$i]['month_10'] = 0;
             $output_array[$i]['month_11'] = 0;
             $output_array[$i]['month_12'] = 0;
-            $output_array[$i]['month_13'] = 0;
+
             if(array_key_last($expense_types) > $key){
                 if($expense_types[$key+1]['category'] != $output_array[$i]['category']){
                     $i++;
@@ -753,7 +754,6 @@ class ReportController extends Controller
                     $output_array[$i]['month_10'] = 0;
                     $output_array[$i]['month_11'] = 0;
                     $output_array[$i]['month_12'] = 0;
-                    $output_array[$i]['month_13'] = 0;
                     $output_array[$i]['bold'] = true;
                 }
             }
@@ -774,21 +774,16 @@ class ReportController extends Controller
                 $output_array[$i]['month_10'] = 0;
                 $output_array[$i]['month_11'] = 0;
                 $output_array[$i]['month_12'] = 0;
-                $output_array[$i]['month_13'] = 0;
                 $output_array[$i]['bold'] = true;
             }
             $i++;
         }
 
-        if($request->report_type == 'this_year'){
-            $start_month = Carbon::today()->startOfYear()->subMonth();
-        }
-        else {
-            $start_month = Carbon::today()->startOfYear()->subYear()->subMonth();
-        }
+        $start_month = $request->report_type == 'this_year' ? Carbon::today()->startOfYear() : Carbon::today()->startOfYear()->subYear();
         $end_month = $start_month->copy()->endOfMonth();
 
-        for ($i=1; $i<=13; $i++){
+
+        for ($i=1; $i<=12; $i++){
             $this_month_invoices = Invoice::query()->whereBetween('created_at', [$start_month, $end_month])->get();
             foreach ($output_array as $key => $value) {
                 foreach ($this_month_invoices as $invoice){
@@ -831,12 +826,11 @@ class ReportController extends Controller
             'month_10' => 0,
             'month_11' => 0,
             'month_12' => 0,
-            'month_13' => 0,
         ];
         foreach ($output_array as $key => $row){
             $sheet->setCellValue('A'.$i, $row['category']);
             $sheet->setCellValue('B'.$i, $row['type']);
-            $sheet->setCellValue('C'.$i, round($row['type_total']/13, 2));
+            $sheet->setCellValue('C'.$i, round($row['type_total']/12, 2));
             $sheet->setCellValue('D'.$i, $row['type_total']);
             $sheet->setCellValue('E'.$i, $row['month_1']);
             $sheet->setCellValue('F'.$i, $row['month_2']);
@@ -850,9 +844,8 @@ class ReportController extends Controller
             $sheet->setCellValue('N'.$i, $row['month_10']);
             $sheet->setCellValue('O'.$i, $row['month_11']);
             $sheet->setCellValue('P'.$i, $row['month_12']);
-            $sheet->setCellValue('Q'.$i, $row['month_12']);
             if(isset($row['bold'])){
-                $months_total['average'] += round($row['type_total']/13, 2);
+                $months_total['average'] += round($row['type_total']/12, 2);
                 $months_total['total'] += $row['type_total'];
                 $months_total['month_1'] += $row['month_1'];
                 $months_total['month_2'] += $row['month_2'];
@@ -866,7 +859,6 @@ class ReportController extends Controller
                 $months_total['month_10'] += $row['month_10'];
                 $months_total['month_11'] += $row['month_11'];
                 $months_total['month_12'] += $row['month_12'];
-                $months_total['month_13'] += $row['month_13'];
                 $styleArray = [
                     'font' => [
                         'bold' => true,
@@ -877,7 +869,7 @@ class ReportController extends Controller
                         ],
                     ],
                 ];
-                $spreadsheet->getActiveSheet()->getStyle('A'.$i.':Q'.$i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('A'.$i.':P'.$i)->applyFromArray($styleArray);
             }
             $i++;
             if($key == array_key_last($output_array)) {
@@ -896,7 +888,6 @@ class ReportController extends Controller
                 $sheet->setCellValue('N'.$i, $months_total['month_10']);
                 $sheet->setCellValue('O'.$i, $months_total['month_11']);
                 $sheet->setCellValue('P'.$i, $months_total['month_12']);
-                $sheet->setCellValue('Q'.$i, $months_total['month_12']);
                 $styleArray = [
                     'font' => [
                         'bold' => true,
@@ -918,7 +909,7 @@ class ReportController extends Controller
                         ],
                     ],
                 ];
-                $spreadsheet->getActiveSheet()->getStyle('A'.$i.':Q'.$i)->applyFromArray($styleArray);
+                $spreadsheet->getActiveSheet()->getStyle('A'.$i.':P'.$i)->applyFromArray($styleArray);
             }
         }
 

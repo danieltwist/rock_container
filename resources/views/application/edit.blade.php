@@ -480,6 +480,7 @@
                                                             >{{ $container }}</option>
                                                         @endforeach
                                                     </select>
+                                                    <span id="containers_remove_confirmation_info" class="d-none">После удаления требуется подтверждение сотрудника с соответствующим доступом</span>
                                                 </div>
                                                 @if(!is_null($application->containers_removed))
                                                     @can('remove containers')

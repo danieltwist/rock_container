@@ -14,7 +14,7 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary"
-                        data-action='{"hide_modal":{"id": "create_task_modal"}}'>
+                        data-action='{"hide_modal":{"id": "create_task_modal"},"redirect_url":{"need_redirect": "true"}}'>
                     {{ __('task.create_task') }}
                 </button>
             </div>

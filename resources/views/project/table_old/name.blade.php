@@ -14,9 +14,12 @@
         {{ __('project.created') }}: <a class="text-dark"
                                         href="{{ route('get_user_statistic', optional($project->user)->id) }}">{{ optional($project->user)->name}}</a> {{ $project->created_at->format('d.m.Y') }}
     @endif
+    @if(!is_null(optional($project->manager)->name) || !is_null(optional($project->logist)->name))
+        <br>
+    @endif
     @if($project->manager_id != '')
         @if(!is_null(optional($project->manager)->name))
-            / {{ __('project.manager') }}: <a class="text-dark"
+            {{ __('project.manager') }}: <a class="text-dark"
                                               href="{{ route('get_user_statistic', optional($project->manager)->id) }}">{{ optional($project->manager)->name}}</a>
         @endif
     @endif
@@ -27,6 +30,16 @@
 {{--        @endif--}}
 {{--    @endif--}}
 </small>
+<br>
+<br>
+<small>{{ __('project.project_finished_percent') }} {{ $project->complete_level }}%</small>
+<div class="progress">
+    <div class="progress-bar bg-primary progress-bar-striped" role="progressbar"
+         aria-valuenow="{{ $project->complete_level }}" aria-valuemin="0" aria-valuemax="100"
+         style="width: {{ $project->complete_level }}%">
+        <span class="sr-only">{{ $project->complete_level }}% {{ __('project.project_finished_percent_simple') }}</span>
+    </div>
+</div>
 <div class="mt-2">
     @if($project->active == '1')
         @if($project->status == 'Черновик')

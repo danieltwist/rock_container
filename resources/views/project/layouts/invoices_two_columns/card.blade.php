@@ -11,9 +11,9 @@
             @elseif(!is_null($invoice->losses_confirmed))
                 {{ __('invoice.losses') }} {{ $invoice->losses_amount }}р.
             @else
-                {{$invoice['direction']}}
+                {{$invoice['direction']}} №{{ $invoice->id }}
             @endif
-            {{ __('general.from') }} {{ $invoice['created_at'] }} {{ __('general.to') }}
+            {{ __('general.from') }} {{ $invoice['created_at']->format('d.m.Y') }} {{ __('general.to') }}
             @if ($invoice->currency != 'RUB')
                 {{ number_format($invoice->amount_in_currency, 0, '.', ' ') }} {{ $invoice->currency }} ({{ $invoice->rate_out_date }})
             @endif

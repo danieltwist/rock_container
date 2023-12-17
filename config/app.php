@@ -19,6 +19,8 @@ return [
 
     'ru_name' => env('APP_RU_NAME', 'Рок контейнер - панель управления'),
 
+    'company_name' => env('COMPANY_NAME', 'ООО Рок контейнер'),
+
     'prefix_view' => env('APP_PREFIX_VIEW', 'rc_'),
 
     /*

@@ -724,14 +724,14 @@ class ApplicationController extends Controller
         $can_reuse = null;
         $application_id = $request->application_id;
 
+        $containers = [];
+
         foreach ($probable_delimiters as $delimiter){
             if(strpos($request->containers_list, $delimiter) !== false ){
                 $used_delimiter = $delimiter;
-                break;
             }
         }
 
-        $containers = [];
 
         if(mb_strlen(preg_replace("/[^,.0-9A-Z]/",'', $request->containers_list)) == 11){
             $container_name = preg_replace("/[^,.0-9A-Z]/",'', $request->containers_list);
@@ -757,7 +757,6 @@ class ApplicationController extends Controller
         }
 
         foreach ($containers as $container_name){
-
             if($this->checkContainerFormat($container_name)){
                 if(in_array($request->application_type, ['Клиент', 'Подсыл'])){
 
@@ -868,90 +867,91 @@ class ApplicationController extends Controller
     public function confirmContainersRemove(Request $request){
         $application = Application::find($request->application_id);
         $containers_removed = $application->containers_removed;
-
         if(!is_null($containers_removed)){
-            foreach ($containers_removed as $container){
-                $container = Container::where('name', $container)->first();
-                if($application->type == 'Подсыл'){
-                    $container->update([
-                        'relocation_counterparty_id' => null,
-                        'relocation_counterparty_name' => null,
-                        'relocation_counterparty_type' => null,
-                        'relocation_application_id' => null,
-                        'relocation_application_name' => null,
-                        'relocation_price_amount' => null,
-                        'relocation_price_currency' => null,
-                        'relocation_price_in_rubles' => null,
-                        'relocation_date_send' => null,
-                        'relocation_date_arrival_to_terminal' => null,
-                        'relocation_delivery_time_days' => null,
-                        'relocation_snp' => null,
-                        'relocation_snp_range' => null,
-                        'relocation_snp_after_range' => null,
-                        'relocation_snp_currency' => null,
-                        'relocation_snp_total' => null,
-                        'relocation_place_of_delivery_city' => null,
-                        'relocation_place_of_delivery_terminal' => null,
-                        'relocation_repair_amount' => null,
-                        'relocation_repair_currency' => null,
-                        'relocation_repair_in_rubles' => null,
-                        'relocation_repair_status' => null,
-                        'relocation_repair_confirmation' => null,
-                        'removed' => null,
-                    ]);
-                }
-                if($application->type == 'Клиент'){
-                    $container->update([
-                        'client_counterparty_id' => null,
-                        'client_counterparty_name' => null,
-                        'client_application_id' => null,
-                        'client_application_name' => null,
-                        'client_price_in_rubles' => null,
-                        'client_grace_period' => null,
-                        'client_snp_range' => null,
-                        'client_snp_after_range' => null,
-                        'client_snp_currency' => null,
-                        'client_snp_in_rubles' => null,
-                        'client_date_get' => null,
-                        'client_date_return' => null,
-                        'client_place_of_delivery_country' => null,
-                        'client_place_of_delivery_city' => null,
-                        'client_days_using' => null,
-                        'client_snp_total' => null,
-                        'client_repair_amount' => null,
-                        'client_repair_currency' => null,
-                        'client_repair_in_rubles' => null,
-                        'client_repair_status' => null,
-                        'client_repair_confirmation' => null,
-                        'client_smgs' => null,
-                        'client_manual' => null,
-                        'client_location_request' => null,
-                        'client_date_manual_request' => null,
-                        'client_return_act' => null,
-                        'client_price_amount' => null,
-                        'client_price_currency' => null,
-                        'removed' => null,
-                    ]);
-                }
-                if($application->type == 'Поставщик'){
-                    $container->delete();
-                }
-                if($application->type == 'Покупка'){
-                    $this->saveContainerUsageHistory($container, $application->id);
-                    $container->update([
-                        'archive' => 'yes'
-                    ]);
-                }
-                if($application->type == 'Продажа'){
-                    $this->saveContainerUsageHistory($container, $application->id);
-                    $container->update([
-                        'archive' => 'yes'
-                    ]);
+            foreach ($containers_removed as $container_name){
+                $container = Container::where('name', $container_name)->first();
+                if(!is_null($container)){
+                    if($application->type == 'Подсыл'){
+                        $container->update([
+                            'relocation_counterparty_id' => null,
+                            'relocation_counterparty_name' => null,
+                            'relocation_counterparty_type' => null,
+                            'relocation_application_id' => null,
+                            'relocation_application_name' => null,
+                            'relocation_price_amount' => null,
+                            'relocation_price_currency' => null,
+                            'relocation_price_in_rubles' => null,
+                            'relocation_date_send' => null,
+                            'relocation_date_arrival_to_terminal' => null,
+                            'relocation_delivery_time_days' => null,
+                            'relocation_snp' => null,
+                            'relocation_snp_range' => null,
+                            'relocation_snp_after_range' => null,
+                            'relocation_snp_currency' => null,
+                            'relocation_snp_total' => null,
+                            'relocation_place_of_delivery_city' => null,
+                            'relocation_place_of_delivery_terminal' => null,
+                            'relocation_repair_amount' => null,
+                            'relocation_repair_currency' => null,
+                            'relocation_repair_in_rubles' => null,
+                            'relocation_repair_status' => null,
+                            'relocation_repair_confirmation' => null,
+                            'removed' => null,
+                        ]);
+                    }
+                    if($application->type == 'Клиент'){
+                        $container->update([
+                            'client_counterparty_id' => null,
+                            'client_counterparty_name' => null,
+                            'client_application_id' => null,
+                            'client_application_name' => null,
+                            'client_price_in_rubles' => null,
+                            'client_grace_period' => null,
+                            'client_snp_range' => null,
+                            'client_snp_after_range' => null,
+                            'client_snp_currency' => null,
+                            'client_snp_in_rubles' => null,
+                            'client_date_get' => null,
+                            'client_date_return' => null,
+                            'client_place_of_delivery_country' => null,
+                            'client_place_of_delivery_city' => null,
+                            'client_days_using' => null,
+                            'client_snp_total' => null,
+                            'client_repair_amount' => null,
+                            'client_repair_currency' => null,
+                            'client_repair_in_rubles' => null,
+                            'client_repair_status' => null,
+                            'client_repair_confirmation' => null,
+                            'client_smgs' => null,
+                            'client_manual' => null,
+                            'client_location_request' => null,
+                            'client_date_manual_request' => null,
+                            'client_return_act' => null,
+                            'client_price_amount' => null,
+                            'client_price_currency' => null,
+                            'removed' => null,
+                        ]);
+                    }
+                    if($application->type == 'Поставщик'){
+                        $container->delete();
+                    }
+                    if($application->type == 'Покупка'){
+                        $this->saveContainerUsageHistory($container, $application->id);
+                        $container->update([
+                            'archive' => 'yes'
+                        ]);
+                    }
+                    if($application->type == 'Продажа'){
+                        $this->saveContainerUsageHistory($container, $application->id);
+                        $container->update([
+                            'archive' => 'yes'
+                        ]);
+                    }
                 }
             }
         }
-
-        $application->containers = $request->containers;
+        $containers = array_diff($application->containers, $containers_removed);
+        $application->containers = $containers;
         $application->containers_removed = null;
         $application->removed_by = null;
 
@@ -960,7 +960,9 @@ class ApplicationController extends Controller
         return response()->json([
             'bg-class' => 'bg-success',
             'from' => 'Система',
-            'message' => 'Удаление успешно подтверждено'
+            'message' => 'Удаление успешно подтверждено',
+            'containers' => $containers,
+            'url' => route('application.show', $application->id)
         ]);
     }
 
@@ -968,20 +970,20 @@ class ApplicationController extends Controller
         $application = Application::find($request->application_id);
         $containers_removed = $application->containers_removed;
         $containers = $application->containers;
+//        if(!is_null($containers)){
+//            $containers_after_confirm = array_merge($containers, $containers_removed);
+//        }
+//        else {
+//            $containers_after_confirm = $application->containers_removed;
+//        }
 
-        if(!is_null($containers)){
-            $containers_after_confirm = array_merge($containers, $containers_removed);
-        }
-        else {
-            $containers_after_confirm = $application->containers_removed;
-        }
         $application->update([
-            'containers' => $containers_after_confirm,
+            //'containers' => $containers_after_confirm,
             'containers_removed' => null,
             'removed_by' => null
         ]);
 
-        foreach ($containers_after_confirm as $container_name){
+        foreach ($containers as $container_name){
             $container = Container::where('name', $container_name)->first();
             if(!is_null($container)){
                 if(in_array($container_name, $containers_removed)){
@@ -995,7 +997,8 @@ class ApplicationController extends Controller
         return response()->json([
             'bg-class' => 'bg-success',
             'from' => 'Система',
-            'message' => 'Контейнеры были успешно восстановлены'
+            'message' => 'Контейнеры были успешно восстановлены',
+            'url' => route('application.show', $application->id)
         ]);
     }
 
@@ -1856,23 +1859,31 @@ class ApplicationController extends Controller
 
     public function deleteRow($id){
 
-        $application = Application::findOrFail($id);
-        $application_name = $application->name;
-        if(!is_null($application->invoices)){
-            foreach ($application->invoices as $invoice){
-                $invoice->delete();
+        $application = Application::find($id);
+
+        if(!is_null($application)){
+            $application_name = $application->name;
+            if(!is_null($application->invoices)){
+                foreach ($application->invoices as $invoice){
+                    $invoice->delete();
+                }
             }
-        }
-        if($application->type == 'Поставщик' && !is_null($application->containers)){
-            foreach ($application->containers as $container_name){
-                $container = Container::where('name', $container_name)->first();
-                $this->saveContainerUsageHistory($container, $application->id);
-                $container->update([
-                    'archive' => 'yes'
-                ]);
+            if($application->type == 'Поставщик' && !is_null($application->containers)){
+                foreach ($application->containers as $container_name){
+                    $container = Container::where('name', $container_name)->first();
+                    $this->saveContainerUsageHistory($container, $application->id);
+                    $container->update([
+                        'archive' => 'yes'
+                    ]);
+                }
             }
+            $application->delete();
         }
-        $application->delete();
+        else {
+            $application = Application::withTrashed()->find($id);
+            $application_name = $application->name;
+            $application->forceDelete();
+        }
 
         return response()->json([
             'bg-class' => 'bg-success',
@@ -2086,29 +2097,31 @@ class ApplicationController extends Controller
         if(!is_null($application->containers)){
             foreach ($application->containers as $container_name){
                 $container = Container::where('name', $container_name)->first();
-                if(is_null($container->archive)){
-                    if($application->type == 'Поставщик'){
-                        if(!is_null($container->relocation_application_id)){
-                            $relocation_apps [] = $container->relocation_application_id;
+                if(!is_null($container)){
+                    if(is_null($container->archive)){
+                        if($application->type == 'Поставщик'){
+                            if(!is_null($container->relocation_application_id)){
+                                $relocation_apps [] = $container->relocation_application_id;
+                            }
+                            if(!is_null($container->client_application_id)){
+                                $client_apps [] = $container->client_application_id;
+                            }
                         }
-                        if(!is_null($container->client_application_id)){
-                            $client_apps [] = $container->client_application_id;
+                        if($application->type == 'Подсыл'){
+                            if(!is_null($container->supplier_application_id)){
+                                $supplier_apps [] = $container->supplier_application_id;
+                            }
+                            if(!is_null($container->client_application_id)){
+                                $client_apps [] = $container->client_application_id;
+                            }
                         }
-                    }
-                    if($application->type == 'Подсыл'){
-                        if(!is_null($container->supplier_application_id)){
-                            $supplier_apps [] = $container->supplier_application_id;
-                        }
-                        if(!is_null($container->client_application_id)){
-                            $client_apps [] = $container->client_application_id;
-                        }
-                    }
-                    if($application->type == 'Клиент'){
-                        if(!is_null($container->supplier_application_id)){
-                            $supplier_apps [] = $container->supplier_application_id;
-                        }
-                        if(!is_null($container->relocation_application_id)){
-                            $relocation_apps [] = $container->relocation_application_id;
+                        if($application->type == 'Клиент'){
+                            if(!is_null($container->supplier_application_id)){
+                                $supplier_apps [] = $container->supplier_application_id;
+                            }
+                            if(!is_null($container->relocation_application_id)){
+                                $relocation_apps [] = $container->relocation_application_id;
+                            }
                         }
                     }
                 }

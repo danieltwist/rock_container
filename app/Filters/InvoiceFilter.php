@@ -199,7 +199,9 @@ class InvoiceFilter extends QueryFilter
         }
 
         elseif($value == 'my'){
-            return $this->builder->where('user_add', auth()->user()->name);
+            return $this->builder->where(function ($query) {
+                $query->where('user_id', auth()->user()->id)->orWhere('user_add', auth()->user()->name);
+            });
         }
 
         else return null;

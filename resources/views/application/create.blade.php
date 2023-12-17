@@ -230,8 +230,7 @@
                                         <div class="form-group">
                                             <label>Вставьте список контейнеров</label>
                                             <textarea class="form-control" rows="10" id="application_containers"
-                                                      placeholder="Список контейнеров"
-                                                      oninput="this.value = this.value.toUpperCase()"></textarea>
+                                                      placeholder="Список контейнеров"></textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-8" id="dynamic_containers_div"></div>

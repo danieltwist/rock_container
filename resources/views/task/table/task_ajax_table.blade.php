@@ -13,7 +13,7 @@
         <th>
             {{ __('general.status') }}
         </th>
-        <th style="width: 20%">
+        <th style="width: 25%">
             {{ __('general.actions') }}
         </th>
     </tr>

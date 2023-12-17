@@ -57,10 +57,13 @@
         @if($invoice->project)
             <a href="{{ route('project.show', optional($invoice->project)->id) }}">{{ optional($invoice->project)->name }}</a>
             {{ $invoice->block_id!='' ? ' / '.$invoice->block->name : '' }}
-            <br>
         @else
             {{ __('general.deleted') }}<br>
         @endif
+        @if(!is_null($invoice->application_id))
+            / <a href="{{ route('application.show', $invoice->application_id) }}">Заявка {{ optional($invoice->application)->name }}</a>
+        @endif
+        <br>
         @if ($invoice->direction=='Расход')
             @if(!is_null($invoice->block))
                 <b>{{ __('general.stage') }}:</b> {{ $invoice->block->name }}<br>

@@ -22,8 +22,10 @@
                     <div class="card card-default">
                         <div class="card-header">
                             <h3 class="card-title">Список заявок</h3>
+                            <div id="loading_spinner"></div>
                         </div>
                         <div class="card-body">
+                            <div id="containers_count"></div>
                             <div class="btn-group">
                                 <button type="button" class="btn btn-default btn-sm applications_filters"
                                         data-filter_type="type"

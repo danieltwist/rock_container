@@ -219,7 +219,32 @@
             type: "GET",
             url: APP_URL + "/invoice/edit_invoice_by_id/" + id,
             success: function (response) {
-                $('#edit_invoice_info').html(response);
+                $('#edit_invoice_info').html(response.info);
+                $('#edit_invoice_payments_history').html(response.payments_history);
+                setTimeout(function(){
+                    $('.xedit').editable({
+                        mode: 'inline',
+                        url: '{{url("xeditable/update")}}',
+                        title: '{{ __('general.update_') }}',
+                        emptytext: '{{ __('general.empty') }}',
+                        params: function(params) {
+                            params.model = $(this).data('model');
+                            params.invoice_id = $(this).data('invoice_id');
+                            return params;
+                        },
+                        success: function(response) {
+                            if(!response.success){
+                                $(document).Toasts('create', {
+                                    autohide: true,
+                                    delay: 3000,
+                                    class: 'bg-danger',
+                                    title: 'Ошибка',
+                                    body: response.error
+                                });
+                            }
+                        }
+                    });
+                }, 1000);
                 $(".digits_only").inputmask('9{1,}');
                 $(".rate_input").inputmask(
                     "decimal", {
@@ -777,7 +802,7 @@
 
     });
 
-    jQuery(document).on('keyup', '#invoice_amount_in_currency', function () {
+    jQuery(document).on('keyup', '#invoice_amount_in_currency, #invoice_rate', function () {
         price = $('#invoice_amount_in_currency').val();
         rate = $('#invoice_rate').val();
 
@@ -1899,7 +1924,17 @@
     }
 
     $('#application_containers').change(function () {
+        const containers = this.value.replace(/[^a-zA-Z0-9]+/g,'');
+        $(this).val(containers.replace(/(.{11})/g, "$&" + ", ").slice(0, -2));
         process_filled_containers();
+    });
+
+    $('#application_containers').on('input', function () {
+        this.value = this.value.toUpperCase();
+    });
+
+    $('#containers_removed').change(function (){
+       $('#containers_remove_confirmation_info').removeClass('d-none');
     });
 
     $(document).on('click', '.reuse_container', function () {
@@ -1925,28 +1960,28 @@
 
     $('#confirm_containers_remove').click(function () {
         let application_id = $(this).data('application_id');
-        let containers_removed = $('#containers_removed').val();
-        let containers = $('#containers').val();
-        containers.forEach((item) => {
-            if(containers_removed.includes(item)){
-                let index = containers_removed.indexOf(item);
-                if (index !== -1) {
-                    containers.splice(index, 1);
-                    $("#containers option[value="+item+"]").remove();
-                }
-            }
-        });
-        console.log($("#containers").val());
-        $('#containers_used').val(containers.join(', '));
+        // let containers_removed = $('#containers_removed').val();
+        // let containers = $('#containers').val();
+        // containers.forEach((item) => {
+        //     if(containers_removed.includes(item)){
+        //         let index = containers_removed.indexOf(item);
+        //         if (index !== -1) {
+        //             containers.splice(index, 1);
+        //             $("#containers option[value="+item+"]").remove();
+        //         }
+        //     }
+        // });
+        // console.log($("#containers").val());
+        // $('#containers_used').val(containers.join(', '));
         $.ajax({
             type: "POST",
             url: "{{ route('confirm_containers_remove') }}",
             data: {
                 application_id: application_id,
-                containers: containers
             },
             success: function (response) {
                 $('#containers_removed').val([]);
+                $('#containers_used').val(Object.values(response.containers));
                 $(document).Toasts('create', {
                     autohide: true,
                     delay: 3000,
@@ -1955,6 +1990,35 @@
                     body: response['message']
                 });
                 $('#removed_containers_div').addClass('d-none');
+                window.location.assign(response.url);
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    });
+
+    $(document).on('click', '#cancel_containers_remove', function () {
+        let application_id = $(this).data('application_id');
+
+        $('#containers_removed').val('').change();
+        $.ajax({
+            type: "POST",
+            url: "{{ route('cancel_containers_remove') }}",
+            data: {
+                application_id: application_id,
+            },
+            success: function (response) {
+                $('#containers_removed').val('');
+                $(document).Toasts('create', {
+                    autohide: true,
+                    delay: 3000,
+                    class: response['bg-class'],
+                    title: 'Уведомление от ' + response['from'],
+                    body: response['message']
+                });
+                $('#removed_containers_div').addClass('d-none');
+                window.location.assign(response.url);
             },
             error: function (XMLHttprequest, textStatus, errorThrown) {
                 console.log(textStatus);
@@ -2014,33 +2078,6 @@
                 let newOption = new Option(data.text, data.id, true, true);
                 $(target).append(newOption).trigger('change');
 
-            },
-            error: function (XMLHttprequest, textStatus, errorThrown) {
-                console.log(textStatus);
-            }
-        });
-    });
-
-    $(document).on('click', '#cancel_containers_remove', function () {
-        let application_id = $(this).data('application_id');
-
-        $('#containers_removed').val('').change();
-        $.ajax({
-            type: "POST",
-            url: "{{ route('cancel_containers_remove') }}",
-            data: {
-                application_id: application_id,
-            },
-            success: function (response) {
-                $('#containers_removed').val('');
-                $(document).Toasts('create', {
-                    autohide: true,
-                    delay: 3000,
-                    class: response['bg-class'],
-                    title: 'Уведомление от ' + response['from'],
-                    body: response['message']
-                });
-                $('#removed_containers_div').addClass('d-none');
             },
             error: function (XMLHttprequest, textStatus, errorThrown) {
                 console.log(textStatus);

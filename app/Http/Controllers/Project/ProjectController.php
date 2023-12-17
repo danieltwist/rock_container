@@ -249,7 +249,6 @@ class ProjectController extends Controller
             }
             else $invoices = $project->invoices;
 
-            $exchange_difference = 0;
             foreach ($invoices as $invoice){
                 switch($invoice->status){
                     case 'Удален': case 'Не оплачен':
@@ -273,8 +272,9 @@ class ProjectController extends Controller
                     default:
                         $invoice->class = 'secondary';
                 }
-                $exchange_difference += $this->getInvoiceExchangeDifference($invoice);
             }
+
+            $exchange_difference = $this->getProjectInvoiceDifference($project);
 
             $container_groups = ContainerGroup::where('project_id', $project->id)->get();
 
@@ -300,7 +300,8 @@ class ProjectController extends Controller
 
             if(!is_null($project->access_to_project)){
                 foreach($project->access_to_project as $user_id){
-                    $access_to_project [] = User::withTrashed()->find($user_id)->name;
+                    $user = User::withTrashed()->find($user_id);
+                    $access_to_project [] = '<a class="text-dark" href="'.route('get_user_statistic', $user->id).'">'.$user->name.'</a>';
                 }
                 $access_to_project = implode(', ', $access_to_project);
             }
@@ -896,9 +897,18 @@ class ProjectController extends Controller
     public function deleteRow($id){
 
         $project = Project::find($id);
+        if(!is_null($project)) {
+            $project_invoices = $project->invoices->pluck('id');
 
-        //ProjectExpense::where('project_id', $project->id)->delete();
-        $project->delete();
+            Invoice::whereIn('id', $project_invoices)->delete();
+
+            $project->delete();
+        }
+        else {
+            $project = Project::withTrashed()->find($id);
+            $project->forceDelete();
+        }
+
 
         return response()->json([
             'bg-class' => 'bg-success',
@@ -954,6 +964,11 @@ class ProjectController extends Controller
     public function restoreRow($id){
 
         $project = Project::withTrashed()->findOrFail($id);
+        $project_invoices = Invoice::withTrashed()->where('project_id', $project->id)->get();
+
+        foreach ($project_invoices as $invoice){
+            $invoice->restore();
+        }
         $project_name = $project->name;
         $project->restore();
 

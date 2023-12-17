@@ -121,6 +121,8 @@ class InvoiceTablesController extends Controller
 
         foreach ($records as $invoice) {
 
+            $difference = $this->getInvoiceExchangeDifference($invoice);
+
             $class = $this->giveInvoiceTableColClass($invoice);
 
             $id = $invoice->id;
@@ -134,11 +136,13 @@ class InvoiceTablesController extends Controller
             ])->render();
 
             $amount = view('invoice.table.amount', [
-                'invoice' => $invoice
+                'invoice' => $invoice,
+                'exchange_difference' => $difference['difference']
             ])->render();
 
             $paid = view('invoice.table.paid', [
-                'invoice' => $invoice
+                'invoice' => $invoice,
+                'average_exchange_rate' => $difference['average_exchange_rate']
             ])->render();
 
             $status = view('invoice.table.status', [
@@ -310,6 +314,7 @@ class InvoiceTablesController extends Controller
         foreach ($records as $invoice) {
 
             $class = $this->giveInvoiceTableColClass($invoice);
+            $difference = $this->getInvoiceExchangeDifference($invoice);
 
             $id = $invoice->id;
 
@@ -322,11 +327,13 @@ class InvoiceTablesController extends Controller
             ])->render();
 
             $amount = view('invoice.table.amount', [
-                'invoice' => $invoice
+                'invoice' => $invoice,
+                'exchange_difference' => $difference['difference']
             ])->render();
 
             $paid = view('invoice.table.paid', [
-                'invoice' => $invoice
+                'invoice' => $invoice,
+                'average_exchange_rate' => $difference['average_exchange_rate']
             ])->render();
 
             $status = view('invoice.table.status', [
@@ -483,6 +490,8 @@ class InvoiceTablesController extends Controller
 
             $class = $this->giveInvoiceTableColClass($invoice);
 
+            $difference = $this->getInvoiceExchangeDifference($invoice);
+
             $id = $invoice->id;
 
             $info = view('invoice.table.info', [
@@ -494,11 +503,13 @@ class InvoiceTablesController extends Controller
             ])->render();
 
             $amount = view('invoice.table.amount', [
-                'invoice' => $invoice
+                'invoice' => $invoice,
+                'exchange_difference' => $difference['difference']
             ])->render();
 
             $paid = view('invoice.table.paid', [
-                'invoice' => $invoice
+                'invoice' => $invoice,
+                'average_exchange_rate' => $difference['average_exchange_rate']
             ])->render();
 
             $status = view('invoice.table.status', [

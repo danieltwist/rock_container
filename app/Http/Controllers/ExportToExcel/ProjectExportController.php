@@ -130,7 +130,7 @@ class ProjectExportController extends Controller
         $sheet->setCellValue('B2', $range_text);
         $sheet->setCellValue('B3', $parameters['sorting_type']);
 
-        $i=5;
+        $i=6;
 
         $price = 0;
         $cost = 0;
@@ -140,6 +140,7 @@ class ProjectExportController extends Controller
         $income_unpaid = 0;
         $outcome_paid = 0;
         $outcome_unpaid = 0;
+        $exchange_difference = 0;
 
         foreach ($projects as $project){
             $project->finance = $this->getProjectFinanceForReport($project->id);
@@ -171,6 +172,7 @@ class ProjectExportController extends Controller
                 : $company = optional($project->client)->name;
             $company_link = 'client/'.$project->client_id;
 
+            $this_project_exchange_difference = $this->getProjectInvoiceDifference($project);
 
             $start = explode(' ', $project->created_at);
 
@@ -211,13 +213,15 @@ class ProjectExportController extends Controller
             $sheet->setCellValue('T'.$i, $project->finance['outcome_paid']);
             $sheet->setCellValue('U'.$i, $project->finance['outcome_unpaid']);
             $sheet->setCellValue('V'.$i, $project->finance['profit']);
+            $sheet->setCellValue('W'.$i, $this_project_exchange_difference);
+
             if($project->finance['profit']<0){
                 $sheet->getStyle('V'.$i)
                     ->getFont()
                     ->getColor()
                     ->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED);
             }
-            $sheet->setCellValue('W'.$i, $project->additional_info);
+            $sheet->setCellValue('X'.$i, $project->additional_info);
 
             $price += $project->finance['price'];
             $cost += $project->finance['cost'];
@@ -228,6 +232,7 @@ class ProjectExportController extends Controller
             $outcome_unpaid += $project->finance['outcome_unpaid'];
 
             $containers_count += $project->expense->amount;
+            $exchange_difference += $this_project_exchange_difference;
 
             $i++;
         }
@@ -236,7 +241,7 @@ class ProjectExportController extends Controller
         $sheet->setCellValue('S'.$i, 'Сумма');
         $sheet->setCellValue('V'.$i, 'Сумма');
 
-        $sheet->getStyle('P'.$i.':W'.$i)->getFont()->setBold(true);
+        $sheet->getStyle('P'.$i.':X'.$i)->getFont()->setBold(true);
         $i++;
 
         $sheet->setCellValue('N'.$i,'ИТОГО');
@@ -248,8 +253,22 @@ class ProjectExportController extends Controller
         $sheet->setCellValue('T'.$i , $outcome_paid);
         $sheet->setCellValue('U'.$i , $outcome_unpaid);
         $sheet->setCellValue('V'.$i , $profit);
+        $sheet->setCellValue('W'.$i , $exchange_difference);
 
-        $sheet->getStyle('N'.$i.':W'.$i)->getFont()->setBold(true);
+
+        $sheet->setCellValue('O4' , $containers_count);
+        $sheet->setCellValue('P4' , $price);
+        $sheet->setCellValue('Q4' , $income_paid);
+        $sheet->setCellValue('R4' , $income_unpaid);
+        $sheet->setCellValue('S4' , $cost);
+        $sheet->setCellValue('T4' , $outcome_paid);
+        $sheet->setCellValue('U4' , $outcome_unpaid);
+        $sheet->setCellValue('V4' , $profit);
+        $sheet->setCellValue('W4' , $exchange_difference);
+
+        $sheet->getStyle('N4:X4')->getFont()->setBold(true);
+
+        $sheet->getStyle('N'.$i.':X'.$i)->getFont()->setBold(true);
 
         if($profit<0){
             $sheet->getStyle('V'.$i)

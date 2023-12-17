@@ -16,7 +16,7 @@ class ContainerHistory extends Model
         'client_snp_range' => 'array',
     ];
 
-    protected $dates = ['supplier_date_get', 'supplier_date_start_using', 'relocation_date_send', 'relocation_date_arrival_to_terminal', 'client_date_get', 'client_date_return', 'client_date_manual_request', 'own_date_buy', 'own_date_sell'];
+    protected $dates = ['supplier_date_get', 'supplier_date_start_using', 'relocation_date_send', 'relocation_date_arrival_to_terminal', 'client_date_get', 'client_date_return', 'client_date_manual_request', 'own_date_buy', 'own_date_sell', 'supplier_date_return'];
 
     protected $guarded = [];
 

@@ -160,7 +160,7 @@
         </div>
     </div>
     <div class="card-footer">
-        <form action="{{ route('containers_export_to_excel') }}" method="GET">
+        <form action="{{ route('containers_export_to_excel') }}" method="POST">
             @csrf
             <input type="hidden" id="chosen_containers_id" name="chosen_containers_id" value="">
             <button type="submit" class="btn btn-success download_file_directly"

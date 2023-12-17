@@ -158,10 +158,16 @@
                                             </p>
                                         @endif
                                         <p class="text-sm">Создан / Менеджер / Доступ к проекту
-                                            <b class="d-block">{{ $project->user->name }} /
-                                                {{ $project->manager_id!='' ? optional($project->manager)->name : 'Не выбран' }}
+                                            <b class="d-block">
+                                                <a class="text-dark" href="{{ route('get_user_statistic', optional($project->user)->id) }}">{{ optional($project->user)->name}}</a>
                                                 /
-                                                {{ $access_to_project }}
+                                                @if($project->manager_id != '')
+                                                     <a class="text-dark" href="{{ route('get_user_statistic', optional($project->manager)->id) }}">{{ optional($project->manager)->name}}</a>
+                                                @else
+                                                    Не выбран
+                                                @endif
+                                                /
+                                                {!! $access_to_project !!}
                                             </b>
                                         </p>
                                         <p class="text-sm">{{ __('project.current_stage') }}
@@ -552,6 +558,11 @@
                                 <div class="card-body">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"
+                                                data-filter=""
+                                                data-filter_type="direction">
+                                            {{ __('project.show_all') }}
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"
                                                 data-filter="Доход"
                                                 data-filter_type="direction"
                                                 @if($project->management_expenses == 'on' && !in_array($role,['super-admin','director','accountant']))
@@ -568,7 +579,7 @@
                                                 >{{ __('project.show_outcome') }}
                                         </button>
                                         <button type="button" class="btn btn-default btn-sm show_alternative_block_invoices" data-filter="">
-                                            {{ __('project.show_all') }}
+                                            2 столбца
                                         </button>
                                     </div>
                                     <div class="invoices_project mt-4 filter_table_div"

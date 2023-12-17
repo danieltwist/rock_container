@@ -282,7 +282,11 @@
                                         });
                                     }, 1000);
                                 }
-
+                                if(key === 'redirect_url'){
+                                    setTimeout(function(){
+                                        window.location.assign(data.url);
+                                    }, 500);
+                                }
                                 if(key === 'datetimepicker_init'){
                                     $('.invoice_deadline').datetimepicker({
                                         timepicker: false,

@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\NotifyAboutBirthday;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Spatie\ShortSchedule\ShortSchedule;
@@ -31,7 +32,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\TelegramDaemon::class,
         \App\Console\Commands\UpdateContainersUsageInfo::class,
         \App\Console\Commands\NotifyAboutBirthday::class,
-        \App\Console\Commands\RemoveUnusedAudits::class
+        \App\Console\Commands\RemoveUnusedAudits::class,
     ];
 
     /**
@@ -64,7 +65,7 @@ class Kernel extends ConsoleKernel
 
     protected function shortSchedule(ShortSchedule $shortSchedule)
     {
-        $shortSchedule->command('telegram:get_updates')->everySecond();
+        $shortSchedule->command('telegram:get_updates')->everySeconds('15');
     }
 
     /**

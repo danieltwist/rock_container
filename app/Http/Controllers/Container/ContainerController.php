@@ -6,6 +6,7 @@ use App\Filters\ContainerFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\ContainerTrait;
 use App\Http\Traits\FinanceTrait;
+use App\Models\Application;
 use App\Models\Container;
 use App\Models\ContainerGroup;
 use App\Models\ContainerProblem;
@@ -611,6 +612,51 @@ class ContainerController extends Controller
     public function reuseContainerWithReturnDate(Request $request){
         $container = Container::find($request->container_id);
         $this->saveContainerUsageHistory($container, $request->application_id);
+    }
+
+    public function getContainersCount(){
+
+        $bought = 0;
+        $sold = 0;
+        $get = 0;
+        $give = 0;
+
+        $bought_fact = 0;
+        $sold_fact = 0;
+        $get_fact = 0;
+        $give_fact = 0;
+
+        foreach (Application::all() as $application){
+            switch ($application->type){
+                case 'Поставщик':
+                    if(!is_null($application->containers_amount)) $get += $application->containers_amount;
+                    if(!is_null($application->containers)) $get_fact += count($application->containers);
+                    break;
+                case 'Клиент':
+                    if(!is_null($application->containers_amount)) $give += $application->containers_amount;
+                    if(!is_null($application->containers)) $give_fact += count($application->containers);
+                    break;
+                case 'Покупка':
+                    if(!is_null($application->containers_amount)) $bought += $application->containers_amount;
+                    if(!is_null($application->containers)) $bought_fact += count($application->containers);
+                    break;
+                case 'Продажа':
+                    if(!is_null($application->containers_amount)) $sold += $application->containers_amount;
+                    if(!is_null($application->containers)) $sold_fact += count($application->containers);
+                    break;
+            }
+        }
+
+        return view('application.ajax.containers_count', [
+            'bought' => $bought,
+            'sold' => $sold,
+            'get' => $get,
+            'give' => $give,
+            'bought_fact' => $bought_fact,
+            'sold_fact' => $sold_fact,
+            'get_fact' => $get_fact,
+            'give_fact' => $give_fact,
+        ])->render();
     }
 
 }

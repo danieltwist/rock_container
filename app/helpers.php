@@ -389,4 +389,11 @@ if(!function_exists('can_edit_this_project')){
         return optional($application)->name;
     }
 
+    function paymentAmountMask($payment){
+        $payment = str_replace(' ', '', $payment);
+        $payment = str_replace(',', '.', $payment);
+
+        return $payment;
+    }
+
 }

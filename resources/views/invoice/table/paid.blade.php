@@ -1,7 +1,7 @@
 @if ($invoice->direction == 'Доход')
     @if ($invoice->currency != 'RUB')
         @if ($invoice->amount_in_currency_income_date != '')
-            {{ number_format($invoice->amount_in_currency_income_date, 0, '.', ' ') }} {{ $invoice->currency }} ({{ $invoice->rate_income_date }})
+            {{ number_format($invoice->amount_in_currency_income_date, 0, '.', ' ') }} {{ $invoice->currency }} ({{ $average_exchange_rate }})
             <br>
             {{ number_format($invoice->amount_income_date, 2, '.', ' ') }}р.
             @if ($invoice->amount_in_currency > $invoice->amount_in_currency_income_date)
@@ -22,7 +22,7 @@
 @else
     @if ($invoice->currency != 'RUB')
         @if ($invoice->amount_in_currency_income_date != '')
-            {{ number_format($invoice->amount_in_currency_income_date, 0, '.', ' ') }} {{ $invoice->currency }} ({{ $invoice->rate_income_date }})
+            {{ number_format($invoice->amount_in_currency_income_date, 0, '.', ' ') }} {{ $invoice->currency }} ({{ $average_exchange_rate }})
             <br>
             {{ number_format($invoice->amount_income_date, 2, '.', ' ') }}р.
         @endif

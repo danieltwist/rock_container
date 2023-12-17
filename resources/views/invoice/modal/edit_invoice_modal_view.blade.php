@@ -139,13 +139,27 @@
                value="{{ $invoice->amount }}">
     </div>
     @if($invoice->direction == 'Расход')
-        <div class="form-group currency-dnone {{ $class }}">
-            <label>{{ __('invoice.amount_in_currency_actual') }}</label>
-            <input type="text" class="form-control rate_input"
-                   id="edit_invoice_amount_actual"
-                   name="amount_in_currency_actual"
-                   placeholder="{{ __('invoice.amount_in_currency_actual') }}"
-                   value="{{ $invoice->amount_in_currency_actual }}">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group currency-dnone {{ $class }}">
+                    <label>{{ __('invoice.amount_in_currency_actual') }}</label>
+                    <input type="text" class="form-control rate_input"
+                           id="edit_invoice_amount_actual"
+                           name="amount_in_currency_actual"
+                           placeholder="{{ __('invoice.amount_in_currency_actual') }}"
+                           value="{{ $invoice->amount_in_currency_actual }}">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group currency-dnone {{ $class }}">
+                    <label>{{ __('invoice.rate_income_date') }}</label>
+                    <input type="text" class="form-control rate_input need_calculate"
+                           id="rate_income_date"
+                           name="rate_income_date"
+                           placeholder="{{ __('invoice.rate_income_date') }}"
+                           value="{{ $invoice->rate_income_date }}">
+                </div>
+            </div>
         </div>
         <div class="form-group">
             <label>{{ __('invoice.amount_actual_in_rubles') }}</label>
@@ -156,37 +170,51 @@
                    value="{{ $invoice->amount_actual }}">
         </div>
     @endif
-    <div class="row currency-dnone {{ $class }}">
-        <div class="col-md-6">
-            <div class="form-group currency-dnone {{ $class }}">
-                <label>{{ __('invoice.amount_in_currency_income_date') }}</label>
-                <input type="text" class="form-control rate_input"
-                       id="edit_invoice_amount_income_date"
-                       name="amount_in_currency_income_date"
-                       placeholder="{{ __('invoice.amount_in_currency_income_date') }}"
-                       value="{{ $invoice->amount_in_currency_income_date }}">
+    @if($invoice->direction == 'Расход')
+        <div class="row currency-dnone {{ $class }}">
+            <div class="col-md-12">
+                <div class="form-group currency-dnone {{ $class }}">
+                    <label>{{ __('invoice.amount_in_currency_income_date') }}</label>
+                    <input type="text" class="form-control rate_input"
+                           id="edit_invoice_amount_income_date"
+                           name="amount_in_currency_income_date"
+                           placeholder="{{ __('invoice.amount_in_currency_income_date') }}"
+                           value="{{ $invoice->amount_in_currency_income_date }}">
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>{{ __('invoice.rate_income_date') }}</label>
-                <input type="text" class="form-control rate_input need_calculate"
-                       id="rate_income_date"
-                       name="rate_income_date"
-                       placeholder="{{ __('invoice.rate_income_date') }}"
-                       value="{{ $invoice->rate_income_date }}">
+    @else
+        <div class="row currency-dnone {{ $class }}">
+            <div class="col-md-6">
+                <div class="form-group currency-dnone {{ $class }}">
+                    <label>{{ __('invoice.amount_in_currency_income_date') }}</label>
+                    <input type="text" class="form-control rate_input"
+                           id="edit_invoice_amount_income_date"
+                           name="amount_in_currency_income_date"
+                           placeholder="{{ __('invoice.amount_in_currency_income_date') }}"
+                           value="{{ $invoice->amount_in_currency_income_date }}">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{{ __('invoice.rate_income_date') }}</label>
+                    <input type="text" class="form-control rate_input need_calculate"
+                           id="rate_income_date"
+                           name="rate_income_date"
+                           placeholder="{{ __('invoice.rate_income_date') }}"
+                           value="{{ $invoice->rate_income_date }}">
+                </div>
             </div>
         </div>
+    @endif
+    <div class="form-group">
+        <label>{{ __('invoice.amount_income_date') }}</label>
+        <input type="text" class="form-control rate_input"
+               id="edit_invoice_amount_income_date_in_rubles"
+               name="amount_income_date"
+               placeholder="{{ __('invoice.amount_income_date') }}"
+               value="{{ $invoice->amount_income_date }}">
     </div>
-        <div class="form-group">
-            <label>{{ __('invoice.amount_income_date') }}</label>
-            <input type="text" class="form-control rate_input"
-                   id="edit_invoice_amount_income_date_in_rubles"
-                   name="amount_income_date"
-                   placeholder="{{ __('invoice.amount_income_date') }}"
-                   value="{{ $invoice->amount_income_date }}">
-        </div>
-
     @if ($invoice->currency != 'RUB' && $invoice->amount_sale_date != '')
         <div class="form-group">
             <label>{{ __('invoice.amount_sale_date') }}</label>

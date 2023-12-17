@@ -157,7 +157,7 @@ class InvoiceExportController extends Controller
                 'amount' => $amount,
                 'amount_paid' => $amount_paid,
                 'amount_balance' => (float)$amount - $amount_paid,
-                'exchange_difference' => $this->getInvoiceExchangeDifference($invoice),
+                'exchange_difference' => $this->getInvoiceExchangeDifference($invoice)['difference'],
                 'status' => $invoice->status,
                 'info' => str_replace('=', 'символ равно', $invoice->additional_info),
             ];

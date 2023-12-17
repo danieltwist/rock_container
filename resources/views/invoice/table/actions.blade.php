@@ -99,6 +99,15 @@
             <i class="fas fa-trash-restore"></i>
             Восстановить
         </button>
+        <button
+            class="btn btn-app bg-danger ajax-delete-row"
+            data-action="delete_row"
+            data-object="invoice"
+            data-type="ajax"
+            data-object-id="{{ $invoice->id }}">
+            <i class="fas fa-trash"></i>
+            {{ __('general.remove') }}
+        </button>
     @else
         <button
             class="btn btn-app bg-danger ajax-delete-row"

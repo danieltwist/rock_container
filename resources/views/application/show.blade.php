@@ -354,6 +354,11 @@
                                 <div class="card-body">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"
+                                                data-filter=""
+                                                data-filter_type="direction">
+                                            {{ __('project.show_all') }}
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"
                                                 data-filter="Доход"
                                                 data-filter_type="direction">
                                             {{ __('project.show_income') }}
@@ -362,10 +367,6 @@
                                                 data-filter="Расход"
                                                 data-filter_type="direction">
                                             {{ __('project.show_outcome') }}
-                                        </button>
-                                        <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"
-                                                data-filter="">
-                                            {{ __('project.show_all') }}
                                         </button>
                                     </div>
                                     <div class="invoices_application mt-4 filter_table_div"

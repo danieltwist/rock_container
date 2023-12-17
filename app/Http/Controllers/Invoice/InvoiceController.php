@@ -67,6 +67,7 @@ class InvoiceController extends Controller
             $new_invoice->expense_category = $request->expense_category;
             $new_invoice->expense_type = $request->expense_type;
             $new_invoice->user_add = Auth::user()->name;
+            $new_invoice->user_id = Auth::user()->id;
             if ($losses) {
                 $new_invoice->losses_potential = [
                     'client_decision' => '',
@@ -138,6 +139,7 @@ class InvoiceController extends Controller
             $new_invoice->amount = $request->amount;
             $new_invoice->additional_info = $request->additional_info;
             $new_invoice->user_add = Auth::user()->name;
+            $new_invoice->user_id = Auth::user()->id;
 
             $new_invoice->save();
 
@@ -179,6 +181,10 @@ class InvoiceController extends Controller
             $income_invoice_id = $invoice->losses_potential['income_invoice_id'];
         }
 
+        $difference = $this->getInvoiceExchangeDifference($invoice);
+        $exchange_difference = $difference['difference'];
+        $average_exchange_rate = $difference['average_exchange_rate'];
+
         return view('invoice.show', [
             'invoice' => $invoice,
             'invoices' => Invoice::where('direction', 'Доход')->where('project_id', $invoice->project_id)->get(),
@@ -186,7 +192,9 @@ class InvoiceController extends Controller
             'client_decision' => $client_decision,
             'client_payment_deadline' => $client_payment_deadline,
             'income_invoice_id' => $income_invoice_id,
-            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
+            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value']),
+            'exchange_difference' => $exchange_difference,
+            'average_exchange_rate' => $average_exchange_rate
         ]);
     }
 
@@ -546,6 +554,10 @@ class InvoiceController extends Controller
         $client_payment_deadline = '';
         $income_invoice_id = '';
 
+        $difference = $this->getInvoiceExchangeDifference($invoice);
+        $exchange_difference = $difference['difference'];
+        $average_exchange_rate = $difference['average_exchange_rate'];
+
         if (!is_null($invoice->losses_potential)) {
             $client_decision = $invoice->losses_potential['client_decision'];
             $client_payment_deadline = $invoice->losses_potential['client_payment_deadline'];
@@ -559,7 +571,9 @@ class InvoiceController extends Controller
             'client_decision' => $client_decision,
             'client_payment_deadline' => $client_payment_deadline,
             'income_invoice_id' => $income_invoice_id,
-            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value'])
+            'agree_invoice_users' => unserialize(Setting::where('name', 'agree_invoice_users')->first()->toArray()['value']),
+            'exchange_difference' => $exchange_difference,
+            'average_exchange_rate' => $average_exchange_rate
         ]);
 
     }
@@ -573,20 +587,24 @@ class InvoiceController extends Controller
 
         $invoice->currency != 'RUB' ? $class = '' : $class = 'd-none';
 
-        return view('invoice.modal.edit_invoice_modal_view', [
-            'invoice' => $invoice,
-            'client_id' => $invoice->client_id,
-            'supplier_id' => $invoice->supplier_id,
-            'rates' => $currency_rates,
-            'company_type' => $company_type,
-            'class' => $class,
-            'expense_types' => ExpenseType::all(),
-            'projects' => \App\Models\Project::all(),
-            'applications' => Application::all(),
-            'clients' => Client::all(),
-            'suppliers' => Supplier::all()
-        ]);
-
+        return [
+            'info' => view('invoice.modal.edit_invoice_modal_view', [
+                'invoice' => $invoice,
+                'client_id' => $invoice->client_id,
+                'supplier_id' => $invoice->supplier_id,
+                'rates' => $currency_rates,
+                'company_type' => $company_type,
+                'class' => $class,
+                'expense_types' => ExpenseType::all(),
+                'projects' => \App\Models\Project::all(),
+                'applications' => Application::all(),
+                'clients' => Client::all(),
+                'suppliers' => Supplier::all()
+            ])->render(),
+            'payments_history' => view('invoice.modal.edit_invoice_payments_history', [
+                'invoice' => $invoice
+            ])->render()
+        ];
     }
 
     public function get_invoice_changes($id)
@@ -956,15 +974,21 @@ class InvoiceController extends Controller
     public function deleteRow($id)
     {
 
-        $invoice = Invoice::findOrFail($id);
+        $invoice = Invoice::find($id);
 
-        if (checkUploadedFileInvoice($invoice->id)['file']) {
-            Storage::delete(unserialize($invoice->file)['filename']);
-        } else Storage::delete($invoice->file);
+        if(!is_null($invoice)){
+            if (checkUploadedFileInvoice($invoice->id)['file']) {
+                Storage::delete(unserialize($invoice->file)['filename']);
+            } else Storage::delete($invoice->file);
 
-        $invoice->delete();
+            $invoice->delete();
 
-        $this->updateProjectFinance($invoice->project_id);
+            $this->updateProjectFinance($invoice->project_id);
+        }
+        else {
+            $invoice = Invoice::withTrashed()->find($id);
+            $invoice->forceDelete();
+        }
 
         return response()->json([
             'bg-class' => 'bg-success',
@@ -1070,17 +1094,17 @@ class InvoiceController extends Controller
 
         foreach ($invoices as $invoice){
 
-            $invoice_amount = $this->getInvoiceAmountWithCurrency($invoice);
+            $invoice_amount = $this->getInvoicePaymentBalance($invoice);
 
-            switch ($invoice_amount['currency']){
+            switch ($invoice->currency){
                 case 'RUB':
-                    $amount_rub += $invoice_amount['amount'];
+                    $amount_rub += $invoice_amount;
                     break;
                 case 'USD':
-                    $amount_usd += $invoice_amount['amount'];
+                    $amount_usd += $invoice_amount;
                     break;
                 case 'CNY':
-                    $amount_cny += $invoice_amount['amount'];
+                    $amount_cny += $invoice_amount;
                     break;
             }
 

@@ -56,6 +56,9 @@
         if (urlpath[1] === 'invoice') {
             if (getInvoicesPageType() === 'agree') getAgreedInvoicesAmount();
         }
+        if (urlpath[1] === 'application') {
+            getContainersCount();
+        }
         if (urlpath[1] === 'container' || urlpath[1] === 'application') {
             getContainersColumns();
             getContainersFilters('');
@@ -305,10 +308,25 @@
                 "filter": page_href.split('?')[1],
                 "data_range": $('#reportrange span').html()
             },
-            url: APP_URL + "/invoice/get_agreed_invoices_amount/",
+            url: "{{ route('get_agreed_invoices_amount') }}",
             success: function (response) {
                 $('#loading_spinner').html('');
                 $('#invoices_agree_amount').html(response);
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    }
+
+    function getContainersCount() {
+        $('#loading_spinner').html('&nbsp;&nbsp' + loading_spinner_small);
+        $.ajax({
+            type: "GET",
+            url: "{{ route('get_containers_count') }}",
+            success: function (response) {
+                $('#loading_spinner').html('');
+                $('#containers_count').html(response);
             },
             error: function (XMLHttprequest, textStatus, errorThrown) {
                 console.log(textStatus);
@@ -1669,7 +1687,7 @@
 
         $('#users_table').DataTable({
             "paging": true,
-            "lengthChange": false,
+            "lengthChange": true,
             "searching": true,
             "ordering": true,
             "info": true,

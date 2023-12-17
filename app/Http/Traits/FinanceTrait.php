@@ -585,7 +585,6 @@ trait FinanceTrait {
     }
 
     public function getInvoiceAmountForReport(Invoice $invoice){
-
         $invoice->amount_actual != '' ? $planned_amount = $invoice->amount_actual: $planned_amount =  $invoice->amount;
 
         if ($invoice->amount_sale_date != '') {
@@ -766,12 +765,34 @@ trait FinanceTrait {
 //        }
         foreach ($invoices as $invoice){
             if ($invoice->direction == 'Доход'){
-                $price += $this->getInvoiceAmountForReport($invoice)['actual_amount'];
-                $income_paid += $this->getInvoiceAmountForReport($invoice)['paid'];
+                try {
+                    $price += $this->getInvoiceAmountForReport($invoice)['actual_amount'];
+                }
+                catch (\Exception $e) {
+                    $price += 0.00;
+                }
+
+                try {
+                    $income_paid += $this->getInvoiceAmountForReport($invoice)['paid'];
+                }
+                catch (\Exception $e) {
+                    $income_paid += 0.00;
+                }
             }
             else {
-                $costs += $this->getInvoiceAmountForReport($invoice)['actual_amount'];
-                $outcome_paid += $this->getInvoiceAmountForReport($invoice)['paid'];
+                try {
+                    $costs += $this->getInvoiceAmountForReport($invoice)['actual_amount'];
+                }
+                catch (\Exception $e) {
+                    $costs += 0.00;
+                }
+
+                try {
+                    $outcome_paid += $this->getInvoiceAmountForReport($invoice)['paid'];
+                }
+                catch (\Exception $e) {
+                    $outcome_paid += 0.00;
+                }
             }
         }
 
@@ -792,6 +813,7 @@ trait FinanceTrait {
 
     public function getInvoiceExchangeDifference(Invoice $invoice){
         $difference = 0;
+        $total_amount_in_currency = 0;
         if($invoice->currency != 'RUB'){
             if($invoice->amount_sale_date != '' || $invoice->amount_income_date != ''){
                 if($invoice->rate_out_date != $invoice->rate_income_date || $invoice->rate_out_date != $invoice->rate_sale_date){
@@ -803,11 +825,63 @@ trait FinanceTrait {
                             $difference = $invoice->amount_income_date - $invoice->amount;
                     }
                     if($invoice->status == 'Частично оплачен'){
-                        $difference = $invoice->amount_income_date - $invoice->amount;
+                        if(!is_null($invoice->payments_history)){
+                            foreach ($invoice->payments_history as $payment){
+                                if($payment['amount_currency'] != 0){
+                                    $total_amount_in_currency += $payment['amount_currency'];
+                                    $rate = $payment['amount_rub'] / $payment['amount_currency'];
+                                    $rate_difference = $invoice->rate_out_date - $rate;
+                                    $payment_difference = $invoice->amount_in_currency - $payment['amount_currency'];
+                                    $this_payment_exchange_difference = $payment_difference * $rate_difference;
+                                    $difference += $this_payment_exchange_difference;
+                                }
+                            }
+
+                        }
+                        else
+                            $difference = $invoice->amount_income_date - $invoice->amount;
                     }
                 }
             }
         }
-        return $difference;
+
+        if(!is_null($invoice->rate_sale_date)){
+            $average_exchange_rate = $invoice->rate_sale_date;
+        }
+        else {
+            if($total_amount_in_currency != 0){
+                $average_exchange_rate = $invoice->amount_income_date / $total_amount_in_currency;
+            }
+            else {
+                $average_exchange_rate = $invoice->rate_income_date;
+            }
+        }
+
+        return [
+            'difference' => round($difference, 2),
+            'average_exchange_rate' => round($average_exchange_rate, 4)
+        ];
+    }
+
+    public function getInvoicePaymentBalance(Invoice $invoice){
+
+        if($invoice->currency == 'RUB'){
+            $balance = $invoice->amount - $invoice->amount_income_date;
+        }
+        else {
+            $balance = $invoice->amount_in_currency - $invoice->amount_in_currency_income_date;
+        }
+
+        return $balance;
+    }
+
+    public function getProjectInvoiceDifference(Project $project){
+
+        $exchange_difference = 0;
+        foreach ($project->invoices as $invoice){
+            $exchange_difference += $this->getInvoiceExchangeDifference($invoice)['difference'];
+        }
+
+        return $exchange_difference;
     }
 }

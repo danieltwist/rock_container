@@ -64,8 +64,16 @@ class NotifyAboutBirthday extends Command
                     'from' => 'Система',
                     'to' => $user_id,
                     'text' => $text,
-                    'link' => '',
+                    'link' => 'user/'.$user_id.'/statistic',
                     'class' => 'bg-success'
+                ];
+
+                $notification['inline_keyboard'] = [
+                    'inline_keyboard' => [
+                        [
+                            ['text' => 'Открыть', 'url' => config('app.url').$notification['link']],
+                        ],
+                    ]
                 ];
 
                 $notification['action'] = 'notification';

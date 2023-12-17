@@ -41,7 +41,9 @@ class InvoiceAgreeController extends Controller
                     $invoice->director_comment = $request->director_comment;
                     $invoice->agreement_date = Carbon::now();
 
-                    $this->notifyAccountant($invoice);
+                    if($request->sub_status == 'Срочно') {
+                        $this->notifyAccountant($invoice);
+                    }
                 }
                 else {
                     $invoice->status = 'Счет на согласовании';
@@ -86,7 +88,12 @@ class InvoiceAgreeController extends Controller
                         $invoice->sub_status = $sub_status;
                         $invoice->director_comment = $request->director_comment;
 
-                        $this->notifySecondPerson($invoice, $this->agree_invoice_users[1], $agreed_by);
+                        if(is_null($invoice->agree_2)){
+                            $this->notifySecondPerson($invoice, $this->agree_invoice_users[1], $agreed_by);
+                            if($request->sub_status == 'Срочно') {
+                                $this->notifyAccountant($invoice);
+                            }
+                        }
                     }
                     else {
                         $invoice->status = 'Счет на согласовании';
@@ -107,7 +114,12 @@ class InvoiceAgreeController extends Controller
                         $invoice->sub_status = $sub_status;
                         $invoice->director_comment = $request->director_comment;
 
-                        $this->notifySecondPerson($invoice, $this->agree_invoice_users[0], $agreed_by);
+                        if(is_null($invoice->agree_1)){
+                            $this->notifySecondPerson($invoice, $this->agree_invoice_users[0], $agreed_by);
+                            if($request->sub_status == 'Срочно') {
+                                $this->notifyAccountant($invoice);
+                            }
+                        }
                     }
                     else {
                         $invoice->status = 'Счет на согласовании';
@@ -121,7 +133,6 @@ class InvoiceAgreeController extends Controller
                 if ($invoice->agree_1 != '' && $invoice->agree_2 !=''){
                     $invoice->status = 'Счет согласован на оплату';
                     $invoice->agreement_date = Carbon::now();
-                    $this->notifyAccountant($invoice);
                 }
 
                 $invoice->save();

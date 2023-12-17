@@ -5,7 +5,11 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h1 class="m-0">{{ __('user.edit_user') }} {{ $user->name }}</h1>
+                    <h1 class="m-0">{{ __('user.edit_user') }} {{ $user->name }}
+                        <a href="{{ route('all_users') }}" class="btn btn-default">
+                            {{ __('user.all_users') }}
+                        </a>
+                    </h1>
                 </div>
             </div>
         </div>

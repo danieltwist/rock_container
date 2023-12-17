@@ -171,6 +171,20 @@ class XEditable extends Controller
                 return response()->json(['success' => true]);
 
             }
+
+            if ($request->input('model') == 'InvoicePaymentHistory'){
+                $invoice = Invoice::find($request->input('invoice_id'));
+
+                $payments_history = $invoice->payments_history;
+
+                $payments_history[$request->input('pk')][$request->input('name')] = paymentAmountMask($request->input('value'));
+                $invoice->update([
+                    'payments_history' => $payments_history
+                ]);
+
+                return response()->json(['success' => true]);
+
+            }
         }
     }
 }

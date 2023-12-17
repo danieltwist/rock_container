@@ -218,7 +218,8 @@ class TaskController extends Controller
         return response()->json([
             'bg-class' => 'bg-success',
             'from' => 'Система',
-            'message' => __('task.created_successfully')
+            'message' => __('task.created_successfully'),
+            'url' => route('task.show', $new_task->id)
         ]);
     }
 
@@ -1419,14 +1420,18 @@ class TaskController extends Controller
 
     public function deleteRow($id){
 
-        $task = Task::findOrFail($id);
-        $number = $task->id;
-        $task->delete();
+        $task = Task::find($id);
+        if(!is_null($task)){
+            $task->delete();
+        }
+        else {
+            Task::withTrashed()->find($id)->forceDelete();
+        }
 
         return response()->json([
             'bg-class' => 'bg-success',
             'from' => 'Система',
-            'message' => __('task.delete_task_number_successfully', ['number' => $number])
+            'message' => __('task.delete_task_number_successfully', ['number' => $id])
         ]);
     }
 

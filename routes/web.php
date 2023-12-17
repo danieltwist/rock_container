@@ -164,13 +164,14 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
 
     Route::resource('invoice', \App\Http\Controllers\Invoice\InvoiceController::class)->middleware(['auth']);
 
+    Route::get('container/get_containers_count', '\App\Http\Controllers\Container\ContainerController@getContainersCount')->name('get_containers_count')->middleware(['auth']);
     Route::get('container_group/get_table', 'App\Http\Controllers\Datatables\ContainerTablesController@getContainerGroupTable')->name('get_container_group_table')->middleware(['auth']);
     Route::get('container/extended', '\App\Http\Controllers\Datatables\ContainerTablesController@extendedTable')->name('containers_extended')->middleware(['auth']);
     Route::get('container/extended/archive', '\App\Http\Controllers\Datatables\ContainerTablesController@archiveTable')->name('containers_extended_archive')->middleware(['auth']);
     Route::post('container/extended/get_table', '\App\Http\Controllers\Datatables\ContainerTablesController@extendedTableGet')->name('containers_extended_table')->middleware(['auth']);
     Route::get('container/extended/get_table_filters', '\App\Http\Controllers\Datatables\ContainerTablesController@extendedTableGetFilters')->name('containers_extended_table_get_filters')->middleware(['auth']);
     Route::get('container/extended/get_table_columns', '\App\Http\Controllers\Datatables\ContainerTablesController@extendedTableGetColumns')->name('containers_extended_table_get_columns')->middleware(['auth']);
-    Route::get('container/extended/export_to_excel', '\App\Http\Controllers\ExportToExcel\ContainerExportController@exportExtendedTable')->name('containers_export_to_excel')->middleware(['auth']);
+    Route::post('container/extended/export_to_excel', '\App\Http\Controllers\ExportToExcel\ContainerExportController@exportExtendedTable')->name('containers_export_to_excel')->middleware(['auth']);
 
     Route::post('container/extended/edit', '\App\Http\Controllers\Container\ContainerController@update_list')->name('edit_containers_list')->middleware(['auth']);
     Route::post('container/extended/load_table_for_filter', '\App\Http\Controllers\Datatables\ContainerTablesController@loadTableForFilter')->name('load_table_for_filter')->middleware(['auth']);

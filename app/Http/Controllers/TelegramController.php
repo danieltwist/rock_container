@@ -26,7 +26,6 @@ class TelegramController extends Controller
 
     public function linkAccount(Request $request)
     {
-
         $user = \Auth::user();
         $user->update([
             'telegram_login' => $request->telegram_login
@@ -34,7 +33,7 @@ class TelegramController extends Controller
 
         $linked = false;
 
-        $updates = TelegramUpdate::all();
+        $updates = TelegramUpdate::query()->limit(1000)->orderBy('id', 'DESC')->get();
 
         foreach ($updates as $update) {
             if(!is_null($update->object) && isset($update->object['message'])){
