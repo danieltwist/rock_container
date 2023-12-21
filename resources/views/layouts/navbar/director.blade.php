@@ -173,6 +173,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('project.index').'?archive' }}" class="nav-link">
+                                <p>{{ __('interface.containers_archive') }}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('project.index').'?trash' }}" class="nav-link">
                                 <p>Корзина</p>
                             </a>
@@ -409,6 +414,13 @@
                             </a>
                         </li>
                     </ul>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('report_income_by_types') }}" class="nav-link">
+                                <p>Сводка по доходам</p>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="nav-item">
@@ -491,6 +503,9 @@
                             </a>
                             <a href="{{ route('expense_type.index') }}" class="nav-link">
                                 <p>Классификатор расходов</p>
+                            </a>
+                            <a href="{{ route('income_type.index') }}" class="nav-link">
+                                <p>{{ __('interface.income_types') }}</p>
                             </a>
                             <a href="{{ route('agree_invoices_settings') }}" class="nav-link">
                                 <p>Согласование счетов</p>

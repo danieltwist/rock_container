@@ -19,6 +19,8 @@
                         <h1 class="m-0">{{ __('project.done_unpaid_projects') }}</h1>
                     @elseif (isset($_GET['trash']))
                         <h1 class="m-0">Удаленные проекты</h1>
+                    @elseif (isset($_GET['archive']))
+                        <h1 class="m-0">Архив проектов</h1>
                     @else
                         <h1 class="m-0">{{ $page_title }}</h1>
                     @endif
@@ -98,6 +100,14 @@
                                     'sorting_type' => 'Завершенные неоплаченные проекты',
                                 ];
                                 $filter = 'done_unpaid';
+                            @endphp
+                        @elseif (isset($_GET['archive']))
+                            @php
+                                $parameters = [
+                                    'filename' => 'архив_проектов',
+                                    'sorting_type' => 'Архив проектов',
+                                ];
+                                $filter = 'archive';
                             @endphp
                         @else
                             @php

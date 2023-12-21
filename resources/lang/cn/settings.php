@@ -81,4 +81,9 @@ return [
     'country_added_successfully' => '国家成功添加到列表中',
     'country_removed_successfully' => '国家/地区已成功从列表中删除',
     'currency_rates_updated_successfully' => '汇率已成功更新',
+    //21122023
+    'income_categories' => 'Виды доходов',
+    'income_types' => 'Типы доходов',
+    'add_income_category' => 'Добавить вид доходов',
+    'add_income_type' => 'Добавить тип доходов',
 ];

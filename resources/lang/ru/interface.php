@@ -83,5 +83,7 @@ return [
     'currency_ratio_settings' => 'Коэффициенты валют',
     'file_manager' => 'Файловый менеджер',
     'logout' => 'Выход из аккаунта',
-    'search' => 'Поиск'
+    'search' => 'Поиск',
+    //21122023
+    'income_types' => 'Классификатор доходов'
 ];

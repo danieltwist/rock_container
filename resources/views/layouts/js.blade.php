@@ -2270,11 +2270,13 @@
     $(document).on('change', '#invoice_type', function () {
         if($(this).val() === 'Доход'){
             $('#expense_types_categories').addClass('d-none');
+            $('#income_types_categories').removeClass('d-none');
             $("#finance_direction").val("Клиенту").change();
         }
 
         else {
             $('#expense_types_categories').removeClass('d-none');
+            $('#income_types_categories').addClass('d-none');
             $("#finance_direction").val("Поставщику").change();
         }
     });
@@ -2288,6 +2290,25 @@
             },
             success: function (response) {
                 $('.expense_type_div').html(response);
+                $('.select2').select2({
+                    "language": "ru",
+                });
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    });
+
+    $(document).on('change', '#income_category, #edit_income_category', function () {
+        $.ajax({
+            type: "GET",
+            url: "{{ route('load_income_types_by_category') }}",
+            data: {
+                category: $(this).val(),
+            },
+            success: function (response) {
+                $('.income_type_div').html(response);
                 $('.select2').select2({
                     "language": "ru",
                 });
@@ -2368,6 +2389,39 @@
             },
             success: function (response) {
                 $('#not_allowed_finish_reason_div').html(response);
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    });
+
+    $(document).on('click', '.project_to_archive', function () {
+        let project_id = $(this).data('project_id');
+        $.ajax({
+            type: "POST",
+            url: "{{ route('project_to_archive') }}",
+            data: {
+                'project_id': project_id
+            },
+            success: function () {
+                $('.projects_ajax_table').DataTable().draw(false);
+            },
+            error: function (XMLHttprequest, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    });
+    $(document).on('click', '.project_from_archive', function () {
+        let project_id = $(this).data('project_id');
+        $.ajax({
+            type: "POST",
+            url: "{{ route('project_from_archive') }}",
+            data: {
+                project_id: project_id
+            },
+            success: function () {
+                $('.projects_ajax_table').DataTable().draw(false);
             },
             error: function (XMLHttprequest, textStatus, errorThrown) {
                 console.log(textStatus);

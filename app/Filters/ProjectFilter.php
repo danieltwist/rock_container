@@ -33,7 +33,11 @@ class ProjectFilter extends QueryFilter
         }
 
         elseif($value == 'finished'){
-            return $this->builder->where('active', '0')->where('status', '<>', 'Черновик')->where('paid', 'Оплачен');
+            return $this->builder->where('active', '0')->where('status', '<>', 'Черновик')->where('paid', 'Оплачен')->where('archive', '<>', 1);
+        }
+
+        elseif($value == 'archive'){
+            return $this->builder->where('archive', 1);
         }
 
         elseif($value == 'finished_paid_date'){

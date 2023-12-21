@@ -84,4 +84,6 @@ return [
     'file_manager' => '文件管理器',
     'logout' => '登出',
     'search' => '搜索',
+    //21122023
+    'income_types' => '收入类型设置'
 ];

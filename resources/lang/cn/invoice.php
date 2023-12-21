@@ -165,5 +165,8 @@ return [
     'draft_created_successfully' => '已成功创建草稿发票',
     'sell_currency_successfully' => '售币信息已成功进行',
     'add_phone_or_card_number' => '输入您的电话或信用卡号码',
-    'invoice_status_updated_successfully' => '审批信息已成功更新'
+    'invoice_status_updated_successfully' => '审批信息已成功更新',
+    //21122023
+    'income_category' => 'Вид доходов',
+    'income_type' => 'Тип доходов',
 ];

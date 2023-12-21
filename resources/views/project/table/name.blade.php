@@ -7,6 +7,13 @@
     @else
         - {{ $project->paid }}
     @endif
+    @if(in_array($role, ['director', 'super-admin']) && $project->paid != 'Не оплачен')
+        @if($project->archive == 1)
+            <a class="text-dark cursor-pointer project_from_archive" data-project_id="{{ $project->id }}"><i class="fas fa-archive"></i></a>
+        @elseif($project->archive == 0)
+            <a class="text-dark cursor-pointer project_to_archive" data-project_id="{{ $project->id }}"><i class="fas fa-archive"></i></a>
+        @endif
+    @endif
 @endif
 <br>
 <small>

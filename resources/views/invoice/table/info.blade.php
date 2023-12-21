@@ -24,6 +24,9 @@
 @if($invoice->expense_type != '' || $invoice->expense_category != '')
     <br><small>{{ $invoice->expense_category }} {{ $invoice->expense_type }}</small>
 @endif
+@if($invoice->income_type != '' || $invoice->income_category != '')
+    <br><small>{{ $invoice->income_category }} {{ $invoice->income_type }}</small>
+@endif
 @if (!is_null($invoice->project))
     <br><a href="{{ route('project.show', $invoice->project->id) }}">{{ $invoice->project->name }}</a>
 @endif

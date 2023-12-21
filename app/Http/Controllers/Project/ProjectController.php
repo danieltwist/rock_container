@@ -16,6 +16,7 @@ use App\Models\ContainerGroupLocation;
 use App\Models\ContainerUsageStatistic;
 use App\Models\CurrencyRate;
 use App\Models\ExpenseType;
+use App\Models\IncomeType;
 use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\ProjectExpense;
@@ -25,12 +26,8 @@ use App\Models\Client;
 use App\Models\Block;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Yandex\Disk\DiskClient;
-use function PHPUnit\Framework\assertDirectoryDoesNotExist;
 
 class ProjectController extends Controller
 {
@@ -326,6 +323,7 @@ class ProjectController extends Controller
                 'rates' => $currency_rates,
                 'users' => User::all(),
                 'expense_types' => ExpenseType::all(),
+                'income_types' => IncomeType::all(),
                 'access_to_project' => $access_to_project,
                 'exchange_difference' => $exchange_difference
             ]);
@@ -976,6 +974,19 @@ class ProjectController extends Controller
             'bg-class' => 'bg-success',
             'from' => 'Система',
             'message' => __('Проект ' .$project_name. ' был успешно восстановлен')
+        ]);
+    }
+
+    public function moveToArchive(Request $request){
+        $project = Project::withTrashed()->findOrFail($request->project_id);
+        $project->update([
+            'archive' => true
+        ]);
+    }
+    public function moveFromArchive(Request $request){
+        $project = Project::withTrashed()->findOrFail($request->project_id);
+        $project->update([
+            'archive' => false
         ]);
     }
 

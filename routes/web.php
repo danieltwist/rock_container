@@ -92,6 +92,9 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
 
     Route::get('/', [App\Http\Controllers\Adminpage\HomeController::class, 'index'])->name('homeAdmin')->middleware(['auth']);
 
+    Route::post('project/to_archive', 'App\Http\Controllers\Project\ProjectController@moveToArchive')->name('project_to_archive')->middleware(['auth']);
+    Route::post('project/from_archive', 'App\Http\Controllers\Project\ProjectController@moveFromArchive')->name('project_from_archive')->middleware(['auth']);
+
     Route::get('project/remove_from_stat', 'App\Http\Controllers\Project\ProjectController@removeFromStatView')->name('remove_from_stat_view')->middleware(['auth']);
     Route::any('project/remove_from_stat/process', 'App\Http\Controllers\Project\ProjectController@removeFromStat')->name('remove_from_stat')->middleware(['auth']);
 
@@ -319,11 +322,17 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
         return view('report.expenses_by_types');
     })->name('report_expenses_by_types')->middleware(['auth']);
 
+    Route::get('report/income_by_types', function (){
+        return view('report.income_by_types');
+    })->name('report_income_by_types')->middleware(['auth']);
+
     Route::get('report/user_invoices', 'App\Http\Controllers\Report\ReportController@ReportUserInvoices')->name('report_user_invoices_choose_type')->middleware(['auth']);
 
     Route::any('report/user_invoices/result', 'App\Http\Controllers\Report\ReportController@getReportUserInvoices')->name('get_report_user_invoices')->middleware(['auth']);
 
     Route::get('report/get_expenses_by_types', 'App\Http\Controllers\Report\ReportController@expensesByTypes')->name('get_report_expenses_by_types')->middleware(['auth']);
+
+    Route::get('report/get_incomes_by_types', 'App\Http\Controllers\Report\ReportController@incomeByTypes')->name('get_report_incomes_by_types')->middleware(['auth']);
 
     //////////////////ajax routes containers
     Route::post('container/delete_row/{id}', '\App\Http\Controllers\Container\ContainerController@deleteRow')->middleware(['auth']);
@@ -336,6 +345,10 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
 
     Route::get('expense_type/load_expense_types_by_category', 'App\Http\Controllers\ExpenseTypeController@loadExpenseTypesByCategory')
         ->name('load_expense_types_by_category')
+        ->middleware(['auth']);
+
+    Route::get('income_type/load_income_types_by_category', 'App\Http\Controllers\IncomeTypeController@loadIncomeTypesByCategory')
+        ->name('load_income_types_by_category')
         ->middleware(['auth']);
 
     Route::get('/history/get_component_history_table', 'App\Http\Controllers\Datatables\AuditTablesController@getComponentHistoryTable')->middleware(['auth'])->name('get_component_history_table');
@@ -364,6 +377,7 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
         ->middleware(['auth']);
 
     Route::resource('expense_type', \App\Http\Controllers\ExpenseTypeController::class)->middleware(['auth']);
+    Route::resource('income_type', \App\Http\Controllers\IncomeTypeController::class)->middleware(['auth']);
 
     Route::get('/history', 'App\Http\Controllers\Audit\AuditController@index')->middleware(['auth'])->name('history');
     Route::get('/history/get_audits_table', 'App\Http\Controllers\Datatables\AuditTablesController@getAuditTable')->middleware(['auth'])->name('get_audits_table');

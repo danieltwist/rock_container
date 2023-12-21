@@ -2,7 +2,7 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Виды расходов</h3>
+                <h3 class="card-title">{{ __('settings.income_categories') }}</h3>
             </div>
             <div class="card-body">
                 <table class="table table-striped">
@@ -13,23 +13,23 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($expense_types as $expense_type)
-                        @if($expense_type->type == 'category')
+                    @foreach($income_types as $income_type)
+                        @if($income_type->type == 'category')
                             <tr>
                                 <td>
                                     <a href="#" class="xedit"
-                                       data-pk="{{ $expense_type->id }}"
+                                       data-pk="{{ $income_type->id }}"
                                        data-name="name"
-                                       data-model="ExpenseType">
-                                        {{ $expense_type->name }}
+                                       data-model="incomeType">
+                                        {{ $income_type->name }}
                                     </a>
                                 </td>
                                 <td>
-                                    <form class="inline-block" action="{{ route('expense_type.destroy', $expense_type->id) }}" method="POST">
+                                    <form class="inline-block" action="{{ route('income_type.destroy', $income_type->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm"
-                                                data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"},"xedit_init":{"need_init":"true"}}'>
+                                                data-action='{"update_div":{"div_id": "income_types_settings_div"},"select2_init":{"need_init":"true"},"xedit_init":{"need_init":"true"}}'>
                                             {{ __('general.remove') }}
                                         </button>
                                     </form>
@@ -43,36 +43,36 @@
         </div>
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Типы расходов</h3>
+                <h3 class="card-title">{{ __('settings.income_types') }}</h3>
             </div>
             <div class="card-body">
                 <table class="table table-striped">
                     <thead>
                     <tr>
                         <th>{{ __('general.name') }}</th>
-                        <th>Вид</th>
+                        <th>{{ __('settings.type') }}</th>
                         <th style="width: 10%">{{ __('general.removing') }}</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($expense_types as $expense_type)
-                        @if($expense_type->type == 'type')
+                    @foreach($income_types as $income_type)
+                        @if($income_type->type == 'type')
                             <tr>
                                 <td>
                                     <a href="#" class="xedit"
-                                       data-pk="{{ $expense_type->id }}"
+                                       data-pk="{{ $income_type->id }}"
                                        data-name="name"
-                                       data-model="ExpenseType">
-                                        {{ $expense_type->name }}
+                                       data-model="incomeType">
+                                        {{ $income_type->name }}
                                     </a>
                                 </td>
-                                <td>{{ $expense_type->category }}</td>
+                                <td>{{ $income_type->category }}</td>
                                 <td>
-                                    <form class="inline-block" action="{{ route('expense_type.destroy', $expense_type->id) }}" method="POST">
+                                    <form class="inline-block" action="{{ route('income_type.destroy', $income_type->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger btn-sm"
-                                                data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"},"xedit_init":{"need_init":"true"}}'>
+                                                data-action='{"update_div":{"div_id": "income_types_settings_div"},"select2_init":{"need_init":"true"},"xedit_init":{"need_init":"true"}}'>
                                             {{ __('general.remove') }}
                                         </button>
                                     </form>
@@ -87,51 +87,51 @@
 
     </div>
     <div class="col-md-6">
-        <form action="{{ route('expense_type.store') }}" method="POST">
-            <input type="hidden" name="type" value="add_expense_category">
+        <form action="{{ route('income_type.store') }}" method="POST">
+            <input type="hidden" name="type" value="add_income_category">
             @csrf
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Добавить вид расходов</h3>
+                    <h3 class="card-title">{{ __('settings.add_income_category') }}</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="name">Название</label>
+                        <label for="name">{{ __('general.name') }}</label>
                         <input type="text" class="form-control" name="name"
-                               placeholder="Название">
+                               placeholder="{{ __('general.name') }}">
                     </div>
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary float-right"
-                            data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"}}'>
+                            data-action='{"update_div":{"div_id": "income_types_settings_div"},"select2_init":{"need_init":"true"}}'>
                         {{ __('general.add') }}
                     </button>
                 </div>
             </div>
         </form>
-        <form action="{{ route('expense_type.store') }}" method="POST">
-            <input type="hidden" name="type" value="add_expense_type">
+        <form action="{{ route('income_type.store') }}" method="POST">
+            <input type="hidden" name="type" value="add_income_type">
             @csrf
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Добавить тип расходов</h3>
+                    <h3 class="card-title">{{ __('settings.add_income_type') }}</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="name">Название</label>
+                        <label for="name">{{ __('general.name') }}</label>
                         <input type="text" class="form-control" name="name"
-                               placeholder="Название">
+                               placeholder="{{ __('general.name') }}">
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="expense_category">Вид расходов</label>
+                        <label for="income_category">{{ __('invoice.income_category') }}</label>
                         <select class="form-control select2" name="category"
-                                data-placeholder="Выберите вид расходов" style="width: 100%;">
+                                data-placeholder="{{ __('invoice.income_category') }}" style="width: 100%;">
                             <option></option>
-                            @foreach($expense_types as $expense_type)
-                                @if($expense_type->type == 'category')
-                                    <option value="{{ $expense_type->name }}">{{ $expense_type->name }}</option>
+                            @foreach($income_types as $income_type)
+                                @if($income_type->type == 'category')
+                                    <option value="{{ $income_type->name }}">{{ $income_type->name }}</option>
                                 @endif
                             @endforeach
                         </select>
@@ -139,7 +139,7 @@
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary float-right"
-                            data-action='{"update_div":{"div_id": "expense_types_settings_div"},"select2_init":{"need_init":"true"}}'>
+                            data-action='{"update_div":{"div_id": "income_types_settings_div"},"select2_init":{"need_init":"true"}}'>
                         {{ __('general.add') }}
                     </button>
                 </div>

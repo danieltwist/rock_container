@@ -37,19 +37,20 @@
                 @endforeach
             </select>
         </div>
-        <label for="project">Проект</label>
-        <select class="form-control select2" name="project_id"
-                data-placeholder="Выберите проект" style="width: 100%;">
-            <option></option>
-            @foreach($projects as $project)
-                <option value="{{ $project->id }}"
-                        @if($invoice->project_id == $project->id)
-                        selected
-                    @endif
-                >{{ $project->name }}</option>
-            @endforeach
-        </select>
-    </div>
+        <div class="form-group">
+            <label for="project">Проект</label>
+            <select class="form-control select2" name="project_id"
+                    data-placeholder="Выберите проект" style="width: 100%;">
+                <option></option>
+                @foreach($projects as $project)
+                    <option value="{{ $project->id }}"
+                            @if($invoice->project_id == $project->id)
+                            selected
+                        @endif
+                    >{{ $project->name }}</option>
+                @endforeach
+            </select>
+        </div>
     <div class="form-group">
         <label for="application">Заявка</label>
         <select class="form-control select2" name="application_id"
@@ -73,9 +74,9 @@
                 @foreach($expense_types as $expense_type)
                     @if($expense_type->type == 'category')
                         <option value="{{ $expense_type->name }}"
-                        @if($invoice->expense_category == $expense_type->name)
-                            selected
-                        @endif
+                                @if($invoice->expense_category == $expense_type->name)
+                                    selected
+                            @endif
                         >{{ $expense_type->name }}</option>
                     @endif
                 @endforeach
@@ -90,10 +91,45 @@
                     @foreach($expense_types as $expense_type)
                         @if($expense_type->type == 'type')
                             <option value="{{ $expense_type->name }}"
-                                @if($invoice->expense_type == $expense_type->name)
-                                    selected
+                                    @if($invoice->expense_type == $expense_type->name)
+                                        selected
                                 @endif
                             >{{ $expense_type->name }}</option>
+                        @endif
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    @else
+        <div class="form-group">
+            <label for="income_category">Вид доходов</label>
+            <select class="form-control select2" name="income_category" id="edit_income_category"
+                    data-placeholder="Выберите вид доходов" style="width: 100%;">
+                <option></option>
+                @foreach($income_types as $income_type)
+                    @if($income_type->type == 'category')
+                        <option value="{{ $income_type->name }}"
+                                @if($invoice->income_category == $income_type->name)
+                                    selected
+                            @endif
+                        >{{ $income_type->name }}</option>
+                    @endif
+                @endforeach
+            </select>
+        </div>
+        <div class="income_type_div">
+            <div class="form-group">
+                <label for="income_type">Тип доходов</label>
+                <select class="form-control select2" name="income_type"
+                        data-placeholder="Выберите тип доходов" style="width: 100%;">
+                    <option></option>
+                    @foreach($income_types as $income_type)
+                        @if($income_type->type == 'type')
+                            <option value="{{ $income_type->name }}"
+                                    @if($invoice->income_type == $income_type->name)
+                                        selected
+                                @endif
+                            >{{ $income_type->name }}</option>
                         @endif
                     @endforeach
                 </select>

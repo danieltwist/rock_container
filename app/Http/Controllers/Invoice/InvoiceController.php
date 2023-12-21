@@ -13,7 +13,7 @@ use App\Models\Client;
 use App\Models\CurrencyRate;
 use App\Models\ExpenseType;
 use App\Models\Invoice;
-use App\Models\Notification;
+use App\Models\IncomeType;
 use App\Models\Setting;
 use App\Models\Supplier;
 use App\Models\User;
@@ -22,7 +22,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use phpDocumentor\Reflection\Project;
-use Symfony\Component\Console\Input\Input;
 
 class InvoiceController extends Controller
 {
@@ -66,6 +65,8 @@ class InvoiceController extends Controller
             $new_invoice->additional_info = $request->additional_info;
             $new_invoice->expense_category = $request->expense_category;
             $new_invoice->expense_type = $request->expense_type;
+            $new_invoice->income_category = $request->income_category;
+            $new_invoice->income_type = $request->income_type;
             $new_invoice->user_add = Auth::user()->name;
             $new_invoice->user_id = Auth::user()->id;
             if ($losses) {
@@ -123,6 +124,8 @@ class InvoiceController extends Controller
                 } else {
                     $supplier->country == 'Россия' ? $status = 'Ожидается загрузка счета' : $status = 'Ожидается создание инвойса';
                 }
+                $new_invoice->income_category = $request->income_category;
+                $new_invoice->income_type = $request->income_type;
 
                 $message = __('invoice.income_added_successfully');
             }
@@ -298,7 +301,6 @@ class InvoiceController extends Controller
                         ? $status = $invoice->status
                         : $status = 'Счет на согласовании';
                 }
-
 
                 $invoice->status = $status;
 
@@ -501,6 +503,8 @@ class InvoiceController extends Controller
                 'additional_info' => $request->additional_info,
                 'expense_category' => $request->expense_category,
                 'expense_type' => $request->expense_type,
+                'income_category' => $request->income_category,
+                'income_type' => $request->income_type,
                 'edited' => '1'
             ]);
 
@@ -596,6 +600,7 @@ class InvoiceController extends Controller
                 'company_type' => $company_type,
                 'class' => $class,
                 'expense_types' => ExpenseType::all(),
+                'income_types' => IncomeType::all(),
                 'projects' => \App\Models\Project::all(),
                 'applications' => Application::all(),
                 'clients' => Client::all(),
@@ -827,19 +832,24 @@ class InvoiceController extends Controller
             Storage::delete($invoice_file[$key]['filename']);
         }
 
-        if ($invoice->direction == 'Расход') {
-            $status = 'Ожидается счет от поставщика';
+        if(in_array($invoice->status, ['Счет согласован на оплату', 'Согласована частичная оплата', 'Оплачен', 'Частично оплачен'])){
+            $status = $invoice->status;
         }
         else {
-            if (!is_null($invoice->client_id)) {
-                $invoice->client->country == 'Россия' ? $status = 'Ожидается загрузка счета' : $status = 'Ожидается создание инвойса';
+            if ($invoice->direction == 'Расход') {
+                $status = 'Ожидается счет от поставщика';
+            }
+            else {
+                if (!is_null($invoice->client_id)) {
+                    $invoice->client->country == 'Россия' ? $status = 'Ожидается загрузка счета' : $status = 'Ожидается создание инвойса';
+
+                }
+                elseif (!is_null($invoice->supplier_id)) {
+                    $invoice->supplier->country == 'Россия' ? $status = 'Ожидается загрузка счета' : $status = 'Ожидается создание инвойса';
+
+                }
 
             }
-            elseif (!is_null($invoice->supplier_id)) {
-                $invoice->supplier->country == 'Россия' ? $status = 'Ожидается загрузка счета' : $status = 'Ожидается создание инвойса';
-
-            }
-
         }
 
         unset($invoice_file[$key]);

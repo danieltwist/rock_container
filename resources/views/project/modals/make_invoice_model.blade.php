@@ -40,6 +40,21 @@
                         </div>
                         <div class="expense_type_div"></div>
                     </div>
+                    <div id="income_types_categories" class="d-none">
+                        <div class="form-group">
+                            <label for="income_category">Вид доходов</label>
+                            <select class="form-control select2" name="income_category" id="income_category"
+                                    data-placeholder="Выберите вид доходов" style="width: 100%;">
+                                <option></option>
+                                @foreach($income_types as $income_type)
+                                    @if($income_type->type == 'category')
+                                        <option value="{{ $income_type->name }}">{{ $income_type->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="income_type_div"></div>
+                    </div>
                     <div class="form-group">
                         <label for="direction">{{ __('general.direction') }}</label>
                         <select class="form-control" name="direction" id="finance_direction" required>

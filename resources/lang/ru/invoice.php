@@ -166,5 +166,8 @@ return [
     'draft_created_successfully' => 'Черновик инвойса был успешно создан',
     'sell_currency_successfully' => 'Информация о продаже валюты была успешно проведена',
     'add_phone_or_card_number' => 'Введите номер телефона или карты',
-    'invoice_status_updated_successfully' => 'Информация по согласованию была успешно обновлена'
+    'invoice_status_updated_successfully' => 'Информация по согласованию была успешно обновлена',
+    //21122023
+    'income_category' => 'Вид доходов',
+    'income_type' => 'Тип доходов',
 ];

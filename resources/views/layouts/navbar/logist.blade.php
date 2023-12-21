@@ -152,6 +152,11 @@
                                 <p>Завершенные проекты</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('project.index').'?archive' }}" class="nav-link">
+                                <p>{{ __('interface.containers_archive') }}</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">

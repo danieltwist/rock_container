@@ -170,13 +170,15 @@
         <a class="btn btn-default btn-sm copy-to-clipboard cursor-pointer" data-link="{{ route('invoice.show', $invoice->id) }}">
             <i class="fas fa-copy"></i> {{ __('invoice.copy_link') }}
         </a>
-        <a class="btn btn-default btn-sm cursor-pointer"
-           data-toggle="modal"
-           data-type="ajax"
-           data-target="#edit_invoice_modal"
-           data-invoice-id="{{ $invoice->id }}">
-            <i class="fas fa-pencil-alt"></i> {{ __('general.change') }}
-        </a>
+        @can('edit invoices')
+            <a class="btn btn-default btn-sm cursor-pointer"
+               data-toggle="modal"
+               data-type="ajax"
+               data-target="#edit_invoice_modal"
+               data-invoice-id="{{ $invoice->id }}">
+                <i class="fas fa-pencil-alt"></i> {{ __('general.change') }}
+            </a>
+        @endcan
         <br><br>
         @if ($invoice->additional_info!='')
             <b>{{ __('general.additional_info') }}:</b> {{ $invoice->additional_info }}
