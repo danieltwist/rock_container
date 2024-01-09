@@ -9,12 +9,16 @@
                 <br>
                 <small>
                     <b>{{ __('invoice.exchange_difference') }}: {{ number_format($exchange_difference, 2, '.', ' ') }}р.</b><br>
-                    <a class="sell_currency_modal cursor-pointer"
-                       data-toggle="modal"
-                       data-target="#sell_currency"
-                       data-invoice-id="{{ $invoice->id }}"
-                       data-currency-amount="{{ $invoice->amount_in_currency_income_date }}">({{ __('invoice.currency_not_sold') }})
-                    </a>
+                    @if($invoice->amount_sale_date == '')
+                        <a class="sell_currency_modal cursor-pointer"
+                           data-toggle="modal"
+                           data-target="#sell_currency"
+                           data-invoice-id="{{ $invoice->id }}"
+                           data-currency-amount="{{ $invoice->amount_in_currency_income_date }}">({{ __('invoice.currency_not_sold') }})
+                        </a>
+                    @else
+                        ({{ $invoice->amount_sale_date }}р. {{ __('invoice.on_rate') }} {{ $invoice->rate_sale_date }})
+                    @endif
                 </small>
             @endif
         @endif

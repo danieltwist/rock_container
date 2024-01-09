@@ -7,6 +7,7 @@ use App\Http\Traits\FinanceTrait;
 use App\Models\Container;
 use App\Models\ContainerUsageStatistic;
 use App\Models\ExpenseType;
+use App\Models\IncomeType;
 use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\ProjectComment;
@@ -165,6 +166,16 @@ class XEditable extends Controller
             if ($request->input('model') == 'ExpenseType'){
 
                 ExpenseType::find($request->input('pk'))->update([
+                    $request->input('name') => $request->input('value')
+                ]);
+
+                return response()->json(['success' => true]);
+
+            }
+
+            if ($request->input('model') == 'incomeType'){
+
+                IncomeType::find($request->input('pk'))->update([
                     $request->input('name') => $request->input('value')
                 ]);
 

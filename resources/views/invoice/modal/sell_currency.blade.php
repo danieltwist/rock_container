@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">П{{ __('invoice.sell_currency') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('invoice.sell_currency') }}</button>
                 </div>
             </form>
         </div>

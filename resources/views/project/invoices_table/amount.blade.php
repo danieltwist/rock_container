@@ -8,18 +8,16 @@
             @if ($invoice->amount != $invoice->amount_sale_date || $invoice->amount != $invoice->amount_income_date)
                 <br>
                 <small>
-                    <b>{{ __('invoice.exchange_difference') }}:
-                        @if($invoice->amount_sale_date != '')
-                            {{ number_format($invoice->amount_sale_date - $invoice->amount, 2, '.', ' ') }}р.<br>
-                            ({{ number_format($invoice->amount_sale_date, 2, '.', ' ') }}р. {{ __('invoice.on_rate') }} {{ $invoice->rate_sale_date }})
-                        @else
-                            {{ number_format($invoice->amount_income_date - $invoice->amount, 2, '.', ' ') }}р.</b><br>
-                    <a class="sell_currency_modal cursor-pointer"
-                       data-toggle="modal"
-                       data-target="#sell_currency"
-                       data-invoice-id="{{ $invoice->id }}"
-                       data-currency-amount="{{ $invoice->amount_in_currency_income_date }}">({{ __('invoice.currency_not_sold') }})
-                    </a>
+                    <b>{{ __('invoice.exchange_difference') }}: {{ number_format($exchange_difference, 2, '.', ' ') }}р.</b><br>
+                    @if($invoice->amount_sale_date == '')
+                        <a class="sell_currency_modal cursor-pointer"
+                           data-toggle="modal"
+                           data-target="#sell_currency"
+                           data-invoice-id="{{ $invoice->id }}"
+                           data-currency-amount="{{ $invoice->amount_in_currency_income_date }}">({{ __('invoice.currency_not_sold') }})
+                        </a>
+                    @else
+                        ({{ $invoice->amount_sale_date }}р. {{ __('invoice.on_rate') }} {{ $invoice->rate_sale_date }})
                     @endif
                 </small>
             @endif

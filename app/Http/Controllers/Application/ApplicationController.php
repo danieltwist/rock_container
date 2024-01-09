@@ -14,6 +14,7 @@ use App\Models\Contract;
 use App\Models\Country;
 use App\Models\CurrencyRate;
 use App\Models\ExpenseType;
+use App\Models\IncomeType;
 use App\Models\Invoice;
 use App\Models\Project;
 use App\Models\Supplier;
@@ -368,6 +369,7 @@ class ApplicationController extends Controller
             'fact_in' => $fact_in,
             'fact_out' => $fact_out,
             'expense_types' => ExpenseType::all(),
+            'income_types' => IncomeType::all(),
             'can_finish_application' => $this->checkCanFinishApplication($application),
             'load_from_containers' => $load_from_containers,
             'load_from_archive' => $load_from_archive,

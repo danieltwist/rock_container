@@ -399,12 +399,12 @@
                                        value="{{ $rate_minus_one }}">
                             </div>
                             <div class="form-group" id="invoice_amount_in_currency_div">
-                                <label>{{ __('general.amount_in_currency_actual') }}</label>
+                                <label>{{ __('invoice.amount_in_currency_actual') }}</label>
                                 <input class="form-control rate_input"
                                        name="amount_in_currency_actual"
                                        type="text"
                                        id="invoice_amount_in_currency"
-                                       placeholder="{{ __('general.amount_in_currency_actual') }}"
+                                       placeholder="{{ __('invoice.amount_in_currency_actual') }}"
                                        value="{{ $invoice->amount_in_currency }}">
                             </div>
                         @endif
