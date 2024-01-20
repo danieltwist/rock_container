@@ -179,9 +179,11 @@
                 <i class="fas fa-pencil-alt"></i> {{ __('general.change') }}
             </a>
         @endcan
-        <br><br>
-        @if ($invoice->additional_info!='')
-            <b>{{ __('general.additional_info') }}:</b> {{ $invoice->additional_info }}
+        @if(canSeeInvoiceComment($invoice))
+            <br><br>
+            @if ($invoice->additional_info!='')
+                <b>{{ __('general.additional_info') }}:</b> {{ $invoice->additional_info }}
+            @endif
         @endif
         <div class="row mt-4">
             <div class="col-md-4">

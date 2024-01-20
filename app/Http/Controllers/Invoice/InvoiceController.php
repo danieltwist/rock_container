@@ -77,6 +77,9 @@ class InvoiceController extends Controller
                 ];
             }
 
+            if(isset($request->hide_comment))
+                $new_invoice->hide_comment = 1;
+
             $new_invoice->save();
 
             if (!is_null($new_invoice->losses_potential)) $this->updateInvoiceLosses($new_invoice, '');
@@ -143,6 +146,9 @@ class InvoiceController extends Controller
             $new_invoice->additional_info = $request->additional_info;
             $new_invoice->user_add = Auth::user()->name;
             $new_invoice->user_id = Auth::user()->id;
+
+            if(isset($request->hide_comment))
+                $new_invoice->hide_comment = 1;
 
             $new_invoice->save();
 
@@ -482,6 +488,8 @@ class InvoiceController extends Controller
             $old_project = $invoice->project_id;
             $new_project = $request->project_id;
 
+            isset($request->hide_comment) ?  $hide_comment = 1 : $hide_comment = 0;
+
             $invoice->update([
                 'amount' => $request->amount,
                 'client_id' => $client_id,
@@ -505,7 +513,8 @@ class InvoiceController extends Controller
                 'expense_type' => $request->expense_type,
                 'income_category' => $request->income_category,
                 'income_type' => $request->income_type,
-                'edited' => '1'
+                'edited' => '1',
+                'hide_comment' => $hide_comment
             ]);
 
             $this->updateProjectFinance($invoice->project_id);

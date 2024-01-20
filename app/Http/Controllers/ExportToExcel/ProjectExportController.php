@@ -99,16 +99,10 @@ class ProjectExportController extends Controller
             $sheet->setCellValue('E'.($i+2), $total_in);
         }
 
-        if ($project->active == '1') {
-            $folder = 'public/Проекты/Активные проекты/'.$project["name"].'/';
-            $path = 'public/Проекты/Активные проекты/'.$project["name"].'/'.config('app.prefix_view').$project["name"].'_выгрузка.xlsx';
-            $savepath = 'storage/Проекты/Активные проекты/'.$project["name"].'/';
-        }
-        else {
-            $folder = 'public/Проекты/Завершенные проекты/'.$project["name"].'/';
-            $path = 'public/Проекты/Завершенные проекты/'.$project["name"].'/'.config('app.prefix_view').$project["name"].'_выгрузка.xlsx';
-            $savepath = 'storage/Проекты/Завершенные проекты/'.$project["name"].'/';
-        }
+        $folder = 'public/Проекты выгрузка/';
+        $path = 'public/Проекты выгрузка/'.config('app.prefix_view').$project["name"].'_выгрузка.xlsx';
+        $savepath = 'storage/Проекты выгрузка/';
+
         Storage::makeDirectory($folder);
 
         $filename = config('app.prefix_view').$project["name"].'_выгрузка.xlsx';

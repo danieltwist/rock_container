@@ -413,6 +413,7 @@ class ApplicationController extends Controller
         $application->contract_id = $request->contract_id;
 
         if($request->counterparty_type == 'Клиент') {
+            $application->supplier_id = null;
             $client = Client::find($request->client_id);
             !is_null($client->short_name) ? $name = $client->short_name : $name = $client->name;
             $application->client_name = $name;
@@ -420,6 +421,7 @@ class ApplicationController extends Controller
             $counterparty_type = 'client';
         }
         if($request->counterparty_type == 'Поставщик') {
+            $application->client_id = null;
             $supplier = Supplier::find($request->supplier_id);
             !is_null($supplier->short_name) ? $name = $supplier->short_name : $name = $supplier->name;
             $application->supplier_name = $name;

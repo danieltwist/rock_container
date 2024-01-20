@@ -396,4 +396,17 @@ if(!function_exists('can_edit_this_project')){
         return $payment;
     }
 
+    function canSeeInvoiceComment(\App\Models\Invoice $invoice){
+        $user = auth()->user();
+        $role = $user->getRoleNames()[0];
+
+        if($invoice->hide_comment == 0 || in_array($role, ['director', 'accountant', 'super-admin'])){
+            $can_see = true;
+        }
+        else $can_see = false;
+
+        return $can_see;
+
+    }
+
 }

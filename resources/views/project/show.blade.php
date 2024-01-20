@@ -559,7 +559,11 @@
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"
                                                 data-filter=""
-                                                data-filter_type="direction">
+                                                data-filter_type="direction"
+                                                @if($project->management_expenses == 'on' && !in_array($role,['super-admin','director','accountant']))
+                                                    data-personal="true"
+                                                @endif
+                                                >
                                             {{ __('project.show_all') }}
                                         </button>
                                         <button type="button" class="btn btn-default btn-sm invoices_object_filters show_invoices_table"

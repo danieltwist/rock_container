@@ -31,7 +31,7 @@
     @if ($invoice->amount != $invoice->amount_actual && $invoice->amount_actual != '')
         <br>{{ __('invoice.fact_amount') }}:<br>
         @if ($invoice->currency != 'RUB')
-            {{ number_format($invoice->amount_in_currency_actual, 0, '.', ' ') }} {{ $invoice->currency }} ({{ $invoice->rate_out_date }}) <br>
+            {{ number_format($invoice->amount_in_currency_actual, 0, '.', ' ') }} {{ $invoice->currency }}
         @endif
         {{ number_format($invoice->amount_actual, 2, '.', ' ') }}р.
     @endif

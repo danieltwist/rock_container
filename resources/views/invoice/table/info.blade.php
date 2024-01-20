@@ -13,7 +13,7 @@
     @endswitch
 @endif
 <small>{{ __('general.from') }} {{ $invoice['created_at']->format('d.m.Y H:i:s') }}</small>
-@if($invoice->edited != '')
+@if($invoice->edited != '' && canSeeInvoiceComment($invoice))
     <a data-toggle="modal" data-target="#view_component_history"
             class="text-dark cursor-pointer"
             data-component="invoice"
@@ -37,23 +37,25 @@
     <br>
 @endif
 <small>
-    @if ($invoice->additional_info !='')
-        @if(mb_strlen($invoice->additional_info)>100)
-            <div id="collapse_task_text_compact_{{ $invoice->id }}">
-                {{ \Illuminate\Support\Str::limit($invoice->additional_info, 100, $end='...') }}
-                <a class="cursor-pointer collapse-trigger" data-div_id="collapse_task_text_full_{{ $invoice->id }}">
-                    <i class="fa fa-angle-down"></i> {{ __('general.expand') }}
-                </a>
-            </div>
-            <div id="collapse_task_text_full_{{ $invoice->id }}" class="d-none">
+    @if(canSeeInvoiceComment($invoice))
+        @if ($invoice->additional_info !='')
+            @if(mb_strlen($invoice->additional_info)>100)
+                <div id="collapse_task_text_compact_{{ $invoice->id }}">
+                    {{ \Illuminate\Support\Str::limit($invoice->additional_info, 100, $end='...') }}
+                    <a class="cursor-pointer collapse-trigger" data-div_id="collapse_task_text_full_{{ $invoice->id }}">
+                        <i class="fa fa-angle-down"></i> {{ __('general.expand') }}
+                    </a>
+                </div>
+                <div id="collapse_task_text_full_{{ $invoice->id }}" class="d-none">
+                    {{ $invoice->additional_info }}
+                    <a class="cursor-pointer collapse-trigger" data-div_id="collapse_task_text_compact_{{ $invoice->id }}">
+                        <i class="fa fa-angle-up"></i> {{ __('general.collapse') }}
+                    </a>
+                </div>
+            @else
                 {{ $invoice->additional_info }}
-                <a class="cursor-pointer collapse-trigger" data-div_id="collapse_task_text_compact_{{ $invoice->id }}">
-                    <i class="fa fa-angle-up"></i> {{ __('general.collapse') }}
-                </a>
-            </div>
-        @else
-            {{ $invoice->additional_info }}
-            <br>
+                <br>
+            @endif
         @endif
     @endif
     <i>

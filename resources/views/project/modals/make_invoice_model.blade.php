@@ -141,6 +141,14 @@
                         <textarea class="form-control" rows="3" name="additional_info" id="add_invoice_additional_info"
                                   placeholder="{{ __('general.additional_info') }}"></textarea>
                     </div>
+                    @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                        <div class="form-group clearfix">
+                            <div class="icheck-primary d-inline">
+                                <input type="checkbox" id="hide_comment" name="hide_comment">
+                                <label for="hide_comment">Скрыть комментарий</label>
+                            </div>
+                        </div>
+                    @endif
                     <div class="form-group clearfix" id="supplier_group_agree_without_invoice">
                         <div class="icheck-primary d-inline">
                             <input type="checkbox" id="agree_without_invoice" name="agree_without_invoice">

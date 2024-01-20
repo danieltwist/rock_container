@@ -294,11 +294,21 @@
                placeholder="{{ __('invoice.payment_deadline') }}"
                value="{{ !is_null($invoice->deadline) ? $invoice->deadline->format('d.m.Y') : '' }}">
     </div>
-    <div class="form-group">
-        <label>{{ __('general.additional_info') }}</label>
-        <textarea class="form-control" rows="3" name="additional_info"
-                  placeholder="{{ __('general.additional_info') }}">{{ $invoice->additional_info }}</textarea>
-    </div>
+    @if(canSeeInvoiceComment($invoice))
+        <div class="form-group">
+            <label>{{ __('general.additional_info') }}</label>
+            <textarea class="form-control" rows="3" name="additional_info"
+                      placeholder="{{ __('general.additional_info') }}">{{ $invoice->additional_info }}</textarea>
+        </div>
+    @endif
+    @if(in_array($role, ['director', 'accountant', 'super-admin']))
+        <div class="form-group clearfix">
+            <div class="icheck-primary d-inline">
+                <input type="checkbox" id="hide_comment" name="hide_comment" {{ $invoice->hide_comment == 1 ? 'checked' : '' }}>
+                <label for="hide_comment">Скрыть комментарий</label>
+            </div>
+        </div>
+    @endif
     <div class="form-group">
         <button type="submit" class="btn btn-primary"
                 id="update_invoice_form"

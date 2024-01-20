@@ -227,6 +227,18 @@ if(isset($_COOKIE["role"])){
                         array(
                             'pattern' => '!^/Проекты!',
                             'locked' => true
+                        ),
+                        array(
+                            'pattern' => '!^/Счета выгрузка!',
+                            'hidden' => true
+                        ),
+                        array(
+                            'pattern' => '!^/Проекты выгрузка!',
+                            'hidden' => true
+                        ),
+                        array(
+                            'pattern' => '!^/Отчеты!',
+                            'hidden' => true
                         )
                     )
                 ),
@@ -260,9 +272,7 @@ if(isset($_COOKIE["role"])){
             ),
         );
     }
-
 }
-
 else {
     return array(
 
@@ -364,6 +374,18 @@ else {
                     array(
                         'pattern' => '!^/Проекты!',
                         'locked' => true
+                    ),
+                    array(
+                        'pattern' => '!^/Счета выгрузка!',
+                        'hidden' => true
+                    ),
+                    array(
+                        'pattern' => '!^/Проекты выгрузка!',
+                        'hidden' => true
+                    ),
+                    array(
+                        'pattern' => '!^/Отчеты!',
+                        'hidden' => true
                     )
                 )
             ),
