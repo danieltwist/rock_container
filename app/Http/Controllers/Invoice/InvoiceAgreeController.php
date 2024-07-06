@@ -88,7 +88,7 @@ class InvoiceAgreeController extends Controller
                         $invoice->sub_status = $sub_status;
                         $invoice->director_comment = $request->director_comment;
 
-                        if(is_null($invoice->agree_2)){
+                        if(is_null($invoice->agree_2) || $invoice->status == 'Частично оплачен'){
                             $this->notifySecondPerson($invoice, $this->agree_invoice_users[1], $agreed_by);
                             if($request->sub_status == 'Срочно') {
                                 $this->notifyAccountant($invoice);
@@ -114,7 +114,7 @@ class InvoiceAgreeController extends Controller
                         $invoice->sub_status = $sub_status;
                         $invoice->director_comment = $request->director_comment;
 
-                        if(is_null($invoice->agree_1)){
+                        if(is_null($invoice->agree_1) || $invoice->status == 'Частично оплачен'){
                             $this->notifySecondPerson($invoice, $this->agree_invoice_users[0], $agreed_by);
                             if($request->sub_status == 'Срочно') {
                                 $this->notifyAccountant($invoice);

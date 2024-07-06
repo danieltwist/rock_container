@@ -7,6 +7,7 @@ use App\Events\TelegramNotify;
 use App\Http\Controllers\Controller;
 use App\Models\Contract;
 use App\Models\Invoice;
+use App\Models\InvoiceTemplate;
 use App\Models\Task;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -26,25 +27,9 @@ class GenerateInvoice extends Controller
 
             $filename = 'invoice_'.$request->invoice_id.'_'.Carbon::now()->format('Y-m-d').'.docx';
 
-            if(config('app.prefix_view') == 'rl_'){
-                if($request->template == 'lanta'){
-                    switch ($request->currency){
-                        case 'RUB':
-                            $template_file = 'storage/templates/invoice_template_lanta_rub.docx';
-                            break;
-                        case 'CNY':
-                            $template_file = 'storage/templates/invoice_template_lanta_cny.docx';
-                            break;
-                        case 'USD':
-                            $template_file = 'storage/templates/invoice_template_lanta_usd.docx';
-                            break;
-                        default:
-                            $template_file = 'storage/templates/invoice_template.docx';
-                    }
-                }
-                else {
-                    $template_file = 'storage/templates/invoice_template.docx';
-                }
+            if(!is_null($request->template)){
+                $invoice_template = InvoiceTemplate::find($request->template);
+                $template_file = str_replace('public', 'storage', $invoice_template->file);
             }
             else {
                 $template_file = 'storage/templates/invoice_template.docx';

@@ -95,6 +95,63 @@
                                 </table>
                             </div>
                         </div>
+                        @if(in_array($role, ['director', 'accountant', 'super-admin']))
+                            <div class="card-footer">
+                                <form action="{{ route('applications_export_to_excel') }}" id="get_excel_applications" method="GET">
+                                    @csrf
+                                    @if (isset($_GET['draft']))
+                                        @php
+                                            $parameters = [
+                                                'filename' => 'черновики_заявок',
+                                                'sorting_type' => 'Черновики'
+                                            ];
+                                            $filter = 'draft';
+                                        @endphp
+                                    @elseif (isset($_GET['active']))
+                                        @php
+                                            $parameters = [
+                                                'filename' => 'заявки_в_работе',
+                                                'sorting_type' => 'Заявки в работе'
+                                            ];
+                                            $filter = 'active';
+                                        @endphp
+                                    @elseif (isset($_GET['done']))
+                                        @php
+                                            $parameters = [
+                                                'filename' => 'завершенные_заявки',
+                                                'sorting_type' => 'Завершенные заявки'
+                                            ];
+                                            $filter = 'done';
+                                        @endphp
+                                    @elseif (isset($_GET['trash']))
+                                        @php
+                                            $parameters = [
+                                                'filename' => 'удаленные_заявки',
+                                                'sorting_type' => 'Удаленные заявки'
+                                            ];
+                                            $filter = 'trash';
+                                        @endphp
+                                    @else
+                                        @php
+                                            $parameters = [
+                                                'filename' => 'все_заявки',
+                                                'sorting_type' => 'Все заявки',
+                                            ];
+                                        @endphp
+                                    @endif
+
+                                    @if(isset($filter))
+                                        <input type="hidden" name="filter" value="{{ $filter }}">
+                                    @endif
+                                    <input type="hidden" name="parameters" value="{{ serialize($parameters) }}">
+                                    <button type="submit" class="btn btn-success download_file_directly"
+                                            data-action='{"download_file":{"need_download": "true"}}'>
+                                        <i class="fas fa-file-excel"></i>
+                                        Скачать выгрузку заявок
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

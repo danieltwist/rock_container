@@ -453,7 +453,7 @@ class InvoiceExportController extends Controller
 
     public function exportProjectReportInvoices(InvoiceFilter $filter, Request $request){
 
-        if (in_array($request->data_range, ['','all','Все'])) {
+        if (in_array($request->data_range, ['', 'all', 'Все'])) {
             $range = '2000-01-01 - 3000-01-01';
             $range_text = 'Все';
         }

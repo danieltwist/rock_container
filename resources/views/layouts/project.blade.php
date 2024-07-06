@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
     <link rel="stylesheet" href="/admin/plugins/datatables-scroller/css/scroller.bootstrap4.min.css">
     <link rel="stylesheet" href="/admin/plugins/datatables-fixedheader/css/fixedHeader.bootstrap4.css">
-    <link rel="stylesheet" href="/admin/plugins/datatables-colReorder/css/colReorder.bootstrap4.css">
+{{--    <link rel="stylesheet" href="/admin/plugins/datatables-colReorder/css/colReorder.bootstrap4.css">--}}
     <link rel="stylesheet" href="/admin/plugins/datatables-colresize/jquery.dataTables.colResize.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="/admin/dist/css/adminlte.css">
@@ -80,15 +80,15 @@
                 <a onclick="window.open('/filemanager','','Toolbar=0,Location=0,Directories=0,Status=0,Menubar=0,Scrollbars=0,Resizable=0,Width=1400,Height=740');"
                    class="nav-link cursor-pointer">{{ __('general.files') }}</a>
             </li>
-            @if(!isset($_COOKIE["yaToken"]))
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a onclick="YandexOauth();" class="nav-link cursor-pointer">{{ __('interface.sing_in_yandex') }}</a>
-                </li>
-            @else
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a onclick="YandexExit();" class="nav-link cursor-pointer">{{ __('interface.sing_out_yandex') }}</a>
-                </li>
-            @endif
+{{--            @if(!isset($_COOKIE["yaToken"]))--}}
+{{--                <li class="nav-item d-none d-sm-inline-block">--}}
+{{--                    <a onclick="YandexOauth();" class="nav-link cursor-pointer">{{ __('interface.sing_in_yandex') }}</a>--}}
+{{--                </li>--}}
+{{--            @else--}}
+{{--                <li class="nav-item d-none d-sm-inline-block">--}}
+{{--                    <a onclick="YandexExit();" class="nav-link cursor-pointer">{{ __('interface.sing_out_yandex') }}</a>--}}
+{{--                </li>--}}
+{{--            @endif--}}
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="{{ route('logout') }}"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="nav-link">{{ __('interface.exit') }}</a>
@@ -211,8 +211,8 @@
 <script src="/admin/plugins/datatables-scroller/js/scroller.bootstrap4.min.js"></script>
 <script src="/admin/plugins/datatables-fixedheader/js/dataTables.fixedHeader.js"></script>
 <script src="/admin/plugins/datatables-fixedheader/js/fixedHeader.bootstrap4.js"></script>
-<script src="/admin/plugins/datatables-colreorder/js/dataTables.colReorder.js"></script>
-<script src="/admin/plugins/datatables-colreorder/js/colReorder.bootstrap4.js"></script>
+{{--<script src="/admin/plugins/datatables-colreorder/js/dataTables.colReorder.js"></script>--}}
+{{--<script src="/admin/plugins/datatables-colreorder/js/colReorder.bootstrap4.js"></script>--}}
 <script src="/admin/plugins/datatables-colresize/jquery.dataTables.colResize.js"></script>
 
 <!-- InputMask -->

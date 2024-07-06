@@ -36,7 +36,7 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
         Route::post('/add_city', 'App\Http\Controllers\Application\ApplicationController@addCity')
             ->name('add_city');
 
-        Route::get('/process_containers_list', 'App\Http\Controllers\Application\ApplicationController@processContainersList')
+        Route::post('/process_containers_list', 'App\Http\Controllers\Application\ApplicationController@processContainersList')
             ->name('process_containers_list');
 
         Route::get('/check_containers_processing', 'App\Http\Controllers\Container\ContainerController@checkContainersProcessing')
@@ -206,6 +206,10 @@ Route::middleware(['role:manager|accountant|director|super-admin|special|logist|
     Route::resource('container_group', \App\Http\Controllers\Container\ContainerGroupController::class)->middleware(['auth']);
 
     Route::resource('block_items', \App\Http\Controllers\Block\BlockItemController::class)->middleware(['auth']);
+
+
+    Route::get('application/export_to_excel', '\App\Http\Controllers\ExportToExcel\ApplicationExportController@exportApplications')
+        ->name('applications_export_to_excel')->middleware(['auth']);
 
     Route::resource('application', \App\Http\Controllers\Application\ApplicationController::class)->middleware(['auth']);
 
@@ -395,6 +399,7 @@ Route::middleware(['role:director|super-admin'])->prefix('/')->group(function ()
         Route::post('/update_currency_rates','App\Http\Controllers\Setting\CurrencyRatioController@updateRates')->name('update_currency_rates');
         Route::get('/safe','App\Http\Controllers\Setting\SafeSettingsController@index')->name('safe_settings');
         Route::post('/update_safe_settings','App\Http\Controllers\Setting\SafeSettingsController@updateSafeSettings')->name('update_safe_settings');
+        Route::resource('/invoice_templates', App\Http\Controllers\Setting\InvoiceTemplateController::class);
     });
 
     ///////////////////ajax restore

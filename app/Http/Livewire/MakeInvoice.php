@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Contract;
 use App\Models\Invoice;
+use App\Models\InvoiceTemplate;
 use App\Models\Project;
 use Livewire\Component;
 
@@ -23,6 +24,7 @@ class MakeInvoice extends Component
     public $price_1pc;
     public $freight_amount;
     public $price_in_currency;
+    public $invoice_templates;
 
     protected $listeners = [
         'set:create_invoice_id' => 'getInvoice'
@@ -32,6 +34,7 @@ class MakeInvoice extends Component
         $this->invoice = Invoice::find($id);
         $this->project = Project::find($this->invoice->project_id);
         $this->contracts = Contract::where('client_id', $this->invoice->client_id)->get();
+        $this->invoice_templates = InvoiceTemplate::all();
 
         $invoice_array = unserialize($this->invoice->invoice_array);
 

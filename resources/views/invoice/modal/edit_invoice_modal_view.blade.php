@@ -2,6 +2,15 @@
     @csrf
     @method('PUT')
     <input type="hidden" name="action" value="update_invoice">
+    @if(in_array($role, ['director', 'accountant', 'super-admin']))
+        <div class="form-group">
+            <label>Дата создания</label>
+            <input type="text" class="form-control date_input"
+                   name="created_at"
+                   placeholder="Дата создания"
+                   value="{{ $invoice->created_at->format('d.m.Y') }}">
+        </div>
+    @endif
         <div class="form-group">
             <label for="direction">{{ __('general.direction') }}</label>
             <select class="form-control finance_direction" name="direction" required>
@@ -304,8 +313,8 @@
     @if(in_array($role, ['director', 'accountant', 'super-admin']))
         <div class="form-group clearfix">
             <div class="icheck-primary d-inline">
-                <input type="checkbox" id="hide_comment" name="hide_comment" {{ $invoice->hide_comment == 1 ? 'checked' : '' }}>
-                <label for="hide_comment">Скрыть комментарий</label>
+                <input type="checkbox" id="hide_comment_for_edit" name="hide_comment" {{ $invoice->hide_comment == 1 ? 'checked' : '' }}>
+                <label for="hide_comment_for_edit">Скрыть комментарий</label>
             </div>
         </div>
     @endif

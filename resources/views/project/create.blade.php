@@ -13,13 +13,13 @@
     <section class="content">
         <div class="container-fluid">
             @include('layouts.info_block')
-            @if (!isset($_COOKIE['yaToken']))
-                <div class="alert alert-warning alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <h5><i class="icon fas fa-ban"></i> {{ __('project.attention') }}</h5>
-                    {{ __('project.not_auth_in_yandex') }}
-                </div>
-            @endif
+{{--            @if (!isset($_COOKIE['yaToken']))--}}
+{{--                <div class="alert alert-warning alert-dismissible">--}}
+{{--                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>--}}
+{{--                    <h5><i class="icon fas fa-ban"></i> {{ __('project.attention') }}</h5>--}}
+{{--                    {{ __('project.not_auth_in_yandex') }}--}}
+{{--                </div>--}}
+{{--            @endif--}}
             <div class="row">
                 <div class="col-md-12">
                     <div class="card card-default">
@@ -262,7 +262,7 @@
                                                         <div class="col-md-3">
                                                             <div class="form-group">
                                                                 <label>{{ __('project.1pc_price') }}</label>
-                                                                <input class="form-control digits_only price_1pc" type="text"
+                                                                <input class="form-control rate_input price_1pc" type="text"
                                                                        name="price_1pc" id="project_price_1pc"
                                                                        placeholder="{{ __('project.1pc_price') }}" value="0">
                                                             </div>
@@ -280,7 +280,7 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="price">{{ __('project.project_price_in_currency') }}</label>
-                                                                <input type="text" class="form-control digits_only"
+                                                                <input type="text" class="form-control rate_input"
                                                                        id="project_price_in_currency" name="price_in_currency"
                                                                        placeholder="{{ __('project.project_price_in_currency') }}">
                                                             </div>
@@ -288,7 +288,7 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="price">{{ __('project.project_total_price_in_rub') }}</label>
-                                                                <input type="text" class="form-control digits_only"
+                                                                <input type="text" class="form-control rate_input"
                                                                        id="project_total_price_in_rub" name="price_in_rub"
                                                                        placeholder="{{ __('project.project_total_price_in_rub') }}">
                                                             </div>
@@ -298,14 +298,14 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label>{{ __('project.planned_income') }}</label>
-                                                                <input type="text" class="form-control digits_only"
+                                                                <input type="text" class="form-control rate_input"
                                                                        id="project_planned_revenue" placeholder="{{ __('project.planned_income') }}">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label>{{ __('project.planned_outcome') }}</label>
-                                                                <input type="text" class="form-control digits_only"
+                                                                <input type="text" class="form-control rate_input"
                                                                        id="project_planned_costs" name="planned_costs"
                                                                        placeholder="{{ __('project.planned_outcome') }}">
                                                             </div>

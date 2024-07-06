@@ -110,6 +110,7 @@ class ProjectController extends Controller
                 $new_project->access_to_project = (int)$request->access_to_project;
             }
         }
+        else $new_project->access_to_project = null;
 
         $new_project->save();
 
@@ -558,6 +559,7 @@ class ProjectController extends Controller
                     $project->access_to_project = (int)$request->access_to_project;
                 }
             }
+            else $project->access_to_project = null;
 
             if (can_edit_this_project_price($project->id) || (can_edit_this_project($project->id) && ($project->status == 'Черновик'))){
 

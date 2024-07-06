@@ -513,6 +513,9 @@
                             <a href="{{ route('safe_settings') }}" class="nav-link">
                                 <p>Сейф</p>
                             </a>
+                            <a href="{{ route('invoice_templates.index') }}" class="nav-link">
+                                <p>Шаблоны инвойсов</p>
+                            </a>
                         </li>
                     </ul>
                 </li>

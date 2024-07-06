@@ -489,6 +489,7 @@ class InvoiceController extends Controller
             $new_project = $request->project_id;
 
             isset($request->hide_comment) ?  $hide_comment = 1 : $hide_comment = 0;
+            isset($request->created_at) ?  $created_at = $request->created_at : $created_at = $invoice->created_at;
 
             $invoice->update([
                 'amount' => $request->amount,
@@ -514,7 +515,8 @@ class InvoiceController extends Controller
                 'income_category' => $request->income_category,
                 'income_type' => $request->income_type,
                 'edited' => '1',
-                'hide_comment' => $hide_comment
+                'hide_comment' => $hide_comment,
+                'created_at' => $created_at
             ]);
 
             $this->updateProjectFinance($invoice->project_id);

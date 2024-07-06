@@ -1902,7 +1902,7 @@
         let application_type = $('#application_type option:selected').val();
         let application_id = urlpath[urlpath.length - 2];
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "{{ route('process_containers_list') }}",
             data: {
                 containers_list: containers_list,

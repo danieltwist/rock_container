@@ -678,8 +678,12 @@ trait FinanceTrait {
 
         $class = '';
 
-        if(in_array($invoice->status, ['Оплачен','Частично оплачен','Взаимозачет'])){
+        if(in_array($invoice->status, ['Оплачен', 'Взаимозачет'])){
             $class = 'table-success';
+        }
+
+        if(in_array($invoice->status, ['Частично оплачен'])){
+            $class = 'table-info';
         }
 
         if((!is_null($invoice->losses_amount) && is_null($invoice->losses_confirmed)) || !is_null($invoice->losses_confirmed)) {

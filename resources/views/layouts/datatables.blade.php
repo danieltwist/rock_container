@@ -1258,6 +1258,7 @@
             if(filter_type === 'client'){
                 applications_filters.client = $(this).data('client_id');
             }
+            $('#get_excel_applications').append('<input type="hidden" name="status" value="' + $(this).data('type') + '">');
             initApplicationTables();
         });
 
@@ -1270,6 +1271,8 @@
                 $(this).removeClass('btn-secondary').addClass('btn-default');
             });
             $(this).removeClass('btn-default').addClass('btn-secondary');
+            console.log($(this).data('type'))
+            $('#get_excel_applications').append('<input type="hidden" name="status" value="' + $(this).data('type') + '">');
 
             initApplicationTables();
         });

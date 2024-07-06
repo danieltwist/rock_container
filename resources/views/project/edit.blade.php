@@ -252,7 +252,7 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <label>{{ __('project.1pc_price') }}</label>
-                                                                <input class="form-control digits_only price_1pc" type="text"
+                                                                <input class="form-control rate_input price_1pc" type="text"
                                                                        id="{{ $type }}_price_1pc"
                                                                        name="expenses_array[{{ $expense_i }}][{{ $type }}_price_1pc]"
                                                                        placeholder="{{ __('project.1pc_price') }}"
@@ -270,7 +270,7 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <label>{{ __('project.project_total_price_in_rub') }}</label>
-                                                                <input class="form-control digits_only expenses"
+                                                                <input class="form-control rate_input expenses"
                                                                        id="{{ $type }}_total_price_in_rub"
                                                                        type="text"
                                                                        name="expenses_array[{{ $expense_i }}][{{ $type }}_total_price_in_rub]"
@@ -335,7 +335,7 @@
                                                         <div class="col-md-3">
                                                             <div class="form-group">
                                                                 <label>{{ __('project.1pc_price') }}</label>
-                                                                <input class="form-control digits_only price_1pc" type="text"
+                                                                <input class="form-control rate_input price_1pc" type="text"
                                                                        name="price_1pc" id="project_price_1pc"
                                                                        placeholder="{{ __('project.1pc_price') }}"
                                                                        value="{{ $project->expense->price_1pc }}">
@@ -355,7 +355,7 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="price">{{ __('project.project_price_in_currency') }}</label>
-                                                                <input type="text" class="form-control digits_only"
+                                                                <input type="text" class="form-control rate_input"
                                                                        id="project_price_in_currency" name="price_in_currency"
                                                                        placeholder="{{ __('project.project_price_in_currency') }}"
                                                                        value="{{ $project->expense->price_in_currency }}">
@@ -364,7 +364,7 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label for="price">{{ __('project.project_total_price_in_rub') }}</label>
-                                                                <input type="text" class="form-control digits_only"
+                                                                <input type="text" class="form-control rate_input"
                                                                        id="project_total_price_in_rub" name="price_in_rub"
                                                                        placeholder="{{ __('project.project_total_price_in_rub') }}"
                                                                        value="{{ $project->expense->price_in_rub }}">
@@ -375,7 +375,7 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label>{{ __('project.planned_income') }}</label>
-                                                                <input type="text" class="form-control digits_only"
+                                                                <input type="text" class="form-control rate_input"
                                                                        id="project_planned_revenue" placeholder="{{ __('project.planned_income') }}"
                                                                        value="{{ $project->expense->price_in_rub }}">
                                                             </div>
@@ -383,7 +383,7 @@
                                                         <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label>{{ __('project.planned_outcome') }}</label>
-                                                                <input type="text" class="form-control digits_only"
+                                                                <input type="text" class="form-control rate_input"
                                                                        id="project_planned_costs" name="planned_costs"
                                                                        placeholder="{{ __('project.planned_outcome') }}"
                                                                        value="{{ $project->expense->planned_costs }}">

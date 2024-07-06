@@ -787,7 +787,7 @@ class ReportController extends Controller
             foreach ($output_array as $key => $value) {
                 foreach ($this_month_invoices as $invoice){
                     $invoice_amount = $this->getInvoiceAmountForReport($invoice)['actual_amount'];
-                    if ($invoice->expense_category == $value['category'] && $invoice->expense_type == $value['type']) {
+                    if ($invoice->expense_category == $value['category'] && $invoice->expense_type == $value['type'] && $invoice->created_at->month == $i) {
                         $output_array[$key]['month_'.$i] += $invoice_amount;
                         $output_array[$key]['type_total'] += $invoice_amount;
 
@@ -1016,7 +1016,7 @@ class ReportController extends Controller
             foreach ($output_array as $key => $value) {
                 foreach ($this_month_invoices as $invoice){
                     $invoice_amount = $this->getInvoiceAmountForReport($invoice)['actual_amount'];
-                    if ($invoice->income_category == $value['category'] && $invoice->income_type == $value['type']) {
+                    if ($invoice->income_category == $value['category'] && $invoice->income_type == $value['type'] && $invoice->created_at->month == $i) {
                         $output_array[$key]['month_'.$i] += $invoice_amount;
                         $output_array[$key]['type_total'] += $invoice_amount;
 

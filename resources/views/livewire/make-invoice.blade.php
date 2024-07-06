@@ -2,15 +2,14 @@
     @if (!is_null($invoice))
         @if(!is_null($project))
             <input type="hidden" name="invoice_id" value="{{ $invoice->id }}">
-            @if(config('app.prefix_view') == 'rl_')
-                <div class="form-group">
-                    <label>{{ __('invoice.choose_template') }}</label>
-                    <select class="form-control" name="template" required>
-                        <option value="lanta">Ланта</option>
-                        <option value="rshp">Россельхозбанк</option>
-                    </select>
-                </div>
-            @endif
+            <div class="form-group">
+                <label>{{ __('invoice.choose_template') }}</label>
+                <select class="form-control" name="template" required>
+                    @foreach($invoice_templates as $template)
+                        <option value="{{ $template->id }}">{{ $template->name }}</option>
+                    @endforeach
+                </select>
+            </div>
             <div class="form-group">
                 <label for="inv_num">{{ __('invoice.invoice_number') }}</label>
                 <input type="text" class="form-control" name="inv_num"

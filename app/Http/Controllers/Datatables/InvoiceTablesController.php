@@ -84,6 +84,7 @@ class InvoiceTablesController extends Controller
             $withFilter = $withFilter->filter($filter)
                 ->whereDate('created_at', '>=', $range_from)
                 ->whereDate('created_at', '<=', $range_to)
+                ->orderBy($columnName, $columnSortOrder)
                 ->select('invoices.*')
                 ->skip($start)
                 ->take($rowperpage);
@@ -286,6 +287,7 @@ class InvoiceTablesController extends Controller
                     });
                 })
                 ->whereIn('project_id', $projects)
+                ->orderBy($columnName, $columnSortOrder)
                 ->filter($filter);
 
             $totalRecordswithFilter = $withFilter->count();
@@ -447,6 +449,7 @@ class InvoiceTablesController extends Controller
             }
 
             $withFilter->filter($filter)
+                ->orderBy($columnName, $columnSortOrder)
                 ->whereDate('created_at', '>=', $range_from)
                 ->whereDate('created_at', '<=', $range_to);
 
@@ -476,6 +479,7 @@ class InvoiceTablesController extends Controller
             }
 
             $records = $records->filter($filter)
+                ->orderBy($columnName, $columnSortOrder)
                 ->skip($start)
                 ->take($rowperpage)
                 ->get();
